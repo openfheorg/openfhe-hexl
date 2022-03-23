@@ -219,27 +219,6 @@ class HexlDCRTPoly : public DCRTPolyImpl<VecType> {
     return *this;
   }
 
-  /**
-   * @brief assignment operator to transform a vector of the Base class into this Derived class
-   * 
-   * @param dcrtVec 
-   * @return std::vector<HexlDCRTPoly> @note this is a copy return intially
-   */
-  std::vector<HexlDCRTPoly> operator=(std::vector<DCRTPolyType>& dcrtVec) const {
-    // Use the base class to do the decompose
-    // std::vector<DCRTPolyType> dcrtVec = DCRTPolyType::CRTDecompose(baseBits);
-    // std::vector<HexlDCRTPoly> hexlVec(dcrtVec.begin(), dcrtVec.end());
-    std::vector<HexlDCRTPoly> hexlVec(dcrtVec.size());
-
-    // use a lambda function to transform the std::vector<DCRTPolyImpl> to std::vector<HexlDCRTPoly>
-    std::transform(dcrtVec.begin(), dcrtVec.end(), hexlVec.begin(),
-      [](DCRTPolyType& dcrtPoly) -> HexlDCRTPoly {
-        return HexlDCRTPoly(dcrtPoly);
-      }
-    );
-    return hexlVec;
-  }
-
 };  // HexlDCRTPoly
 
 /// @todo - Not sure if this is needed, was in DCRTPoly.h
