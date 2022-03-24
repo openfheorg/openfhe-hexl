@@ -10,3 +10,4 @@ if [ ! -d $OPENFHE_DEST_REPO ]; then
 fi
 
 cp -r src $OPENFHE_DEST_REPO
+cp -r benchmark $OPENFHE_DEST_REPO
