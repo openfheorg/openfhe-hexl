@@ -8,7 +8,7 @@ RUNDIR=`pwd`
 
 echo "Extracting row names"
 variant=`echo $VARIANTS | cut -d " " -f 1 | sed 's/,/-/g'`
-cd "$RUNDIR/benchmarks/$variant/openfhe-staging/openfhe-development/build/bin/benchmark"
+cd "$RUNDIR/builds/$variant/openfhe-staging/openfhe-development/build/bin/benchmark"
 for benchmark in $BENCHMARKS; do
   cat $benchmark.out | sed -e '1,/Iterations/d' | egrep -v "^-+" | \
      awk -- 'BEGIN {ORS="\t"} {print $1} END {ORS="\n"; print ""}' > $RUNDIR/$benchmark
@@ -19,7 +19,7 @@ echo "Extracting columnar data"
 for variant in $VARIANTS; do
   variant=`echo $variant | sed 's/,/-/g'`
   for benchmark in $BENCHMARKS; do
-    cat $RUNDIR/benchmarks/$variant/openfhe-staging/openfhe-development/build/bin/benchmark/$benchmark.out | \
+    cat $RUNDIR/builds/$variant/openfhe-staging/openfhe-development/build/bin/benchmark/$benchmark.out | \
        sed -e '1,/Iterations/d' | egrep -v "^-+" | \
        awk -- 'BEGIN {ORS="\t"} { print $4 } END {ORS="\n"; print ""}' >> $RUNDIR/$benchmark
   done
@@ -66,6 +66,7 @@ for benchmark in $BENCHMARKS; do
   rm $benchmark.rot
 done
 
+echo "Converting to xlsx"
 if [ -e /usr/bin/ssconvert ]; then
   for benchmark in $BENCHMARKS; do
     ssconvert $benchmark.tsv $benchmark.xlsx || abort "cannot convert $benchmark.tsv to $benchmark.xlsx"

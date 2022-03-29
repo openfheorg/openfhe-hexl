@@ -3,13 +3,13 @@
 . ./scripts/functions.sh
 . ./scripts/variants.sh
 
-if [ -d benchmarks ]; then
-  echo "ERROR: benchmarks directory already exists; cowardly refusing to continue."
+if [ -d builds ]; then
+  echo "ERROR: builds directory already exists; cowardly refusing to continue."
   exit 1
 fi
 
-mkdir benchmarks || abort "unable to create benchmarks directory."
-cd benchmarks || abort "unable to enter benchmarks directory."
+mkdir builds || abort "unable to create builds directory."
+cd builds || abort "unable to enter builds directory."
 
 ROOT=`pwd`
 

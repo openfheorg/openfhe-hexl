@@ -14,8 +14,8 @@ for variant in $VARIANTS; do
     separator
     echo -n "Running   $variant $benchmark @ "
     date
-    cd $RUNDIR/benchmarks/$variant/openfhe-staging/openfhe-development/build/bin/benchmark
-    LD_LIBRARY_PATH=$RUNDIR/benchmarks/$variant/openfhe-staging/openfhe-development/build/lib ./$benchmark > $benchmark.out 2>&1
+    cd $RUNDIR/builds/$variant/openfhe-staging/openfhe-development/build/bin/benchmark
+    LD_LIBRARY_PATH=$RUNDIR/builds/$variant/openfhe-staging/openfhe-development/build/lib ./$benchmark > $benchmark.out 2>&1
     echo -n "Completed $variant $benchmark @ "
     date
     separator
@@ -24,5 +24,5 @@ for variant in $VARIANTS; do
 done
 
 separator
-echo "done."
+echo "bench-run.sh: done."
 separator
