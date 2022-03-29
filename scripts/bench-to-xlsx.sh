@@ -65,3 +65,10 @@ for benchmark in $BENCHMARKS; do
       }' >> $benchmark.tsv
   rm $benchmark.rot
 done
+
+if [ -e /usr/bin/ssconvert ]; then
+  for benchmark in $BENCHMARKS; do
+    ssconvert $benchmark.tsv $benchmark.xlsx || abort "cannot convert $benchmark.tsv to $benchmark.xlsx"
+    rm $benchmark.tsv
+  done
+fi
