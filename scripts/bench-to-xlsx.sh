@@ -49,6 +49,7 @@ echo "Calculating speedups"
 for benchmark in $BENCHMARKS; do
   echo $benchmark                      > $benchmark.tsv
   echo                                >> $benchmark.tsv
+  echo -n "BENCHMARK"                 >> $benchmark.tsv
   for variant in $VARIANTS; do
     variant=`echo $variant | sed 's/,/-/g'`
     echo -n "\t$variant\tspeedup"     >> $benchmark.tsv
@@ -64,6 +65,11 @@ for benchmark in $BENCHMARKS; do
         print out;                            \
       }' >> $benchmark.tsv
   rm $benchmark.rot
+done
+
+for benchmark in $BENCHMARKS; do
+  sed -r 's/(\s+)?\S+//3' < $benchmark.tsv > $benchmark.tsv3
+  mv $benchmark.tsv3 $benchmark.tsv
 done
 
 echo "Converting to xlsx"
