@@ -78,4 +78,8 @@ if [ -e /usr/bin/ssconvert ]; then
     ssconvert $benchmark.tsv $benchmark.xlsx || abort "cannot convert $benchmark.tsv to $benchmark.xlsx"
     rm $benchmark.tsv
   done
+else
+  separator
+  echo "Spreadsheets will remain in tab-separated format."
+  echo "Install gnumeric / ssconvert to get xlsx output."
 fi
