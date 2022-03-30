@@ -52,7 +52,6 @@ You may now run scripts/build-openfhe-development-hexl.sh to perform a hexl-enab
 [ OpenFHE HEXL-enabled build commences]
 ```
 
-# Contact
+# For More Information
 
-
-
+Please see [OpenFHE Development](https://github.com/openfheorg/openfhe-development)
