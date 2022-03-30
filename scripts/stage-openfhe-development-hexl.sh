@@ -11,3 +11,4 @@ fi
 
 cp -r src $OPENFHE_DEST_REPO
 cp -r benchmark $OPENFHE_DEST_REPO
+cp -r third-party $OPENFHE_DEST_REPO
