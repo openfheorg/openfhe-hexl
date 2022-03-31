@@ -18,17 +18,17 @@ Would you like a HEXL build?             [y/n] : y
 
 ===============================================================================
 
-Switching to branch openfhe-development 2022-02-22-jbates-hexl-split-take-3.
+Switching to branch openfhe-development main.
 
-Already on '2022-02-22-jbates-hexl-split-take-3'
-Your branch is up to date with 'origin/2022-02-22-jbates-hexl-split-take-3'.
+Already on 'main'
+Your branch is up to date with 'origin/main'.
 
 ===============================================================================
 
-Status of branch openfhe-development 2022-02-22-jbates-hexl-split-take-3.
+Status of branch openfhe-development main.
 
-On branch 2022-02-22-jbates-hexl-split-take-3
-Your branch is up to date with 'origin/2022-02-22-jbates-hexl-split-take-3'.
+On branch main
+Your branch is up to date with 'origin/main'.
 
 nothing to commit, working tree clean
 
