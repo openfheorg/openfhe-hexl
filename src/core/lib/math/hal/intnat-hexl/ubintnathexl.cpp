@@ -38,7 +38,7 @@
 //==================================================================================
 #ifdef WITH_INTEL_HEXL
 
-#include "math/hal.h"
+    #include "math/hal.h"
 
 namespace intnathexl {
 
@@ -46,20 +46,19 @@ namespace intnathexl {
 
 // helper template to stream vector contents provided T has an stream operator<<
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const std::vector<T> &v) {
-  os << "[";
-  // for (const auto itr : v){
-  for (const auto &i : v) {
-    os << " " << i;
-  }
-  os << " ]";
-  return os;
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
+    os << "[";
+    // for (const auto itr : v){
+    for (const auto& i : v) {
+        os << " " << i;
+    }
+    os << " ]";
+    return os;
 }
 
 // to stream internal representation
-template std::ostream &operator<<<uint64_t>(std::ostream &os,
-                                            const std::vector<uint64_t> &v);
+template std::ostream& operator<<<uint64_t>(std::ostream& os, const std::vector<uint64_t>& v);
 
 }  // namespace intnathexl
 
-#endif //WITH_INTEL_HEXL
+#endif  // WITH_INTEL_HEXL
