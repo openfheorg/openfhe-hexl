@@ -83,7 +83,7 @@ static void GenerateNativeParms(std::shared_ptr<ILNativeParams> &parmArray) {
   parmArray = std::shared_ptr<ILNativeParams>(new ILNativeParams(m, modulo, root));
 }
 
-static void GenerateDCRTParms(map<usint, std::shared_ptr<M2DCRTParams>> &parmArray) {
+static void GenerateDCRTParms(std::map<usint, std::shared_ptr<M2DCRTParams>> &parmArray) {
   for (usint t : tow_args) {
     uint32_t m = (1 << (RING_DIM_LOG + 1));
 
@@ -122,9 +122,9 @@ static void GeneratePolys(std::shared_ptr<ILNativeParams> parmArray,
 }
 
 static void GenerateDCRTPolys(
-    map<usint, std::shared_ptr<M2DCRTParams>> &parmArray,
-    map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> &polyArrayEval,
-    map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> &polyArrayCoef) {
+    std::map<usint, std::shared_ptr<M2DCRTParams>> &parmArray,
+    std::map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> &polyArrayEval,
+    std::map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> &polyArrayCoef) {
   for (auto &pair : parmArray) {
     std::vector<M2DCRTPoly> vecEval;
     for (size_t i = 0; i < POLY_NUM; i++) {
