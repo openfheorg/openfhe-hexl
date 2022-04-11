@@ -103,7 +103,7 @@ class HexlDCRTPoly : public DCRTPolyImpl<VecType> {
 
   HexlDCRTPoly() : DCRTPolyType() {}
 
-  HexlDCRTPoly(const shared_ptr<Params> params, Format format = EVALUATION,
+  HexlDCRTPoly(const std::shared_ptr<Params> params, Format format = EVALUATION,
                bool initializeElementToZero = false)
       : DCRTPolyType(params, format, initializeElementToZero) {}
 
@@ -111,19 +111,19 @@ class HexlDCRTPoly : public DCRTPolyImpl<VecType> {
   HexlDCRTPoly(const DCRTPolyType &dcrtPoly) : DCRTPolyType(dcrtPoly) {}
   HexlDCRTPoly(const std::vector<PolyType> &elements)
       : DCRTPolyType(elements) {}
-  HexlDCRTPoly(const DggType &dgg, const shared_ptr<Params> params,
+  HexlDCRTPoly(const DggType &dgg, const std::shared_ptr<Params> params,
                Format format = EVALUATION)
       : DCRTPolyType(dgg, params, format) {}
-  HexlDCRTPoly(DugType &dug, const shared_ptr<Params> params,
+  HexlDCRTPoly(DugType &dug, const std::shared_ptr<Params> params,
                Format format = EVALUATION)
       : DCRTPolyType(dug, params, format) {}
-  HexlDCRTPoly(const TugType &tug, const shared_ptr<Params> params,
+  HexlDCRTPoly(const TugType &tug, const std::shared_ptr<Params> params,
                Format format = EVALUATION, uint32_t h = 0)
       : DCRTPolyType(tug, params, format, h) {}
-  HexlDCRTPoly(const BugType &bug, const shared_ptr<Params> params,
+  HexlDCRTPoly(const BugType &bug, const std::shared_ptr<Params> params,
                Format format = EVALUATION)
       : DCRTPolyType(bug, params, format) {}
-  HexlDCRTPoly(const PolyLargeType& element, const shared_ptr<Params> params)
+  HexlDCRTPoly(const PolyLargeType& element, const std::shared_ptr<Params> params)
       : DCRTPolyType(element, params) {}
 
   /**
