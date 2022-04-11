@@ -158,10 +158,10 @@ class Setup {
   Setup() {
     GenerateNativeParms(Nativeparms);
     GenerateDCRTParms(DCRTparms);
-    cerr << "Generating polynomials for the benchmark..." << endl;
+    std::cerr << "Generating polynomials for the benchmark..." << std::endl;
     GeneratePolys(Nativeparms, NativepolysEval, NativepolysCoef);
     GenerateDCRTPolys(DCRTparms, DCRTpolysEval, DCRTpolysCoef);
-    cerr << "Polynomials for the benchmark are generated" << endl;
+    std::cerr << "Polynomials for the benchmark are generated" << std::endl;
   }
 } TestParameters;
 
