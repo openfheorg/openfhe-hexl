@@ -145,13 +145,13 @@ static void GenerateDCRTPolys(
 }  // namespace lbcrypto
 
 std::shared_ptr<ILNativeParams> Nativeparms;
-map<usint, std::shared_ptr<M2DCRTParams>> DCRTparms;
+std::map<usint, std::shared_ptr<M2DCRTParams>> DCRTparms;
 
 std::shared_ptr<std::vector<NativePoly>> NativepolysEval;
-map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> DCRTpolysEval;
+std::map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> DCRTpolysEval;
 
 std::shared_ptr<std::vector<NativePoly>> NativepolysCoef;
-map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> DCRTpolysCoef;
+std::map<usint, std::shared_ptr<std::vector<M2DCRTPoly>>> DCRTpolysCoef;
 
 class Setup {
  public:
