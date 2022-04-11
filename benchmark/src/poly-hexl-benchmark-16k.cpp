@@ -112,13 +112,13 @@ static void GeneratePolys(std::shared_ptr<ILNativeParams> parmArray,
   for (size_t i = 0; i < POLY_NUM; i++) {
     vecEval.push_back(makeElement(parmArray, Format::EVALUATION));
   }
-  polyArrayEval = make_shared<std::vector<NativePoly>>(std::move(vecEval));
+  polyArrayEval = std::make_shared<std::vector<NativePoly>>(std::move(vecEval));
 
   std::vector<NativePoly> vecCoef;
   for (size_t i = 0; i < POLY_NUM; i++) {
     vecCoef.push_back(makeElement(parmArray, Format::COEFFICIENT));
   }
-  polyArrayCoef = make_shared<std::vector<NativePoly>>(std::move(vecCoef));
+  polyArrayCoef = std::make_shared<std::vector<NativePoly>>(std::move(vecCoef));
 }
 
 static void GenerateDCRTPolys(
@@ -131,14 +131,14 @@ static void GenerateDCRTPolys(
       vecEval.push_back(makeElement(parmArray[pair.first], Format::EVALUATION));
     }
     polyArrayEval[pair.first] =
-        make_shared<std::vector<M2DCRTPoly>>(std::move(vecEval));
+        std::make_shared<std::vector<M2DCRTPoly>>(std::move(vecEval));
     std::vector<M2DCRTPoly> vecCoef;
     for (size_t i = 0; i < POLY_NUM; i++) {
       vecCoef.push_back(
           makeElement(parmArray[pair.first], Format::COEFFICIENT));
     }
     polyArrayCoef[pair.first] =
-        make_shared<std::vector<M2DCRTPoly>>(std::move(vecCoef));
+        std::make_shared<std::vector<M2DCRTPoly>>(std::move(vecCoef));
   }
 }
 
