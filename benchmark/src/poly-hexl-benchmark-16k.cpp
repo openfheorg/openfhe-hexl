@@ -40,7 +40,6 @@
 #include "vechelper.h"
 #include "math/hal.h"
 
-using namespace std;
 using namespace lbcrypto;
 
 namespace lbcrypto {
