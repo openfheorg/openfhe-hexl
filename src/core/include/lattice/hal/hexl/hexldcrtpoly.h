@@ -98,6 +98,16 @@ class HexlDCRTPoly : public DCRTPolyImpl<VecType> {
       const std::vector<NativeInteger> &qlInvModq,
       const std::vector<NativeInteger> &qlInvModqPrecon) override;
 
+  /** Optimized ModReduce for HEXL
+   * @see DCRTPolyImpl::ModReduce for procedure description
+   */
+  virtual void ModReduce(const NativeInteger &t,
+                 const std::vector<NativeInteger> &tModqPrecon,
+                 const NativeInteger &negtInvModq,
+                 const NativeInteger &negtInvModqPrecon,
+                 const std::vector<NativeInteger> &qlInvModq,
+                 const std::vector<NativeInteger> &qlInvModqPrecon) override;
+
   // =============================================================================================
   // All methods below here are required for substitution with DCRTPolyImpl<> but are not optimized
 
