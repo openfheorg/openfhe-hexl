@@ -188,13 +188,16 @@ void HexlDCRTPoly<VecType>::ModReduce(
         uint64_t        modulus = qi.ConvertToInt();
 
         intel::hexl::EltwiseFMAMod(op3, op1, op2, op3, ringDim, modulus, 1);
+        this->m_vectors[i] *= qlInvModq[i];
       }
     }
 
+    #if 0
     #pragma omp parallel for
     for (usint i = 0; i < this->m_vectors.size(); i++) {
       this->m_vectors[i] *= qlInvModq[i];
     }
+    #endif
   }
 }
 
