@@ -44,9 +44,9 @@
 // Macros defining parameters to be passed to benchmarks in
 // lib-hexl-benchmark.cpp
 #define ADD_MICRO_HE_ARGS \
-  Args({16384, 3})->Args({16384, 4})->Args({32768, 3})->Args({32768, 4})
+  Args({16384, 3})->Args({16384, 4})->Args({32768, 3})->Args({32768, 4})->Args({65536, 3})->Args({65536, 4})
 
-#define ADD_MICRO_NTT_ARGS Arg(2048)->Arg(4096)->Arg(8192)->Arg(16384)
+#define ADD_MICRO_NTT_ARGS Arg(2048)->Arg(4096)->Arg(8192)->Arg(16384)->Arg(32768)->Arg(65536)
 
 #define HEXL_BENCHMARK(BENCHMARK_NAME) \
   BENCHMARK(BENCHMARK_NAME)->Unit(benchmark::kMicrosecond)->ADD_MICRO_HE_ARGS
