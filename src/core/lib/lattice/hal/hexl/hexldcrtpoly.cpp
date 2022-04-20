@@ -175,29 +175,30 @@ void HexlDCRTPoly<VecType>::ModReduce(
       temp.SwitchModulus(this->m_vectors[i].GetModulus(),
                          this->m_vectors[i].GetRootOfUnity());
 
+      // first cooking of the params
+      const NativeInteger &qi = this->m_vectors[i].GetModulus();
+      PolyType &m_veci        = this->m_vectors[i];
+      uint64_t        modulus = qi.ConvertToInt();
+
       //  Portable code: this->m_vectors[i] += (temp *= t);
       {
-        // first cooking of the params
-        const NativeInteger &qi = this->m_vectors[i].GetModulus();
-        PolyType &m_veci        = this->m_vectors[i];
-
         // second cooking of the params
         const uint64_t *op1     = reinterpret_cast<const uint64_t *>(&temp[0]);
         uint64_t        op2     = t_u64;
         uint64_t       *op3     = reinterpret_cast<uint64_t *>(&m_veci[0]);
-        uint64_t        modulus = qi.ConvertToInt();
 
         intel::hexl::EltwiseFMAMod(op3, op1, op2, op3, ringDim, modulus, 1);
-        this->m_vectors[i] *= qlInvModq[i];
+      }
+      //  Portable code: this->m_vectors[i] *= qlInvModq[i];
+      {
+        // second cooking of the params
+        uint64_t       *op1     = reinterpret_cast<uint64_t *>(&m_veci[0]);
+        uint64_t        op2     = qlInvModq[i];
+        uint64_t       *op3     = nullptr;
+
+        intel::hexl::EltwiseFMAMod(op3, op1, op2, op3, ringDim, modulus, 1);
       }
     }
-
-    #if 0
-    #pragma omp parallel for
-    for (usint i = 0; i < this->m_vectors.size(); i++) {
-      this->m_vectors[i] *= qlInvModq[i];
-    }
-    #endif
   }
 }
 
