@@ -196,7 +196,7 @@ void HexlDCRTPoly<VecType>::ModReduce(
         uint64_t        op2     = qlInvModq[i].ConvertToInt();
         uint64_t       *op3     = nullptr;
 
-        intel::hexl::EltwiseFMAMod(op3, op1, op2, op3, ringDim, modulus, 1);
+        intel::hexl::EltwiseFMAMod(op1, op1, op2, op3, ringDim, modulus, 1);
       }
     }
   }
