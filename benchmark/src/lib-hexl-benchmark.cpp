@@ -39,7 +39,7 @@
 #define _USE_MATH_DEFINES
 #include "benchmark/benchmark.h"
 
-#include "palisade.h"
+#include "openfhe.h"
 #include "utils/debug.h"
 #include "lib-hexl-util.h"
 
