@@ -1,6 +1,7 @@
 #!/bin/sh
 
 . ./scripts/functions.sh
+. ./scripts/vars.sh
 . ./scripts/variants.sh
 
 if [ -d builds ]; then
@@ -14,24 +15,60 @@ cd builds || abort "unable to enter builds directory."
 ROOT=`pwd`
 
 for variant in $VARIANTS; do
+  variant_orig=$variant
   cd $ROOT
-  CMAKE_FLAGS=`echo $variant | sed 's/^/WITH_/; s/WITH_DEFAULT// ; s/,/ WITH_/g ; s/WITH_HEXL/WITH_INTEL_HEXL/ ; s/-/=/g ; s/WITH/-DWITH/g'`
-  variant=`echo $variant | sed 's/,/-/g'`
-  git clone https://github.com/openfheorg/openfhe-configurator $variant
-  cd $variant || abort "clone of variant $variant failed."
-  ./scripts/stage-openfhe-development-hexl.sh
-  HEXL=`echo $variant | grep "HEXL-ON" | wc -l`
-  if [ $HEXL -ne 0 ]; then
-    separator
-    echo "bench-build.sh: $variant / $CMAKE_FLAGS is a HEXL build"
-    separator
-    ./scripts/build-openfhe-development-hexl.sh || abort "build of variant $variant failed."
+
+  # determine compiler
+  gnu9=`echo $variant    | grep "GCC9"    | wc -l`
+  gnu10=`echo $variant   | grep "GCC10"   | wc -l`
+  gnu11=`echo $variant   | grep "GCC11"   | wc -l`
+  clang10=`echo $variant | grep "CLANG10" | wc -l`
+  clang11=`echo $variant | grep "CLANG11" | wc -l`
+  clang12=`echo $variant | grep "CLANG12" | wc -l`
+  if [ $gnu9 -eq 1 ]; then
+    cc=/usr/bin/gcc-9
+    cxx=/usr/bin/g++-9
+  elif [ $gnu10 -eq 1 ]; then
+    cc=/usr/bin/gcc-10
+    cxx=/usr/bin/g++-10
+  elif [ $gnu11 -eq 1 ]; then
+    cc=/usr/bin/gcc-11
+    cxx=/usr/bin/g++-11
+  elif [ $clang10 -eq 1 ]; then
+    cc=/usr/bin/clang-10
+    cxx=/usr/bin/clang++-10
+  elif [ $clang11 -eq 1 ]; then
+    cc=/usr/bin/clang-11
+    cxx=/usr/bin/clang++-11
+  elif [ $clang12 -eq 1 ]; then
+    cc=/usr/bin/clang-12
+    cxx=/usr/bin/clang++-12
   else
-    separator
-    echo "bench-build.sh: $variant / $CMAKE_FLAGS is NOT a HEXL build"
-    separator
-    ./scripts/build-openfhe-development.sh || abort "build of variant $variant failed."
-  fi
+    abort "unable to parse compiler options"
+  fi 
+
+  # transform variant to proper cmake flags
+  cmake_flags=`echo $variant | sed 's/^/WITH_/;                   \
+                                    s/WITH_GCC[0-9]\+//;          \
+                                    s/WITH_CLANG[0-9]\+//;        \
+                                    s/,/ WITH_/g;                 \
+                                    s/WITH_HEXL/WITH_INTEL_HEXL/; \
+                                    s/-/=/g;                      \
+                                    s/WITH/-DWITH/g'`
+
+  echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
+
+  # no commans in directory names
+  variant_dir=`echo $variant_orig | sed 's/,/-/g'`
+  separator
+  echo "Cloning openfhe-configurator for variant $variant_orig"
+  separator
+  git clone https://github.com/openfheorg/openfhe-configurator $variant_dir
+  cd $variant_dir || abort "clone of variant $variant_orig failed."
+  git checkout $OPENFHE_CONFIGURATOR_BRANCH
+
+  ./scripts/stage-openfhe-development-hexl.sh
+  CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags ./scripts/build-openfhe-development.sh || abort "build of variant $variant_orig failed."
 done
 
 separator

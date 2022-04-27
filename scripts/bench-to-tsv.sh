@@ -47,14 +47,22 @@ done
 
 echo "Calculating speedups"
 for benchmark in $BENCHMARKS; do
-  echo $benchmark                      > $benchmark.tsv
-  echo                                >> $benchmark.tsv
-  echo -n "BENCHMARK"                 >> $benchmark.tsv
+  echo $benchmark                              > $benchmark.tsv
+  echo                                        >> $benchmark.tsv
+  echo -n "CPU "                              >> $benchmark.tsv
+  egrep "^Model name:" < lscpu.out | \
+    sed 's/  \+/ /g'                          >> $benchmark.tsv
+  echo -n "g++ version\t"                     >> $benchmark.tsv
+  egrep "^g++" < g++-version.out              >> $benchmark.tsv
+  echo -n "clang version\t"                   >> $benchmark.tsv
+  grep "^clang version" < clang-version.out   >> $benchmark.tsv
+  echo                                        >> $benchmark.tsv
+  echo -n "BENCHMARK"                         >> $benchmark.tsv
   for variant in $VARIANTS; do
     variant=`echo $variant | sed 's/,/-/g'`
-    echo -n "\t$variant\tspeedup"     >> $benchmark.tsv
+    echo -n "\t$variant\tspeedup"             >> $benchmark.tsv
   done
-  echo                                >> $benchmark.tsv
+  echo                                        >> $benchmark.tsv
   cat $benchmark.rot | awk --                 \
     ' {                                       \
         printf $1;                            \
@@ -63,7 +71,7 @@ for benchmark in $BENCHMARKS; do
           printf "\t%03f\t%03f", $i, ($2/$i)  \
         }                                     \
         print out;                            \
-      }' >> $benchmark.tsv
+      }'                                      >> $benchmark.tsv
   rm $benchmark.rot
 done
 
@@ -71,15 +79,3 @@ for benchmark in $BENCHMARKS; do
   sed -r 's/(\s+)?\S+//3' < $benchmark.tsv > $benchmark.tsv3
   mv $benchmark.tsv3 $benchmark.tsv
 done
-
-echo "Converting to xlsx"
-if [ -e /usr/bin/ssconvert ]; then
-  for benchmark in $BENCHMARKS; do
-    ssconvert $benchmark.tsv $benchmark.xlsx || abort "cannot convert $benchmark.tsv to $benchmark.xlsx"
-    rm $benchmark.tsv
-  done
-else
-  separator
-  echo "Spreadsheets will remain in tab-separated format."
-  echo "Install gnumeric / ssconvert to get xlsx output."
-fi

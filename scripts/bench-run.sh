@@ -8,6 +8,12 @@ RUNDIR=`pwd`
 
 export OMP_NUM_THREADS=1
 
+g++     --version > g++-version.out
+clang++ --version > clang-version.out
+lscpu             > lscpu.out
+
+date              > start
+
 for variant in $VARIANTS; do
   variant=`echo $variant | sed 's/,/-/g'`
   for benchmark in $BENCHMARKS; do
@@ -22,6 +28,8 @@ for variant in $VARIANTS; do
     cd $RUNDIR
   done
 done
+
+date              > finish
 
 separator
 echo "bench-run.sh: done."

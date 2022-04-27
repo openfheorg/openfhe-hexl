@@ -36,20 +36,21 @@
 
 #ifdef WITH_INTEL_HEXL
 
-#ifndef LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
-#define LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
+    #ifndef LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
+        #define LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
 
+        // C++ standard libs
+        #include <vector>
+        #include <string>
+        #include <memory>
 
-// C++ standard libs
-#include <vector>
+        // Third-party libs
+        #include "hexl/hexl.hpp"
 
-// Third-party libs
-#include "hexl/hexl.hpp"
-
-// Local PALISADE libs
-#include "math/hal.h"
-#include "lattice/hal/default/dcrtpoly.h"
-#include "utils/debug.h"
+        // Local PALISADE libs
+        #include "math/hal.h"
+        #include "lattice/hal/default/dcrtpoly.h"
+        #include "utils/debug.h"
 
 // PALISADE's main namespace
 namespace lbcrypto {
@@ -64,161 +65,155 @@ namespace lbcrypto {
  */
 template <typename VecType = BigVector>
 class HexlDCRTPoly : public DCRTPolyImpl<VecType> {
- public:
-  // Shortcut to base class
-  using DCRTPolyType = DCRTPolyImpl<VecType>;
+public:
+    // Shortcut to base class
+    using DCRTPolyType = DCRTPolyImpl<VecType>;
 
-  using Integer = typename VecType::Integer;
-  using Params = ILDCRTParams<Integer>;
+    using Integer = typename VecType::Integer;
+    using Params  = ILDCRTParams<Integer>;
 
-  typedef VecType Vector;
+    typedef VecType Vector;
 
-  using DggType = typename DCRTPolyType::DggType;
-  using DugType = typename DCRTPolyType::DugType;
-  using TugType = typename DCRTPolyType::TugType;
-  using BugType = typename DCRTPolyType::BugType;
+    using DggType = typename DCRTPolyType::DggType;
+    using DugType = typename DCRTPolyType::DugType;
+    using TugType = typename DCRTPolyType::TugType;
+    using BugType = typename DCRTPolyType::BugType;
 
-  // this class contains an array of these:
-  using PolyType = typename DCRTPolyType::PolyType;
+    // this class contains an array of these:
+    using PolyType = typename DCRTPolyType::PolyType;
 
-  // the composed polynomial type
-  using PolyLargeType = typename DCRTPolyType::PolyLargeType;
+    // the composed polynomial type
+    using PolyLargeType = typename DCRTPolyType::PolyLargeType;
 
-  static const std::string GetElementName() { return "HexlDCRTPoly"; }
+    static const std::string GetElementName() {
+        return "HexlDCRTPoly";
+    }
 
-  // =============================================================================================
-  // All methods in this section are optimized for HEXL
+    // =============================================================================================
+    // All methods in this section are optimized for HEXL
 
-  /** Optimized DropLastElementAndScale for HEXL
+    /** Optimized DropLastElementAndScale for HEXL
    * @see DCRTPolyImpl::DropLastElementAndScale for procedure description
    */
-  virtual void DropLastElementAndScale(
-      const std::vector<NativeInteger> &QlQlInvModqlDivqlModq,
-      const std::vector<NativeInteger> &QlQlInvModqlDivqlModqPrecon,
-      const std::vector<NativeInteger> &qlInvModq,
-      const std::vector<NativeInteger> &qlInvModqPrecon) override;
+    void DropLastElementAndScale(const std::vector<NativeInteger>& QlQlInvModqlDivqlModq,
+                                 const std::vector<NativeInteger>& QlQlInvModqlDivqlModqPrecon,
+                                 const std::vector<NativeInteger>& qlInvModq,
+                                 const std::vector<NativeInteger>& qlInvModqPrecon) override;
 
-  // =============================================================================================
-  // All methods below here are required for substitution with DCRTPolyImpl<> but are not optimized
+    // =============================================================================================
+    // All methods below here are required for substitution with DCRTPolyImpl<> but are not optimized
 
-  HexlDCRTPoly() : DCRTPolyType() {}
+    HexlDCRTPoly() : DCRTPolyType() {}
 
-  HexlDCRTPoly(const std::shared_ptr<Params> params, Format format = EVALUATION,
-               bool initializeElementToZero = false)
-      : DCRTPolyType(params, format, initializeElementToZero) {}
+  explicit HexlDCRTPoly(const std::shared_ptr<Params> params, Format format = EVALUATION,
+                          bool initializeElementToZero = false)
+        : DCRTPolyType(params, format, initializeElementToZero) {}
 
-  // Need to be able to make a copy,
-  HexlDCRTPoly(const DCRTPolyType &dcrtPoly) : DCRTPolyType(dcrtPoly) {}
-  HexlDCRTPoly(const std::vector<PolyType> &elements)
-      : DCRTPolyType(elements) {}
+    // Need to be able to make a copy,
+    explicit HexlDCRTPoly(const DCRTPolyType& dcrtPoly) : DCRTPolyType(dcrtPoly) {}
+    explicit HexlDCRTPoly(const std::vector<PolyType>& elements) : DCRTPolyType(elements) {}
+    HexlDCRTPoly(const DggType& dgg, const shared_ptr<Params> params, Format format = EVALUATION)
   HexlDCRTPoly(const DggType &dgg, const std::shared_ptr<Params> params,
-               Format format = EVALUATION)
-      : DCRTPolyType(dgg, params, format) {}
+        : DCRTPolyType(dgg, params, format) {}
   HexlDCRTPoly(DugType &dug, const std::shared_ptr<Params> params,
-               Format format = EVALUATION)
-      : DCRTPolyType(dug, params, format) {}
+        : DCRTPolyType(dug, params, format) {}
   HexlDCRTPoly(const TugType &tug, const std::shared_ptr<Params> params,
-               Format format = EVALUATION, uint32_t h = 0)
-      : DCRTPolyType(tug, params, format, h) {}
+        : DCRTPolyType(tug, params, format, h) {}
   HexlDCRTPoly(const BugType &bug, const std::shared_ptr<Params> params,
-               Format format = EVALUATION)
-      : DCRTPolyType(bug, params, format) {}
+        : DCRTPolyType(bug, params, format) {}
   HexlDCRTPoly(const PolyLargeType& element, const std::shared_ptr<Params> params)
-      : DCRTPolyType(element, params) {}
 
-  /**
+    /**
    * @brief Assignment Operator.
    *
    * @param &rhs the copied element.
    * @return the resulting element.
    */
-  virtual const HexlDCRTPoly &operator=(const DCRTPolyType &rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    const HexlDCRTPoly& operator=(const DCRTPolyType& rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  /**
+    /**
    * @brief Move Assignment Operator.
    *
    * @param &rhs the copied element.
    * @return the resulting element.
    */
-  virtual const HexlDCRTPoly &operator=(DCRTPolyType &&rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    const HexlDCRTPoly& operator=(DCRTPolyType&& rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  // All assignment operators need to be overriden because the return type is
-  // different
-  const HexlDCRTPoly &operator=(const PolyLargeType &rhs) {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    // All assignment operators need to be overriden because the return type is
+    // different
+    const HexlDCRTPoly& operator=(const PolyLargeType& rhs) {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  const HexlDCRTPoly &operator=(const PolyType &rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    const HexlDCRTPoly& operator=(const PolyType& rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  /**
+    /**
    * @brief Initalizer list
    *
    * @param &rhs the list to initalized the element.
    * @return the resulting element.
    */
-  HexlDCRTPoly &operator=(std::initializer_list<uint64_t> rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    HexlDCRTPoly& operator=(std::initializer_list<uint64_t> rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  /**
+    /**
    * @brief Assignment Operator. The usint rhs will be set at index zero and all
    * other indices will be set to zero.
    *
    * @param rhs is the usint to assign to index zero.
    * @return the resulting vector.
    */
-  HexlDCRTPoly &operator=(uint64_t rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    HexlDCRTPoly& operator=(uint64_t rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  /**
+    /**
    * @brief Creates a Poly from a vector of signed integers (used for trapdoor
    * sampling)
    *
    * @param &rhs the vector to set the PolyImpl to.
    * @return the resulting PolyImpl.
    */
-  HexlDCRTPoly &operator=(const std::vector<int64_t> &rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    HexlDCRTPoly& operator=(const std::vector<int64_t>& rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  /**
+    /**
    * @brief Creates a Poly from a vector of signed integers (used for trapdoor
    * sampling)
    *
    * @param &rhs the vector to set the PolyImpl to.
    * @return the resulting PolyImpl.
    */
-  HexlDCRTPoly &operator=(const std::vector<int32_t> &rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
+    HexlDCRTPoly& operator=(const std::vector<int32_t>& rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 
-  /**
+    /**
    * @brief Initalizer list
    *
    * @param &rhs the list to set the PolyImpl to.
    * @return the resulting PolyImpl.
    */
-
-  HexlDCRTPoly &operator=(std::initializer_list<std::string> rhs) override {
-    DCRTPolyType::operator=(rhs);
-    return *this;
-  }
-
+    HexlDCRTPoly& operator=(std::initializer_list<std::string> rhs) override {
+        DCRTPolyType::operator=(rhs);
+        return *this;
+    }
 };  // HexlDCRTPoly
 
 /// @todo - Not sure if this is needed, was in DCRTPoly.h
@@ -226,6 +221,6 @@ class HexlDCRTPoly : public DCRTPolyImpl<VecType> {
 
 }  // namespace lbcrypto
 
-#endif  // LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
+    #endif  // LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
 
 #endif  // WITH_INTEL_HEXL
