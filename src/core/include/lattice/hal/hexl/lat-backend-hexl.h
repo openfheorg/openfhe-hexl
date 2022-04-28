@@ -40,16 +40,17 @@
 
 namespace lbcrypto {
 
-using M2DCRTPoly = HexlDCRTPoly<M2Vector>;
-using M4DCRTPoly = HexlDCRTPoly<M4Vector>;
+    using M2DCRTPoly = HexlDCRTPoly<M2Vector>;
+    using M4DCRTPoly = HexlDCRTPoly<M4Vector>;
 #ifdef WITH_NTL
-using M6DCRTPoly = HexlDCRTPoly<M6Vector>;
+    using M6DCRTPoly = HexlDCRTPoly<M6Vector>;
 #else
-using M6DCRTPoly = void;
+    using M6DCRTPoly = void;
 #endif
 
-using DCRTPoly = HexlDCRTPoly<BigVector>;
+    using DCRTPoly = HexlDCRTPoly<BigVector>;
 
 }  // namespace lbcrypto
 
-#endif  // __LAT_BACKEND_HEXL_H__
+#endif // __LAT_BACKEND_HEXL_H__
+
