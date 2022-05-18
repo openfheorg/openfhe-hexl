@@ -75,7 +75,7 @@ void HexlDCRTPoly<VecType>::DropLastElementAndScale(
    auto temp = lastPoly;
    // SwitchModulus is HEXL-accelerated
    temp.SwitchModulus(this->m_vectors[i].GetModulus(),
-                      this->m_vectors[i].GetRootOfUnity());
+                      this->m_vectors[i].GetRootOfUnity(),0,0);
    extra.m_vectors[i] = (temp *= QlQlInvModqlDivqlModq[i]);
  } // omp threaded loop
 
@@ -132,7 +132,7 @@ void HexlDCRTPoly<VecType>::ModReduce(
       auto temp = delta;
       // SwitchModulus is HEXL-accelerated
       temp.SwitchModulus(this->m_vectors[i].GetModulus(),
-                         this->m_vectors[i].GetRootOfUnity());
+                         this->m_vectors[i].GetRootOfUnity(),0,0);
       extra.m_vectors[i] = temp;
     }
 
@@ -173,7 +173,7 @@ void HexlDCRTPoly<VecType>::ModReduce(
       auto temp = delta;
       // SwitchModulus is HEXL-accelerated
       temp.SwitchModulus(this->m_vectors[i].GetModulus(),
-                         this->m_vectors[i].GetRootOfUnity());
+                         this->m_vectors[i].GetRootOfUnity(),0,0);
 
       // first cooking of the params
       const NativeInteger &qi = this->m_vectors[i].GetModulus();
