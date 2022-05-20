@@ -7,7 +7,7 @@ option(INTEL_HEXL_PREBUILT OFF) # Set to ON/OFF to use prebuilt installation
 message(STATUS "INTEL_HEXL_PREBUILT ${INTEL_HEXL_PREBUILT}")
 
 if (INTEL_HEXL_PREBUILT)  # Skip download from gitlab
-  find_package(HEXL 1.2.3
+  find_package(HEXL 1.2.4
         HINTS ${INTEL_HEXL_HINT_DIR}
         REQUIRED)
   if (NOT TARGET HEXL::hexl)
