@@ -204,18 +204,19 @@ public:
    *
    * @param &val is the initial integer value.
    */
-    template <typename T, typename std::enable_if<
-                              std::is_same<T, int16_t>::value || std::is_same<T, uint16_t>::value ||
-                                  std::is_same<T, int32_t>::value || std::is_same<T, uint32_t>::value ||
-                                  std::is_same<T, int64_t>::value || std::is_same<T, uint64_t>::value ||
-                                  std::is_same<T, long>::value || std::is_same<T, unsigned long>::value ||
-                                  std::is_same<T, long long>::value || std::is_same<T, unsigned long long>::value ||
-                                  std::is_same<T, uint64_t>::value ||
+    template <typename T,
+              typename std::enable_if<
+                  std::is_same<T, int16_t>::value || std::is_same<T, uint16_t>::value ||
+                      std::is_same<T, int32_t>::value || std::is_same<T, uint32_t>::value ||
+                      std::is_same<T, int64_t>::value || std::is_same<T, uint64_t>::value ||
+                      std::is_same<T, unsigned int>::value || std::is_same<T, long>::value ||
+                      std::is_same<T, unsigned long>::value || std::is_same<T, long long>::value ||
+                      std::is_same<T, unsigned long long>::value || std::is_same<T, uint64_t>::value ||
 #if defined(HAVE_INT128)
-                                  std::is_same<T, __int128>::value || std::is_same<T, unsigned __int128>::value ||
+                      std::is_same<T, __int128>::value || std::is_same<T, unsigned __int128>::value ||
 #endif
-                                  std::is_same<T, NativeInt>::value,
-                              bool>::type = true>
+                      std::is_same<T, NativeInt>::value,
+                  bool>::type = true>
     NativeIntegerT(T val) : m_value(val) {
     }
 
@@ -225,18 +226,20 @@ public:
    *
    * @param &val is the initial integer represented as a big integer.
    */
-    template <typename T, typename std::enable_if<
-                              !std::is_same<T, int16_t>::value && !std::is_same<T, uint16_t>::value &&
-                                  !std::is_same<T, int32_t>::value && !std::is_same<T, uint32_t>::value &&
-                                  !std::is_same<T, int64_t>::value && !std::is_same<T, uint64_t>::value &&
-                                  !std::is_same<T, long long>::value && !std::is_same<T, unsigned long long>::value &&
+    template <typename T,
+              typename std::enable_if<
+                  !std::is_same<T, int16_t>::value && !std::is_same<T, uint16_t>::value &&
+                      !std::is_same<T, int32_t>::value && !std::is_same<T, uint32_t>::value &&
+                      !std::is_same<T, int64_t>::value && !std::is_same<T, uint64_t>::value &&
+                      !std::is_same<T, unsigned int>::value && !std::is_same<T, long long>::value &&
+                      !std::is_same<T, unsigned long long>::value &&
 #if defined(HAVE_INT128)
-                                  !std::is_same<T, __int128>::value && !std::is_same<T, unsigned __int128>::value &&
+                      !std::is_same<T, __int128>::value && !std::is_same<T, unsigned __int128>::value &&
 #endif
-                                  !std::is_same<T, const std::string>::value && !std::is_same<T, const char*>::value &&
-                                  !std::is_same<T, NativeIntegerT>::value && !std::is_same<T, double>::value &&
-                                  !std::is_same<T, NativeInt>::value,
-                              bool>::type = true>
+                      !std::is_same<T, const std::string>::value && !std::is_same<T, const char*>::value &&
+                      !std::is_same<T, NativeIntegerT>::value && !std::is_same<T, double>::value &&
+                      !std::is_same<T, NativeInt>::value,
+                  bool>::type = true>
     NativeIntegerT(T val) : m_value(val.ConvertToInt()) {
     }
 
