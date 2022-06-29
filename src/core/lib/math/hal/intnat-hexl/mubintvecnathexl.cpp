@@ -592,4 +592,4 @@ template class NativeVectorT<NativeInteger>;
 
 }  // namespace intnathexl
 
-#endif  //WITH_INTEL_HEXL
+#endif  // WITH_INTEL_HEXL
