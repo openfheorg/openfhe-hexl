@@ -43,18 +43,18 @@
 #include "math/hal/basicint.h"
 
 #if NATIVEINT != 64
-#error "Building with HEXL optimizations requires NATIVE_SIZE == 64"
+    #error "Building with HEXL optimizations requires NATIVE_SIZE == 64"
 #endif
 
 namespace lbcrypto {
 
 using NativeInteger = intnathexl::NativeInteger;
-using NativeVector = intnathexl::NativeVector;
+using NativeVector  = intnathexl::NativeVector;
 
-}
+}  // namespace lbcrypto
 
 // Promote to global namespace
 using NativeInteger = lbcrypto::NativeInteger;
-using NativeVector = lbcrypto::NativeVector;
+using NativeVector  = lbcrypto::NativeVector;
 
 #endif /* SRC_CORE_INCLUDE_MATH_HAL_INTNATHEXL_BACKENDNAT_H_ */
