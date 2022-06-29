@@ -39,13 +39,13 @@
 #ifdef WITH_INTEL_HEXL
 
 #include "math/hal.h"
-#include "math/binaryuniformgenerator.cpp"
-#include "math/discretegaussiangenerator.cpp"
-#include "math/discreteuniformgenerator.cpp"
-#include "math/matrix.cpp"
+#include "math/binaryuniformgenerator.cpp"     // NOLINT
+#include "math/discretegaussiangenerator.cpp"  // NOLINT
+#include "math/discreteuniformgenerator.cpp"   // NOLINT
+#include "math/matrix.cpp"                     // NOLINT
 #include "math/matrix.h"
-#include "math/nbtheory.cpp"
-#include "math/ternaryuniformgenerator.cpp"
+#include "math/nbtheory.cpp"                 // NOLINT
+#include "math/ternaryuniformgenerator.cpp"  // NOLINT
 #include "math/hal/transform.h"
 
 namespace lbcrypto {
@@ -90,4 +90,4 @@ template class Matrix<NativeVector>;
 CEREAL_CLASS_VERSION(NativeInteger, NativeInteger::SerializedVersion());
 CEREAL_CLASS_VERSION(NativeVector, NativeVector::SerializedVersion());
 
-#endif  //WITH_INTEL_HEXL
+#endif  // WITH_INTEL_HEXL

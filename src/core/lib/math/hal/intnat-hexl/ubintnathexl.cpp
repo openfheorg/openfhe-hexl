@@ -61,4 +61,4 @@ template std::ostream& operator<<<uint64_t>(std::ostream& os, const std::vector<
 
 }  // namespace intnathexl
 
-#endif  //WITH_INTEL_HEXL
+#endif  // WITH_INTEL_HEXL
