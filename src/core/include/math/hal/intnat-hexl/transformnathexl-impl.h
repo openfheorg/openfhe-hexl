@@ -46,6 +46,9 @@
 #include "utils/utilities.h"
 #include "utils/defines.h"
 
+#include <map>
+#include <vector>
+
 namespace intnathexl {
 
 template <typename VecType>

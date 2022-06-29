@@ -37,17 +37,18 @@
 #ifndef LBCRYPTO_MATH_HAL_INTNATHEXL_UBINTNAT_H
 #define LBCRYPTO_MATH_HAL_INTNATHEXL_UBINTNAT_H
 
-#include <cstdlib>
-#include <fstream>
+// #include <cstdlib>
+// #include <fstream>
 #include <functional>
 #include <iostream>
 #include <limits>
-#include <memory>
-#include <sstream>
+// #include <memory>
+// #include <sstream>
 #include <string>
 #include <type_traits>
-#include <typeinfo>
+// #include <typeinfo>
 #include <vector>
+#include <utility>
 
 #include "math/hal/integer.h"
 #include "math/hal/basicint.h"
@@ -758,9 +759,9 @@ public:
         tmp1.hi = 0;
         DNativeInt tmp(this->m_value);
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         // RShiftD is more efficient than the right-shifting of DNativeInt
         NativeInt ql = RShiftD(tmp1, n + beta);
@@ -790,9 +791,9 @@ public:
         prod.hi      = 0;
         typeD result = prod;
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         NativeInt ql = RShiftD(prod, n + beta);
         MultD(ql, mu.m_value, prod);
@@ -826,9 +827,9 @@ public:
         tmp1.hi = 0;
         DNativeInt tmp(this->m_value);
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         // RShiftD is more efficient than the right-shifting of DNativeInt
         NativeInt ql = RShiftD(tmp1, n + beta);
@@ -857,9 +858,9 @@ public:
         prod.hi      = 0;
         typeD result = prod;
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         NativeInt ql = RShiftD(prod, n + beta);
         MultD(ql, mu.m_value, prod);
@@ -1277,9 +1278,9 @@ public:
         MultD(this->m_value, b.m_value, prod1);
         DNativeInt prod = GetD(prod1);
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         // RShiftD is more efficient than the right-shifting of DNativeInt
         NativeInt ql = RShiftD(prod1, n + beta);
@@ -1316,9 +1317,9 @@ public:
         MultD(this->m_value, b.m_value, prod1);
         typeD prod = prod1;
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         NativeInt ql = RShiftD(prod1, n + beta);
         MultD(ql, mu.m_value, prod1);
@@ -1419,9 +1420,9 @@ public:
         DNativeInt prod = GetD(prod1);
         typeD q0(prod1);
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         // RShiftD is more efficient than the right-shifting of DNativeInt
         NativeInt ql = RShiftD(q0, n + beta);
@@ -1451,9 +1452,9 @@ public:
         MultD(ans.m_value, b.m_value, prod1);
         typeD prod = prod1;
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         NativeInt ql = RShiftD(prod1, n + beta);
         MultD(ql, mu.m_value, prod1);
@@ -1490,9 +1491,9 @@ public:
         DNativeInt prod = GetD(prod1);
         typeD q0(prod1);
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         // RShiftD is more efficient than the right-shifting of DNativeInt
         NativeInt ql = RShiftD(q0, n + beta);
@@ -1520,9 +1521,9 @@ public:
         MultD(this->m_value, b.m_value, prod1);
         typeD prod = prod1;
 
-        long n     = modulus.GetMSB();
-        long alpha = n + 3;
-        long beta  = -2;
+        int64_t n     = modulus.GetMSB();
+        int64_t alpha = n + 3;
+        int64_t beta  = -2;
 
         NativeInt ql = RShiftD(prod1, n + beta);
         MultD(ql, mu.m_value, prod1);
@@ -1811,8 +1812,8 @@ public:
     OutputType ConvertToInt() const {
         if (sizeof(OutputType) < sizeof(m_value))
             OPENFHE_THROW(lbcrypto::type_error,
-                          "Invalid integer conversion: sizeof(OutputIntType) < "
-                          "sizeof(InputIntType)");
+                           "Invalid integer conversion: sizeof(OutputIntType) < "
+                           "sizeof(InputIntType)");
         return static_cast<OutputType>(m_value);
     }
 
@@ -1951,7 +1952,7 @@ public:
     load(Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
             OPENFHE_THROW(lbcrypto::deserialize_error, "serialized object version " + std::to_string(version) +
-                                                           " is from a later version of the library");
+                                                            " is from a later version of the library");
         }
         ar(::cereal::make_nvp("v", m_value));
     }
@@ -1963,7 +1964,7 @@ public:
     load(Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
             OPENFHE_THROW(lbcrypto::deserialize_error, "serialized object version " + std::to_string(version) +
-                                                           " is from a later version of the library");
+                                                            " is from a later version of the library");
         }
         // get an array with 2 unint64_t values for m_value
         uint64_t vec[2];
@@ -1979,7 +1980,7 @@ public:
     load(Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
             OPENFHE_THROW(lbcrypto::deserialize_error, "serialized object version " + std::to_string(version) +
-                                                           " is from a later version of the library");
+                                                            " is from a later version of the library");
         }
         // get an array with 2 unint64_t values for m_value
         uint64_t vec[2];
@@ -2119,7 +2120,7 @@ private:
    * @param shift the number of bits to shift by
    * @return the result of right-shifting
    */
-    static inline NativeInt RShiftD(const typeD& x, long shift) {
+    static inline NativeInt RShiftD(const typeD& x, int64_t shift) {
         return (x.lo >> shift) | (x.hi << (MaxBits() - shift));
     }
 

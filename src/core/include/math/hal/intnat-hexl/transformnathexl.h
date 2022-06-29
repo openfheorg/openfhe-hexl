@@ -39,6 +39,8 @@
 #include <map>
 #include <unordered_map>
 #include <mutex>
+#include <vector>
+#include <utility>
 #include "math/hal/transform.h"
 #include "hexl/hexl.hpp"
 

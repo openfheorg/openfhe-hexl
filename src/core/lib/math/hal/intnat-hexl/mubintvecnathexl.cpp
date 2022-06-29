@@ -30,7 +30,7 @@
 //==================================================================================
 
 /*
-  This code provides basic arithmetic functionality for vectors of thr HEXL accelerated native integers
+  This code provides basic arithmetic functionality for vectors of HEXL accelerated native integers
  */
 
 //==================================================================================
@@ -38,13 +38,13 @@
 //==================================================================================
 #ifdef WITH_INTEL_HEXL
 
-    #include "math/hal.h"
-    #include "math/hal/intnat-hexl/mubintvecnathexl.h"
-    #include "math/nbtheory.h"
-    #include "utils/debug.h"
-    #include "utils/serializable.h"
+#include "math/hal.h"
+#include "math/hal/intnat-hexl/mubintvecnathexl.h"
+#include "math/nbtheory.h"
+#include "utils/debug.h"
+#include "utils/serializable.h"
 
-    #include "hexl/hexl.hpp"
+#include "hexl/hexl.hpp"
 
 namespace intnathexl {
 
@@ -62,7 +62,7 @@ template <class IntegerType>
 NativeVectorT<IntegerType>::NativeVectorT(usint length, const IntegerType& modulus) {
     if (modulus.GetMSB() > MAX_MODULUS_SIZE) {
         OPENFHE_THROW(lbcrypto::not_available_error,
-                      "NativeVectorT supports only modulus size <=  " + std::to_string(MAX_MODULUS_SIZE) + " bits");
+                       "NativeVectorT supports only modulus size <=  " + std::to_string(MAX_MODULUS_SIZE) + " bits");
     }
     this->SetModulus(modulus);
     this->m_data.resize(length);
@@ -186,7 +186,7 @@ template <class IntegerType>
 void NativeVectorT<IntegerType>::SetModulus(const IntegerType& value) {
     if (value.GetMSB() > MAX_MODULUS_SIZE) {
         OPENFHE_THROW(lbcrypto::not_available_error,
-                      "NativeVectorT supports only modulus size <=  " + std::to_string(MAX_MODULUS_SIZE) + " bits");
+                       "NativeVectorT supports only modulus size <=  " + std::to_string(MAX_MODULUS_SIZE) + " bits");
     }
     this->m_modulus = value;
 }

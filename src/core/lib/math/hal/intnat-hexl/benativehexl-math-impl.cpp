@@ -38,15 +38,15 @@
 //==================================================================================
 #ifdef WITH_INTEL_HEXL
 
-    #include "math/hal.h"
-    #include "math/binaryuniformgenerator.cpp"
-    #include "math/discretegaussiangenerator.cpp"
-    #include "math/discreteuniformgenerator.cpp"
-    #include "math/matrix.cpp"
-    #include "math/matrix.h"
-    #include "math/nbtheory.cpp"
-    #include "math/ternaryuniformgenerator.cpp"
-    #include "math/hal/transform.h"
+#include "math/hal.h"
+#include "math/binaryuniformgenerator.cpp"
+#include "math/discretegaussiangenerator.cpp"
+#include "math/discreteuniformgenerator.cpp"
+#include "math/matrix.cpp"
+#include "math/matrix.h"
+#include "math/nbtheory.cpp"
+#include "math/ternaryuniformgenerator.cpp"
+#include "math/hal/transform.h"
 
 namespace lbcrypto {
 
