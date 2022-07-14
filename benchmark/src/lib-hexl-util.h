@@ -58,7 +58,7 @@ CryptoContext<DCRTPoly> GenerateBFVrnsContext(uint32_t poly_modulus_degree, uint
     parameters.SetStandardDeviation(3.19);
     parameters.SetEvalMultCount(numTowers - 1);
     parameters.SetMaxDepth(5);
-    parameters.SetRelinWindow(30);
+    parameters.SetDigitSize(30);
     parameters.SetScalingFactorBits(47);
     parameters.SetRingDim(poly_modulus_degree);
 
