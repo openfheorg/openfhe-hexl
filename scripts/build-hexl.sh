@@ -6,10 +6,13 @@ echo Prebuilt HEXL library does not exist.  Building...
 echo
 echo ===============================================================================
 
-git clone https://github.com/intel/hexl.git || exit 1
+if [ ! -d hexl ]; then
+  git clone https://github.com/intel/hexl.git || exit 1
+fi
 cd hexl || exit 1
-mkdir build || exit 1
-cmake -DHEXL_BENCHMARK=OFF -DHEXL_COVERAGE=OFF -DHEXL_DOCS=OFF -DHEXL_EXPERIMENTAL=OFF -DHEXL_SHARED_LIB=ON -DHEXL_TESTING=OFF || exit 1
+git checkout v1.2.4 || exit 1
+make clean
+cmake -DHEXL_BENCHMARK=OFF -DHEXL_COVERAGE=OFF -DHEXL_DOCS=OFF -DHEXL_EXPERIMENTAL=OFF -DHEXL_SHARED_LIB=ON -DHEXL_TESTING=OFF . || exit 1
 make -j || exit 1
 
 echo ===============================================================================
