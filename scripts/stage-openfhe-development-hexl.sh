@@ -5,7 +5,7 @@ OPENFHE_HEXL_SOURCE_REPO="."
 
 if [ ! -f /usr/local/lib/libhexl.so.1.2.4 ]; then
   pwd
-  repos/openfhe-hexl/scripts/build-hexl.sh
+  ./scripts/build-hexl.sh
 fi
 
 ROOT=`pwd`
