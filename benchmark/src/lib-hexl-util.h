@@ -57,7 +57,7 @@ CryptoContext<DCRTPoly> GenerateBFVrnsContext(uint32_t poly_modulus_degree, uint
     parameters.SetPlaintextModulus(65537);
     parameters.SetStandardDeviation(3.19);
     parameters.SetEvalMultCount(numTowers - 1);
-    parameters.SetMaxDepth(5);
+    parameters.SetMaxRelinSkDeg(5);
     parameters.SetDigitSize(30);
     parameters.SetScalingFactorBits(47);
     parameters.SetRingDim(poly_modulus_degree);
@@ -77,8 +77,8 @@ CryptoContext<DCRTPoly> GenerateCKKSContext(uint32_t poly_modulus_degree, uint32
     parameters.SetScalingFactorBits(47);
     parameters.SetBatchSize(poly_modulus_degree / 2);
     parameters.SetRingDim(poly_modulus_degree);
-    parameters.SetRescalingTechnique(FIXEDMANUAL);
-    parameters.SetMaxDepth(5);
+    parameters.SetScalingTechnique(FIXEDMANUAL);
+    parameters.SetMaxRelinSkDeg(5);
     parameters.SetFirstModSize(60);
 
     CryptoContext<DCRTPoly> cc = GenCryptoContext(parameters);
@@ -94,10 +94,10 @@ CryptoContext<DCRTPoly> GenerateBGVrnsContext(uint32_t poly_modulus_degree, uint
     CCParams<CryptoContextBGVRNS> parameters;
     parameters.SetMultiplicativeDepth(numTowers - 1);
     parameters.SetPlaintextModulus(65537);
-    parameters.SetMaxDepth(5);
+    parameters.SetRelinSkDegee(5);
     parameters.SetRingDim(poly_modulus_degree);
     parameters.SetFirstModSize(60);
-    parameters.SetRescalingTechnique(FIXEDMANUAL);
+    parameters.SetScalingTechnique(FIXEDMANUAL);
 
     CryptoContext<DCRTPoly> cc = GenCryptoContext(parameters);
     // Enable features that you wish to use
