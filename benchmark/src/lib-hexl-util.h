@@ -94,7 +94,7 @@ CryptoContext<DCRTPoly> GenerateBGVrnsContext(uint32_t poly_modulus_degree, uint
     CCParams<CryptoContextBGVRNS> parameters;
     parameters.SetMultiplicativeDepth(numTowers - 1);
     parameters.SetPlaintextModulus(65537);
-    parameters.SetRelinSkDegee(5);
+    parameters.SetRelinSkDeg(5);
     parameters.SetRingDim(poly_modulus_degree);
     parameters.SetFirstModSize(60);
     parameters.SetScalingTechnique(FIXEDMANUAL);
