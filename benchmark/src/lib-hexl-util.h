@@ -55,11 +55,11 @@ namespace lbcrypto {
 CryptoContext<DCRTPoly> GenerateBFVrnsContext(uint32_t poly_modulus_degree, uint32_t numTowers) {
     CCParams<CryptoContextBFVRNS> parameters;
     parameters.SetPlaintextModulus(65537);
-    parameters.SetStandardDeviation(3.19);
-    parameters.SetEvalMultCount(numTowers - 1);
+    //parameters.SetStandardDeviation(3.19);  -- this is now the default
+    parameters.SetMultiplicativeDepth(numTowers - 1);
     parameters.SetMaxRelinSkDeg(5);
     parameters.SetDigitSize(30);
-    parameters.SetScalingFactorBits(47);
+    parameters.SetScalingModSize(47);
     parameters.SetRingDim(poly_modulus_degree);
 
     CryptoContext<DCRTPoly> cc = GenCryptoContext(parameters);
@@ -74,7 +74,7 @@ CryptoContext<DCRTPoly> GenerateBFVrnsContext(uint32_t poly_modulus_degree, uint
 CryptoContext<DCRTPoly> GenerateCKKSContext(uint32_t poly_modulus_degree, uint32_t numTowers) {
     CCParams<CryptoContextCKKSRNS> parameters;
     parameters.SetMultiplicativeDepth(numTowers - 1);
-    parameters.SetScalingFactorBits(47);
+    parameters.SetScalingModSize(47);
     parameters.SetBatchSize(poly_modulus_degree / 2);
     parameters.SetRingDim(poly_modulus_degree);
     parameters.SetScalingTechnique(FIXEDMANUAL);
