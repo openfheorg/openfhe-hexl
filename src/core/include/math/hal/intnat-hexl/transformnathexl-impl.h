@@ -44,7 +44,7 @@
 
 #include "utils/exception.h"
 #include "utils/utilities.h"
-#include "utils/defines.h"
+//#include "utils/defines.h"
 
 #include <map>
 #include <vector>
@@ -578,7 +578,7 @@ void ChineseRemainderTransformFTTNat<VecType>::ForwardTransformToBitReverseInPla
     IntType modulus = element->GetModulus();
 
     bool reCompute = false;
-    OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
@@ -623,7 +623,7 @@ void ChineseRemainderTransformFTTNat<VecType>::ForwardTransformToBitReverse(cons
     IntType modulus = element.GetModulus();
 
     bool reCompute = false;
-    OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
@@ -670,7 +670,7 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverseInP
     IntType modulus = element->GetModulus();
 
     bool reCompute = false;
-    OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
@@ -716,7 +716,7 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverse(co
     IntType modulus = element.GetModulus();
 
     bool reCompute = false;
-    OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
