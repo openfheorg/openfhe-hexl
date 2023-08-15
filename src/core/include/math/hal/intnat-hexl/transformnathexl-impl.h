@@ -38,15 +38,16 @@
 //            and nowhere else
 #include "math/nbtheory.h"
 #include "math/hal/basicint.h"
-#include "math/hal/intnat/ubintnat.h"
-#include "math/hal/intnat/mubintvecnat.h"
-#include "math/hal/intnat/transformnat.h"
+#include "math/hal/intnat-hexl/ubintnathexl.h"
+#include "math/hal/intnat-hexl/mubintvecnathexl.h"
+#include "math/hal/intnat-hexl/transformnathexl.h"
 
 #include "utils/exception.h"
 #include "utils/utilities.h"
-//#include "utils/defines.h"
 
 #include <map>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace intnathexl {
@@ -578,7 +579,7 @@ void ChineseRemainderTransformFTTNat<VecType>::ForwardTransformToBitReverseInPla
     IntType modulus = element->GetModulus();
 
     bool reCompute = false;
-    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    // OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
@@ -623,7 +624,7 @@ void ChineseRemainderTransformFTTNat<VecType>::ForwardTransformToBitReverse(cons
     IntType modulus = element.GetModulus();
 
     bool reCompute = false;
-    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    // OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
@@ -670,7 +671,7 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverseInP
     IntType modulus = element->GetModulus();
 
     bool reCompute = false;
-    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    // OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
@@ -678,7 +679,7 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverseInP
     }
 
     // XXX - jbates - -Werror=unused-variable
-    //usint msb = lbcrypto::GetMSB64(CycloOrderHf - 1);
+    // usint msb = lbcrypto::GetMSB64(CycloOrderHf - 1);
     std::pair<uint64_t, uint64_t> key{element->GetLength(), modulus.ConvertToInt()};
     intel::hexl::NTT* p_ntt;
     std::unique_lock<std::mutex> lock(m_mtxIntelNTT);
@@ -716,7 +717,7 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverse(co
     IntType modulus = element.GetModulus();
 
     bool reCompute = false;
-    //OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
+    // OPENFHE_UNUSED(reCompute);  // Used only when WITH_INTEL_HEXL=ON
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
         PreCompute(rootOfUnity, CycloOrder, modulus);
@@ -730,7 +731,7 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverse(co
     }
 
     // XXX - jbates - -Werror=unused-variable
-    //usint msb = lbcrypto::GetMSB64(CycloOrderHf - 1);
+    // usint msb = lbcrypto::GetMSB64(CycloOrderHf - 1);
     std::pair<uint64_t, uint64_t> key{element.GetLength(), modulus.ConvertToInt()};
     intel::hexl::NTT* p_ntt;
     std::unique_lock<std::mutex> lock(m_mtxIntelNTT);
