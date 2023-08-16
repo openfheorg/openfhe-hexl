@@ -37,6 +37,9 @@
 #ifndef __TRANSFORMNATHEXL_IMPL_H__
 #define __TRANSFORMNATHEXL_IMPL_H__
 
+#include "config_core.h"
+#ifdef WITH_INTEL_HEXL
+
 #include "hexl/hexl.hpp"
 
 #include "math/hal/basicint.h"
@@ -1370,4 +1373,5 @@ void ChineseRemainderTransformArbNat<VecType>::Reset() {
 
 }  // namespace intnathexl
 
+#endif
 #endif  // __TRANSFORMNAT_IMPL_H__

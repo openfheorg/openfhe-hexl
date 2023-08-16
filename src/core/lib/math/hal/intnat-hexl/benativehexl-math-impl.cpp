@@ -35,6 +35,10 @@
 
 // TODO: remove this file. will require changes to openfhe-development
 
+
+#include "config_core.h"
+#ifdef WITH_INTEL_HEXL
+
 #include "math/math-hal.h"
 #include "math/hal/transform.h"
 
@@ -86,3 +90,5 @@ template class Matrix<NativeVector>;
 
 CEREAL_CLASS_VERSION(NativeInteger, NativeInteger::SerializedVersion());
 CEREAL_CLASS_VERSION(NativeVector, NativeVector::SerializedVersion());
+
+#endif

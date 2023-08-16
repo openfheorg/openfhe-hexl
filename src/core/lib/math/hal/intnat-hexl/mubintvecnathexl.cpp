@@ -35,6 +35,9 @@
 
 // TODO(cpascoe): Hexl-fy more functions
 
+#include "config_core.h"
+#ifdef WITH_INTEL_HEXL
+
 #include "hexl/hexl.hpp"
 
 #include "math/math-hal.h"
@@ -542,3 +545,5 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::GetDigitAtIndexForBase(us
 template class NativeVectorT<NativeInteger>;
 
 }  // namespace intnathexl
+
+#endif

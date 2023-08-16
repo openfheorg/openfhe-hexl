@@ -55,11 +55,22 @@ using BigVector  = bigintbackend::BigVector;
 }  // namespace lbcrypto
 
 //==============================================================================================
-// TODO: total hack ... move this!!!!!
+
+#ifdef WITH_INTEL_HEXL
+
 template <typename VecType>
 using NatChineseRemainderTransformFTT = intnathexl::ChineseRemainderTransformFTTNat<VecType>;
 template <typename VecType>
 using NatChineseRemainderTransformArb = intnathexl::ChineseRemainderTransformArbNat<VecType>;
+
+#else
+
+template <typename VecType>
+using NatChineseRemainderTransformFTT = intnat::ChineseRemainderTransformFTTNat<VecType>;
+template <typename VecType>
+using NatChineseRemainderTransformArb = intnat::ChineseRemainderTransformArbNat<VecType>;
+
+#endif
 
 //==============================================================================================
 

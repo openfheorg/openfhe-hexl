@@ -32,7 +32,11 @@
 #ifndef __NATIVEINTBACKEND_H__
 #define __NATIVEINTBACKEND_H__
 
+#include "config_core.h"
 #include "math/hal/basicint.h"
+
+#ifdef WITH_INTEL_HEXL
+
 #include "math/hal/intnat-hexl/ubintnathexl.h"
 #include "math/hal/intnat-hexl/mubintvecnathexl.h"
 #include "math/hal/intnat-hexl/transformnathexl.h"
@@ -43,6 +47,21 @@ using NativeInteger = intnathexl::NativeInteger;
 using NativeVector  = intnathexl::NativeVector;
 
 }  // namespace lbcrypto
+
+#else
+
+#include "math/hal/intnat/ubintnat.h"
+#include "math/hal/intnat/mubintvecnat.h"
+#include "math/hal/intnat/transformnat.h"
+
+namespace lbcrypto {
+
+using NativeInteger = intnat::NativeInteger;
+using NativeVector  = intnat::NativeVector;
+
+}  // namespace lbcrypto
+
+#endif
 
 using NativeInteger = lbcrypto::NativeInteger;
 using NativeVector  = lbcrypto::NativeVector;
