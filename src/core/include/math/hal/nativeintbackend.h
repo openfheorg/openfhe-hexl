@@ -29,36 +29,22 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  This file contains the main class for native integers
- */
+#ifndef __NATIVEINTBACKEND_H__
+#define __NATIVEINTBACKEND_H__
 
-//==================================================================================
-// This file is included only if WITH_INTEL_HEXL is set to ON in CMakeLists.txt
-//==================================================================================
-#ifdef WITH_INTEL_HEXL
+#include "math/hal/basicint.h"
+#include "math/hal/intnat-hexl/ubintnathexl.h"
+#include "math/hal/intnat-hexl/mubintvecnathexl.h"
+#include "math/hal/intnat-hexl/transformnathexl.h"
 
-    #include "math/hal.h"
+namespace lbcrypto {
 
-namespace intnathexl {
+using NativeInteger = intnathexl::NativeInteger;
+using NativeVector  = intnathexl::NativeVector;
 
-// STRINGS & STREAMS
+}  // namespace lbcrypto
 
-// helper template to stream vector contents provided T has an stream operator<<
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
-    os << "[";
-    // for (const auto itr : v){
-    for (const auto& i : v) {
-        os << " " << i;
-    }
-    os << " ]";
-    return os;
-}
+using NativeInteger = lbcrypto::NativeInteger;
+using NativeVector  = lbcrypto::NativeVector;
 
-// to stream internal representation
-template std::ostream& operator<<<uint64_t>(std::ostream& os, const std::vector<uint64_t>& v);
-
-}  // namespace intnathexl
-
-#endif  // WITH_INTEL_HEXL
+#endif

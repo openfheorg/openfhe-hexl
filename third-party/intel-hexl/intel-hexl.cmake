@@ -1,6 +1,10 @@
 # Copyright (C) 2021 Intel Corporation
 # SPDX-License-Identifier: BSD-3-Clause
 
+
+# TODO: test more recent version of hexl
+
+
 include(ExternalProject)
 
 option(INTEL_HEXL_PREBUILT OFF) # Set to ON/OFF to use prebuilt installation

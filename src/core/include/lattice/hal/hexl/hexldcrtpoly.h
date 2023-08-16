@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2023, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -29,204 +29,388 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  This file is included only if WITH_INTEL_HEXL is set to ON in CMakeLists.txt.
-  test file for checking if the interface class is implemented correctly Intel HEXL specific DCRT Polynomial Object
- */
+// TODO: Update functions to utilize hexl functionality
 
-#ifdef WITH_INTEL_HEXL
+#ifndef LBCRYPTO_INC_LATTICE_HAL_HEXL_HEXLDCRTPOLY_H
+#define LBCRYPTO_INC_LATTICE_HAL_HEXL_HEXLDCRTPOLY_H
 
-    #ifndef LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
-        #define LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
+#include "hexl/hexl.hpp"
 
-        // C++ standard libs
-        #include <vector>
+#include "lattice/hal/hexl/hexlpoly.h"
+#include "lattice/hal/dcrtpoly-interface.h"
+#include "lattice/ildcrtparams.h"
 
-        // Third-party libs
-        #include "hexl/hexl.hpp"
+#include "math/math-hal.h"
+#include "math/distrgen.h"
 
-        // Local OPENFHE libs
-        #include "math/hal.h"
-        #include "lattice/hal/default/dcrtpoly.h"
-        #include "utils/debug.h"
+#include "utils/exception.h"
+#include "utils/inttypes.h"
+#include "utils/parallel.h"
 
-// OPENFHE's main namespace
+#include <functional>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 namespace lbcrypto {
 
-/**
- * @brief A DCRTPoly Implementation optimized for HEXL, Intel's AVX512 IFMA
- * instructions
- *
- * This class overrides the minimum number of methods, what is necassary for use
- * in OPENFHE to substitute HexlDCRTPoly for DCRTPolyImpl and methods that have
- * optimized procedures for specific architecture.
- */
 template <typename VecType = BigVector>
-class HexlDCRTPoly : public DCRTPolyImpl<VecType> {
+class HexlDCRTPolyImpl final
+    : public DCRTPolyInterface<HexlDCRTPolyImpl<VecType>, VecType, NativeVector, HexlPolyImpl> {
 public:
-    // Shortcut to base class
-    using DCRTPolyType = DCRTPolyImpl<VecType>;
+    using Vector                = VecType;
+    using Integer               = typename VecType::Integer;
+    using Params                = ILDCRTParams<Integer>;
+    using PolyType              = HexlPolyImpl<NativeVector>;
+    using PolyLargeType         = HexlPolyImpl<VecType>;
+    using DCRTPolyType          = HexlDCRTPolyImpl<VecType>;
+    using DCRTPolyInterfaceType = DCRTPolyInterface<HexlDCRTPolyImpl<VecType>, VecType, NativeVector, HexlPolyImpl>;
+    using Precomputations       = typename DCRTPolyInterfaceType::CRTBasisExtensionPrecomputations;
+    using DggType               = typename DCRTPolyInterfaceType::DggType;
+    using DugType               = typename DCRTPolyInterfaceType::DugType;
+    using TugType               = typename DCRTPolyInterfaceType::TugType;
+    using BugType               = typename DCRTPolyInterfaceType::BugType;
 
-    using Integer = typename VecType::Integer;
-    using Params  = ILDCRTParams<Integer>;
+    HexlDCRTPolyImpl() = default;
 
-    typedef VecType Vector;
+    HexlDCRTPolyImpl(const DCRTPolyType& e) noexcept
+        : m_params{e.m_params}, m_format{e.m_format}, m_vectors{e.m_vectors} {}
+    DCRTPolyType& operator=(const DCRTPolyType& rhs) noexcept override {
+        m_params  = rhs.m_params;
+        m_format  = rhs.m_format;
+        m_vectors = rhs.m_vectors;
+        return *this;
+    }
 
-    using DggType = typename DCRTPolyType::DggType;
-    using DugType = typename DCRTPolyType::DugType;
-    using TugType = typename DCRTPolyType::TugType;
-    using BugType = typename DCRTPolyType::BugType;
+    HexlDCRTPolyImpl(const PolyLargeType& e, const std::shared_ptr<Params>& params) noexcept;
+    DCRTPolyType& operator=(const PolyLargeType& rhs) noexcept;
 
-    // this class contains an array of these:
-    using PolyType = typename DCRTPolyType::PolyType;
+    HexlDCRTPolyImpl(const PolyType& e, const std::shared_ptr<Params>& params) noexcept;
+    DCRTPolyType& operator=(const PolyType& rhs) noexcept;
 
-    // the composed polynomial type
-    using PolyLargeType = typename DCRTPolyType::PolyLargeType;
+    HexlDCRTPolyImpl(DCRTPolyType&& e) noexcept
+        : m_params{std::move(e.m_params)}, m_format{e.m_format}, m_vectors{std::move(e.m_vectors)} {}
+    DCRTPolyType& operator=(DCRTPolyType&& rhs) noexcept override {
+        m_params  = std::move(rhs.m_params);
+        m_format  = std::move(rhs.m_format);
+        m_vectors = std::move(rhs.m_vectors);
+        return *this;
+    }
+
+    explicit HexlDCRTPolyImpl(const std::vector<PolyType>& elements);
+
+    HexlDCRTPolyImpl(const std::shared_ptr<Params>& params, Format format = Format::EVALUATION,
+                     bool initializeElementToZero = false) noexcept
+        : m_params{params}, m_format{format} {
+        m_vectors.reserve(m_params->GetParams().size());
+        for (const auto& p : m_params->GetParams())
+            m_vectors.emplace_back(p, m_format, initializeElementToZero);
+    }
+
+    HexlDCRTPolyImpl(const DggType& dgg, const std::shared_ptr<Params>& p, Format f = Format::EVALUATION);
+    HexlDCRTPolyImpl(const BugType& bug, const std::shared_ptr<Params>& p, Format f = Format::EVALUATION);
+    HexlDCRTPolyImpl(const TugType& tug, const std::shared_ptr<Params>& p, Format f = Format::EVALUATION,
+                     uint32_t h = 0);
+    HexlDCRTPolyImpl(DugType& dug, const std::shared_ptr<Params>& p, Format f = Format::EVALUATION);
+
+    DCRTPolyType& operator=(std::initializer_list<uint64_t> rhs) noexcept override;
+    DCRTPolyType& operator=(uint64_t val) noexcept;
+    DCRTPolyType& operator=(const std::vector<int64_t>& rhs) noexcept;
+    DCRTPolyType& operator=(const std::vector<int32_t>& rhs) noexcept;
+    DCRTPolyType& operator=(std::initializer_list<std::string> rhs) noexcept;
+
+    DCRTPolyType CloneWithNoise(const DiscreteGaussianGeneratorImpl<VecType>& dgg, Format format) const override;
+    DCRTPolyType CloneTowers(uint32_t startTower, uint32_t endTower) const;
+
+    Integer& at(usint i) override;
+    const Integer& at(usint i) const override;
+    Integer& operator[](usint i) override {
+        return DCRTPolyType::CRTInterpolateIndex(i)[i];
+    }
+    const Integer& operator[](usint i) const override {
+        return DCRTPolyType::CRTInterpolateIndex(i)[i];
+    }
+
+    bool operator==(const DCRTPolyType& rhs) const override;
+
+    DCRTPolyType& operator+=(const DCRTPolyType& rhs) override;
+    DCRTPolyType& operator+=(const Integer& rhs) override;
+    DCRTPolyType& operator+=(const NativeInteger& rhs) override;
+    DCRTPolyType& operator-=(const DCRTPolyType& rhs) override;
+    DCRTPolyType& operator-=(const Integer& rhs) override;
+    DCRTPolyType& operator-=(const NativeInteger& rhs) override;
+    DCRTPolyType& operator*=(const DCRTPolyType& rhs) override {
+        size_t size{m_vectors.size()};
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+        for (size_t i = 0; i < size; ++i)
+            m_vectors[i] *= rhs.m_vectors[i];
+        return *this;
+    }
+    DCRTPolyType& operator*=(const Integer& rhs) override;
+    DCRTPolyType& operator*=(const NativeInteger& rhs) override;
+
+    DCRTPolyType Negate() const override;
+    DCRTPolyType operator-() const override;
+
+    std::vector<DCRTPolyType> BaseDecompose(usint baseBits, bool evalModeAnswer) const override;
+    std::vector<DCRTPolyType> PowersOfBase(usint baseBits) const override;
+    std::vector<DCRTPolyType> CRTDecompose(uint32_t baseBits) const;
+
+    DCRTPolyType AutomorphismTransform(uint32_t i) const override;
+    DCRTPolyType AutomorphismTransform(uint32_t i, const std::vector<uint32_t>& vec) const override;
+
+    DCRTPolyType Plus(const Integer& rhs) const override;
+    DCRTPolyType Plus(const std::vector<Integer>& rhs) const;
+    DCRTPolyType Plus(const DCRTPolyType& rhs) const override {
+        if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
+            OPENFHE_THROW(math_error, "RingDimension missmatch");
+        if (m_format != rhs.m_format)
+            OPENFHE_THROW(not_implemented_error, "Format missmatch");
+        size_t size{m_vectors.size()};
+        if (size != rhs.m_vectors.size())
+            OPENFHE_THROW(math_error, "tower size mismatch; cannot add");
+        if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
+            OPENFHE_THROW(math_error, "Modulus missmatch");
+        DCRTPolyType tmp(m_params, m_format);
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+        for (size_t i = 0; i < size; ++i)
+            tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]);
+        return tmp;
+    }
+
+    DCRTPolyType Minus(const DCRTPolyType& rhs) const override;
+    DCRTPolyType Minus(const Integer& rhs) const override;
+    DCRTPolyType Minus(const std::vector<Integer>& rhs) const;
+
+    DCRTPolyType Times(const DCRTPolyType& rhs) const override {
+        if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
+            OPENFHE_THROW(math_error, "RingDimension missmatch");
+        if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
+            OPENFHE_THROW(not_implemented_error, "operator* for HexlDCRTPolyImpl supported only in Format::EVALUATION");
+        size_t size{m_vectors.size()};
+        if (size != rhs.m_vectors.size())
+            OPENFHE_THROW(math_error, "tower size mismatch; cannot multiply");
+        if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
+            OPENFHE_THROW(math_error, "Modulus missmatch");
+        DCRTPolyType tmp(m_params, m_format);
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+        for (size_t i = 0; i < size; ++i)
+            tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]);
+        return tmp;
+    }
+    DCRTPolyType Times(const Integer& rhs) const override;
+    DCRTPolyType Times(const std::vector<Integer>& rhs) const;
+    DCRTPolyType Times(NativeInteger::SignedNativeInt rhs) const override;
+#if NATIVEINT != 64
+    DCRTPolyType Times(int64_t rhs) const {
+        return Times(static_cast<NativeInteger::SignedNativeInt>(rhs));
+    }
+#endif
+    DCRTPolyType Times(const std::vector<NativeInteger>& rhs) const;
+    DCRTPolyType TimesNoCheck(const std::vector<NativeInteger>& rhs) const;
+
+    DCRTPolyType MultiplicativeInverse() const override;
+    bool InverseExists() const override;
+    bool IsEmpty() const override;
+
+    void SetValuesToZero() override;
+    void AddILElementOne() override;
+    void DropLastElement() override;
+    void DropLastElements(size_t i) override;
+    void DropLastElementAndScale(const std::vector<NativeInteger>& QlQlInvModqlDivqlModq,
+                                 const std::vector<NativeInteger>& QlQlInvModqlDivqlModqPrecon,
+                                 const std::vector<NativeInteger>& qlInvModq,
+                                 const std::vector<NativeInteger>& qlInvModqPrecon) override;
+
+    void ModReduce(const NativeInteger& t, const std::vector<NativeInteger>& tModqPrecon,
+                   const NativeInteger& negtInvModq, const NativeInteger& negtInvModqPrecon,
+                   const std::vector<NativeInteger>& qlInvModq,
+                   const std::vector<NativeInteger>& qlInvModqPrecon) override;
+
+    PolyLargeType CRTInterpolate() const override;
+    PolyType DecryptionCRTInterpolate(PlaintextModulus ptm) const override;
+    PolyType ToNativePoly() const override;
+    PolyLargeType CRTInterpolateIndex(usint i) const override;
+    Integer GetWorkingModulus() const override;
+
+    void SetValuesModSwitch(const DCRTPolyType& element, const NativeInteger& modulus) override;
+
+    std::shared_ptr<Params> GetExtendedCRTBasis(const std::shared_ptr<Params>& paramsP) const override;
+
+    void TimesQovert(const std::shared_ptr<Params>& paramsQ, const std::vector<NativeInteger>& tInvModq,
+                     const NativeInteger& t, const NativeInteger& NegQModt,
+                     const NativeInteger& NegQModtPrecon) override;
+
+    DCRTPolyType ApproxSwitchCRTBasis(const std::shared_ptr<Params>& paramsQ, const std::shared_ptr<Params>& paramsP,
+                                      const std::vector<NativeInteger>& QHatInvModq,
+                                      const std::vector<NativeInteger>& QHatInvModqPrecon,
+                                      const std::vector<std::vector<NativeInteger>>& QHatModp,
+                                      const std::vector<DoubleNativeInt>& modpBarrettMu) const override;
+
+    void ApproxModUp(const std::shared_ptr<Params>& paramsQ, const std::shared_ptr<Params>& paramsP,
+                     const std::shared_ptr<Params>& paramsQP, const std::vector<NativeInteger>& QHatInvModq,
+                     const std::vector<NativeInteger>& QHatInvModqPrecon,
+                     const std::vector<std::vector<NativeInteger>>& QHatModp,
+                     const std::vector<DoubleNativeInt>& modpBarrettMu) override;
+
+    DCRTPolyType ApproxModDown(
+        const std::shared_ptr<Params>& paramsQ, const std::shared_ptr<Params>& paramsP,
+        const std::vector<NativeInteger>& PInvModq, const std::vector<NativeInteger>& PInvModqPrecon,
+        const std::vector<NativeInteger>& PHatInvModp, const std::vector<NativeInteger>& PHatInvModpPrecon,
+        const std::vector<std::vector<NativeInteger>>& PHatModq, const std::vector<DoubleNativeInt>& modqBarrettMu,
+        const std::vector<NativeInteger>& tInvModp, const std::vector<NativeInteger>& tInvModpPrecon,
+        const NativeInteger& t, const std::vector<NativeInteger>& tModqPrecon) const override;
+
+    DCRTPolyType SwitchCRTBasis(const std::shared_ptr<Params>& paramsP, const std::vector<NativeInteger>& QHatInvModq,
+                                const std::vector<NativeInteger>& QHatInvModqPrecon,
+                                const std::vector<std::vector<NativeInteger>>& QHatModp,
+                                const std::vector<std::vector<NativeInteger>>& alphaQModp,
+                                const std::vector<DoubleNativeInt>& modpBarrettMu,
+                                const std::vector<double>& qInv) const override;
+
+    void ExpandCRTBasis(const std::shared_ptr<Params>& paramsQP, const std::shared_ptr<Params>& paramsP,
+                        const std::vector<NativeInteger>& QHatInvModq,
+                        const std::vector<NativeInteger>& QHatInvModqPrecon,
+                        const std::vector<std::vector<NativeInteger>>& QHatModp,
+                        const std::vector<std::vector<NativeInteger>>& alphaQModp,
+                        const std::vector<DoubleNativeInt>& modpBarrettMu, const std::vector<double>& qInv,
+                        Format resultFormat) override;
+
+    void ExpandCRTBasisReverseOrder(const std::shared_ptr<Params>& paramsQP, const std::shared_ptr<Params>& paramsP,
+                                    const std::vector<NativeInteger>& QHatInvModq,
+                                    const std::vector<NativeInteger>& QHatInvModqPrecon,
+                                    const std::vector<std::vector<NativeInteger>>& QHatModp,
+                                    const std::vector<std::vector<NativeInteger>>& alphaQModp,
+                                    const std::vector<DoubleNativeInt>& modpBarrettMu, const std::vector<double>& qInv,
+                                    Format resultFormat) override;
+
+    void FastExpandCRTBasisPloverQ(const Precomputations& precomputed) override;
+
+    void ExpandCRTBasisQlHat(const std::shared_ptr<Params>& paramsQ, const std::vector<NativeInteger>& QlHatModq,
+                             const std::vector<NativeInteger>& QlHatModqPrecon, const usint sizeQ) override;
+
+    PolyType ScaleAndRound(const NativeInteger& t, const std::vector<NativeInteger>& tQHatInvModqDivqModt,
+                           const std::vector<NativeInteger>& tQHatInvModqDivqModtPrecon,
+                           const std::vector<NativeInteger>& tQHatInvModqBDivqModt,
+                           const std::vector<NativeInteger>& tQHatInvModqBDivqModtPrecon,
+                           const std::vector<double>& tQHatInvModqDivqFrac,
+                           const std::vector<double>& tQHatInvModqBDivqFrac) const override;
+
+    DCRTPolyType ApproxScaleAndRound(const std::shared_ptr<Params>& paramsP,
+                                     const std::vector<std::vector<NativeInteger>>& tPSHatInvModsDivsModp,
+                                     const std::vector<DoubleNativeInt>& modpBarretMu) const override;
+
+    DCRTPolyType ScaleAndRound(const std::shared_ptr<Params>& paramsOutput,
+                               const std::vector<std::vector<NativeInteger>>& tOSHatInvModsDivsModo,
+                               const std::vector<double>& tOSHatInvModsDivsFrac,
+                               const std::vector<DoubleNativeInt>& modoBarretMu) const override;
+
+    PolyType ScaleAndRound(const std::vector<NativeInteger>& moduliQ, const NativeInteger& t,
+                           const NativeInteger& tgamma, const std::vector<NativeInteger>& tgammaQHatModq,
+                           const std::vector<NativeInteger>& tgammaQHatModqPrecon,
+                           const std::vector<NativeInteger>& negInvqModtgamma,
+                           const std::vector<NativeInteger>& negInvqModtgammaPrecon) const override;
+
+    void ScaleAndRoundPOverQ(const std::shared_ptr<Params>& paramsQ,
+                             const std::vector<NativeInteger>& pInvModq) override;
+
+    void FastBaseConvqToBskMontgomery(
+        const std::shared_ptr<Params>& paramsQBsk, const std::vector<NativeInteger>& moduliQ,
+        const std::vector<NativeInteger>& moduliBsk, const std::vector<DoubleNativeInt>& modbskBarrettMu,
+        const std::vector<NativeInteger>& mtildeQHatInvModq, const std::vector<NativeInteger>& mtildeQHatInvModqPrecon,
+        const std::vector<std::vector<NativeInteger>>& QHatModbsk, const std::vector<uint64_t>& QHatModmtilde,
+        const std::vector<NativeInteger>& QModbsk, const std::vector<NativeInteger>& QModbskPrecon,
+        const uint64_t& negQInvModmtilde, const std::vector<NativeInteger>& mtildeInvModbsk,
+        const std::vector<NativeInteger>& mtildeInvModbskPrecon) override;
+
+    void FastRNSFloorq(const NativeInteger& t, const std::vector<NativeInteger>& moduliQ,
+                       const std::vector<NativeInteger>& moduliBsk, const std::vector<DoubleNativeInt>& modbskBarrettMu,
+                       const std::vector<NativeInteger>& tQHatInvModq,
+                       const std::vector<NativeInteger>& tQHatInvModqPrecon,
+                       const std::vector<std::vector<NativeInteger>>& QHatModbsk,
+                       const std::vector<std::vector<NativeInteger>>& qInvModbsk,
+                       const std::vector<NativeInteger>& tQInvModbsk,
+                       const std::vector<NativeInteger>& tQInvModbskPrecon) override;
+
+    void FastBaseConvSK(const std::shared_ptr<Params>& paramsQ, const std::vector<DoubleNativeInt>& modqBarrettMu,
+                        const std::vector<NativeInteger>& moduliBsk,
+                        const std::vector<DoubleNativeInt>& modbskBarrettMu,
+                        const std::vector<NativeInteger>& BHatInvModb,
+                        const std::vector<NativeInteger>& BHatInvModbPrecon,
+                        const std::vector<NativeInteger>& BHatModmsk, const NativeInteger& BInvModmsk,
+                        const NativeInteger& BInvModmskPrecon, const std::vector<std::vector<NativeInteger>>& BHatModq,
+                        const std::vector<NativeInteger>& BModq,
+                        const std::vector<NativeInteger>& BModqPrecon) override;
+
+    void SwitchFormat() override;
+
+    void SwitchModulusAtIndex(size_t index, const Integer& modulus, const Integer& rootOfUnity) override;
+
+    template <class Archive>
+    void save(Archive& ar, std::uint32_t const version) const {
+        ar(::cereal::make_nvp("v", m_vectors));
+        ar(::cereal::make_nvp("f", m_format));
+        ar(::cereal::make_nvp("p", m_params));
+    }
+
+    template <class Archive>
+    void load(Archive& ar, std::uint32_t const version) {
+        if (version > SerializedVersion()) {
+            OPENFHE_THROW(deserialize_error, "serialized object version " + std::to_string(version) +
+                                                 " is from a later version of the library");
+        }
+        ar(::cereal::make_nvp("v", m_vectors));
+        ar(::cereal::make_nvp("f", m_format));
+        ar(::cereal::make_nvp("p", m_params));
+    }
 
     static const std::string GetElementName() {
-        return "HexlDCRTPoly";
+        return "HexlDCRTPolyImpl";
     }
 
-    // =============================================================================================
-    // All methods in this section are optimized for HEXL
-
-    /** Optimized DropLastElementAndScale for HEXL
-   * @see DCRTPolyImpl::DropLastElementAndScale for procedure description
-   */
-    virtual void DropLastElementAndScale(const std::vector<NativeInteger>& QlQlInvModqlDivqlModq,
-                                         const std::vector<NativeInteger>& QlQlInvModqlDivqlModqPrecon,
-                                         const std::vector<NativeInteger>& qlInvModq,
-                                         const std::vector<NativeInteger>& qlInvModqPrecon) override;
-
-    /** Optimized ModReduce for HEXL
-   * @see DCRTPolyImpl::ModReduce for procedure description
-   */
-    virtual void ModReduce(const NativeInteger& t, const std::vector<NativeInteger>& tModqPrecon,
-                           const NativeInteger& negtInvModq, const NativeInteger& negtInvModqPrecon,
-                           const std::vector<NativeInteger>& qlInvModq,
-                           const std::vector<NativeInteger>& qlInvModqPrecon) override;
-
-    // =============================================================================================
-    // All methods below here are required for substitution with DCRTPolyImpl<> but are not optimized
-
-    HexlDCRTPoly() : DCRTPolyType() {}
-
-    HexlDCRTPoly(const std::shared_ptr<Params> params, Format format = EVALUATION, bool initializeElementToZero = false)
-        : DCRTPolyType(params, format, initializeElementToZero) {}
-
-    // Need to be able to make a copy,
-    HexlDCRTPoly(const DCRTPolyType& dcrtPoly) : DCRTPolyType(dcrtPoly) {}
-    HexlDCRTPoly(const std::vector<PolyType>& elements) : DCRTPolyType(elements) {}
-    HexlDCRTPoly(const DggType& dgg, const std::shared_ptr<Params> params, Format format = EVALUATION)
-        : DCRTPolyType(dgg, params, format) {}
-    HexlDCRTPoly(DugType& dug, const std::shared_ptr<Params> params, Format format = EVALUATION)
-        : DCRTPolyType(dug, params, format) {}
-    HexlDCRTPoly(const TugType& tug, const std::shared_ptr<Params> params, Format format = EVALUATION, uint32_t h = 0)
-        : DCRTPolyType(tug, params, format, h) {}
-    HexlDCRTPoly(const BugType& bug, const std::shared_ptr<Params> params, Format format = EVALUATION)
-        : DCRTPolyType(bug, params, format) {}
-    HexlDCRTPoly(const PolyLargeType& element, const std::shared_ptr<Params> params) : DCRTPolyType(element, params) {}
-
-    /**
-   * @brief Assignment Operator.
-   *
-   * @param &rhs the copied element.
-   * @return the resulting element.
-   */
-    virtual const HexlDCRTPoly& operator=(const DCRTPolyType& rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    std::string SerializedObjectName() const override {
+        return "DCRTPoly";
     }
 
-    /**
-   * @brief Move Assignment Operator.
-   *
-   * @param &rhs the copied element.
-   * @return the resulting element.
-   */
-    virtual const HexlDCRTPoly& operator=(DCRTPolyType&& rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    static uint32_t SerializedVersion() {
+        return 1;
     }
 
-    // All assignment operators need to be overriden because the return type is
-    // different
-    const HexlDCRTPoly& operator=(const PolyLargeType& rhs) {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    inline Format GetFormat() const final {
+        return m_format;
     }
 
-    const HexlDCRTPoly& operator=(const PolyType& rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    void OverrideFormat(const Format f) final {
+        m_format = f;
     }
 
-    /**
-   * @brief Initalizer list
-   *
-   * @param &rhs the list to initalized the element.
-   * @return the resulting element.
-   */
-    HexlDCRTPoly& operator=(std::initializer_list<uint64_t> rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    inline const std::shared_ptr<Params>& GetParams() const {
+        return m_params;
     }
 
-    /**
-   * @brief Assignment Operator. The usint rhs will be set at index zero and all
-   * other indices will be set to zero.
-   *
-   * @param rhs is the usint to assign to index zero.
-   * @return the resulting vector.
-   */
-    HexlDCRTPoly& operator=(uint64_t rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    const std::vector<PolyType>& GetAllElements() const {
+        return m_vectors;
     }
 
-    /**
-   * @brief Creates a Poly from a vector of signed integers (used for trapdoor
-   * sampling)
-   *
-   * @param &rhs the vector to set the PolyImpl to.
-   * @return the resulting PolyImpl.
-   */
-    HexlDCRTPoly& operator=(const std::vector<int64_t>& rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    std::vector<PolyType>& GetAllElements() {
+        return m_vectors;
     }
 
-    /**
-   * @brief Creates a Poly from a vector of signed integers (used for trapdoor
-   * sampling)
-   *
-   * @param &rhs the vector to set the PolyImpl to.
-   * @return the resulting PolyImpl.
-   */
-    HexlDCRTPoly& operator=(const std::vector<int32_t>& rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    void SetElementAtIndex(usint index, const PolyType& element) {
+        m_vectors[index] = element;
     }
 
-    /**
-   * @brief Initalizer list
-   *
-   * @param &rhs the list to set the PolyImpl to.
-   * @return the resulting PolyImpl.
-   */
-
-    HexlDCRTPoly& operator=(std::initializer_list<std::string> rhs) override {
-        DCRTPolyType::operator=(rhs);
-        return *this;
+    void SetElementAtIndex(usint index, PolyType&& element) {
+        m_vectors[index] = std::move(element);
     }
 
-};  // HexlDCRTPoly
-
-/// @todo - Not sure if this is needed, was in DCRTPoly.h
-// typedef HexlDCRTPoly<BigVector> DCRTPoly;
+protected:
+    std::shared_ptr<Params> m_params{std::make_shared<HexlDCRTPolyImpl::Params>(0, 1)};
+    Format m_format{Format::EVALUATION};
+    std::vector<PolyType> m_vectors;
+};
 
 }  // namespace lbcrypto
 
-    #endif  // LBCRYPTO_LATTICE_HEXLDCRTPOLY_H
-
-#endif  // WITH_INTEL_HEXL
+#endif

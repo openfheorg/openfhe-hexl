@@ -4,6 +4,10 @@
 . ./scripts/vars.sh
 . ./scripts/variants.sh
 
+
+# TODO: install/bench higher versions of gcc/clang
+
+
 if [ -d builds ]; then
   echo "ERROR: builds directory already exists; cowardly refusing to continue."
   exit 1
@@ -45,7 +49,7 @@ for variant in $VARIANTS; do
     cxx=/usr/bin/clang++-12
   else
     abort "unable to parse compiler options"
-  fi 
+  fi
 
   # transform variant to proper cmake flags
   cmake_flags=`echo $variant | sed 's/^/WITH_/;                   \

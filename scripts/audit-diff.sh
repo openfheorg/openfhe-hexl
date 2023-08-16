@@ -1,5 +1,11 @@
 #!/bin/sh
 
+
+# TODO: this shouldn't be needed anymore.
+# src/core/include/lattice/hal/hexl/lat-backend-hexl.h moved to
+# src/core/include/lattice/hal/lat-backend.h
+
+
 SOURCES=`find src -type f | grep -v dcrtpoly`
 
 src/core/include/lattice/hal/hexl/lat-backend-hexl.h

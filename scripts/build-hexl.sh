@@ -1,5 +1,9 @@
 #!/bin/sh
 
+
+# TODO: test more recent version of hexl
+
+
 echo ===============================================================================
 echo
 echo Prebuilt HEXL library does not exist.  Building...

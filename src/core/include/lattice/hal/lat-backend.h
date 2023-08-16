@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2023, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -30,31 +30,52 @@
 //==================================================================================
 
 /*
-  This file contains the definitions for the HEXL accelerated native math backend
+  Defines aliases for the lattice default backend
  */
 
-#ifndef SRC_CORE_INCLUDE_MATH_HAL_INTNATHEXL_BACKENDNAT_H_
-#define SRC_CORE_INCLUDE_MATH_HAL_INTNATHEXL_BACKENDNAT_H_
+#ifndef LBCRYPTO_INC_LATTICE_HAL_LAT_BACKEND_H
+#define LBCRYPTO_INC_LATTICE_HAL_LAT_BACKEND_H
 
-#include "math/hal/intnat-hexl/ubintnathexl.h"
-#include "math/hal/intnat-hexl/mubintvecnathexl.h"
-#include "math/hal/intnat-hexl/transformnathexl.h"
+#define POLY_IMPLEMENTATION     "lattice/hal/hexl/hexlpoly-impl.h"
+#define DCRTPOLY_IMPLEMENTATION "lattice/hal/hexl/hexldcrtpoly-impl.h"
 
-#include "math/hal/basicint.h"
+#define MAKE_POLY_TYPE(T)     template class HexlPolyImpl<T>;
+#define MAKE_DCRTPOLY_TYPE(T) template class HexlDCRTPolyImpl<T>;
 
-#if NATIVEINT != 64
-    #error "Building with HEXL optimizations requires NATIVE_SIZE == 64"
-#endif
+#include "lattice/hal/hexl/hexlpoly.h"
+#include "lattice/hal/hexl/hexldcrtpoly.h"
 
 namespace lbcrypto {
 
-using NativeInteger = intnathexl::NativeInteger;
-using NativeVector  = intnathexl::NativeVector;
+using Poly       = HexlPolyImpl<BigVector>;
+using NativePoly = HexlPolyImpl<NativeVector>;
+// using NativePoly64 = NativePoly;
+using DCRTPoly = HexlDCRTPolyImpl<BigVector>;
+
+#ifdef WITH_BE2
+using M2Poly     = HexlPolyImpl<M2Vector>;
+using M2DCRTPoly = HexlDCRTPolyImpl<M2Vector>;
+#else
+using M2Poly     = void;
+using M2DCRTPoly = void;
+#endif
+
+#ifdef WITH_BE4
+using M4Poly     = HexlPolyImpl<M4Vector>;
+using M4DCRTPoly = HexlDCRTPolyImpl<M4Vector>;
+#else
+using M4Poly     = void;
+using M4DCRTPoly = void;
+#endif
+
+#ifdef WITH_NTL
+using M6Poly     = HexlPolyImpl<M6Vector>;
+using M6DCRTPoly = HexlDCRTPolyImpl<M6Vector>;
+#else
+using M6Poly     = void;
+using M6DCRTPoly = void;
+#endif
 
 }  // namespace lbcrypto
 
-// Promote to global namespace
-using NativeInteger = lbcrypto::NativeInteger;
-using NativeVector  = lbcrypto::NativeVector;
-
-#endif /* SRC_CORE_INCLUDE_MATH_HAL_INTNATHEXL_BACKENDNAT_H_ */
+#endif
