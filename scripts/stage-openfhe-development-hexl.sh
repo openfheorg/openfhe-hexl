@@ -1,13 +1,12 @@
 #!/bin/sh
 
-
-# TODO: test more recent version of hexl
-
+. ./scripts/vars.sh
 
 OPENFHE_DEST_REPO="../../openfhe-staging/openfhe-development"
-OPENFHE_HEXL_SOURCE_REPO="."
+INTEL_HEXL_LIB="scripts/$HEXL_INSTALL_PREFIX/lib/libhexl.so.1.2.5"
 
-if [ ! -f /usr/local/lib/libhexl.so.1.2.5 ]; then
+#if [ ! -f /usr/local/lib/libhexl.so.1.2.5 ]; then
+if [ ! -f $INTEL_HEXL_LIB ]; then
   pwd
   ./scripts/build-hexl.sh
 fi

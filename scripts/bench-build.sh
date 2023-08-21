@@ -4,10 +4,6 @@
 . ./scripts/vars.sh
 . ./scripts/variants.sh
 
-
-# TODO: install/bench higher versions of gcc/clang
-
-
 if [ -d builds ]; then
   echo "ERROR: builds directory already exists; cowardly refusing to continue."
   exit 1
@@ -29,6 +25,11 @@ for variant in $VARIANTS; do
   clang10=`echo $variant | grep "CLANG10" | wc -l`
   clang11=`echo $variant | grep "CLANG11" | wc -l`
   clang12=`echo $variant | grep "CLANG12" | wc -l`
+  clang13=`echo $variant | grep "CLANG13" | wc -l`
+  clang14=`echo $variant | grep "CLANG14" | wc -l`
+  clang15=`echo $variant | grep "CLANG15" | wc -l`
+  clang16=`echo $variant | grep "CLANG16" | wc -l`
+  clang17=`echo $variant | grep "CLANG17" | wc -l`
   if [ $gnu9 -eq 1 ]; then
     cc=/usr/bin/gcc-9
     cxx=/usr/bin/g++-9
@@ -47,6 +48,21 @@ for variant in $VARIANTS; do
   elif [ $clang12 -eq 1 ]; then
     cc=/usr/bin/clang-12
     cxx=/usr/bin/clang++-12
+  elif [ $clang13 -eq 1 ]; then
+    cc=/usr/bin/clang-13
+    cxx=/usr/bin/clang++-13
+  elif [ $clang14 -eq 1 ]; then
+    cc=/usr/bin/clang-14
+    cxx=/usr/bin/clang++-14
+  elif [ $clang15 -eq 1 ]; then
+    cc=/usr/bin/clang-15
+    cxx=/usr/bin/clang++-15
+  elif [ $clang16 -eq 1 ]; then
+    cc=/usr/bin/clang-16
+    cxx=/usr/bin/clang++-16
+  elif [ $clang17 -eq 1 ]; then
+    cc=/usr/bin/clang-17
+    cxx=/usr/bin/clang++-17
   else
     abort "unable to parse compiler options"
   fi
@@ -59,7 +75,7 @@ for variant in $VARIANTS; do
                                     s/WITH_HEXL/WITH_INTEL_HEXL/; \
                                     s/-/=/g;                      \
                                     s/WITH/-DWITH/g'`
-
+  cmake_flags=$cmake_flags" -DINTEL_HEXL_HINT_DIR="$HEXL_INSTALL_PREFIX
   echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
 
   # no commans in directory names
@@ -71,7 +87,7 @@ for variant in $VARIANTS; do
   cd $variant_dir || abort "clone of variant $variant_orig failed."
   git checkout $OPENFHE_CONFIGURATOR_BRANCH
 
-  ./scripts/stage-openfhe-development-hexl.sh
+  CC=$cc CXX=$cxx ./scripts/stage-openfhe-development-hexl.sh
   CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags ./scripts/build-openfhe-development.sh || abort "build of variant $variant_orig failed."
 done
 
