@@ -61,30 +61,25 @@ void HexlDCRTPolyImpl<VecType>::DropLastElementAndScale(const std::vector<Native
     auto lastPoly(m_vectors.back());
     lastPoly.SetFormat(Format::COEFFICIENT);
     this->DropLastElement();
+    uint64_t ringdm{this->GetRingDimension()};
     size_t size{m_vectors.size()};
 
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
     for (size_t i = 0; i < size; ++i) {
         auto tmp{lastPoly};
-        tmp.SwitchModulus(m_vectors[i].GetModulus(), m_vectors[i].GetRootOfUnity(), 0, 0);
+        auto& qi{m_vectors[i].GetModulus()};
+        tmp.SwitchModulus(qi, m_vectors[i].GetRootOfUnity(), 0, 0);
         tmp *= QlQlInvModqlDivqlModq[i];
         if (m_format == Format::EVALUATION)
             tmp.SwitchFormat();
 
-        // hexl here
-        m_vectors[i] *= qlInvModq[i];
-        m_vectors[i] += tmp;
+        // m_vectors[i] *= qlInvModq[i];
+        // m_vectors[i] += tmp;
 
-        /*
-        const NativeInteger& qi      = this->m_vectors[i].GetModulus();
-        PolyType& m_veci             = this->m_vectors[i];
-        const PolyType& extra_m_veci = extra.m_vectors[i];
-        const auto multOp            = qlInvModq[i];
-        uint64_t* op1                = reinterpret_cast<uint64_t*>(&m_veci[0]);
-        uint64_t op2                 = multOp.ConvertToInt();
-        const uint64_t* op3          = reinterpret_cast<const uint64_t*>(&extra_m_veci[0]);
-        intel::hexl::EltwiseFMAMod(op1, op1, op2, op3, ringDim, qi.ConvertToInt(), 1);
-*/
+        auto op1 = reinterpret_cast<uint64_t*>(&m_vectors[i][0]);
+        auto op3 = reinterpret_cast<const uint64_t*>(&tmp[0]);
+        intel::hexl::EltwiseFMAMod(op1, op1, qlInvModq[i].ConvertToInt<uint64_t>(), op3, ringdm,
+                                   qi.ConvertToInt<uint64_t>(), 1);
 
         if (m_format == Format::COEFFICIENT)
             m_vectors[i].SwitchFormat();
@@ -101,44 +96,25 @@ void HexlDCRTPolyImpl<VecType>::ModReduce(const NativeInteger& t, const std::vec
     delta.SetFormat(Format::COEFFICIENT);
     delta *= negtInvModq;
     this->DropLastElement();
+    uint64_t ringdm{this->GetRingDimension()};
     size_t size{m_vectors.size()};
 
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
     for (size_t i = 0; i < size; ++i) {
         auto tmp{delta};
-        tmp.SwitchModulus(m_vectors[i].GetModulus(), m_vectors[i].GetRootOfUnity(), 0, 0);
+        auto& qi{m_vectors[i].GetModulus()};
+        tmp.SwitchModulus(qi, m_vectors[i].GetRootOfUnity(), 0, 0);
         if (m_format == Format::EVALUATION)
             tmp.SwitchFormat();
 
-        // hexl here
-        m_vectors[i] += (tmp *= t);
-        m_vectors[i] *= qlInvModq[i];
+        // m_vectors[i] += (tmp *= t);
+        // m_vectors[i] *= qlInvModq[i];
 
-        /*
-            // first cooking of the params
-            const NativeInteger& qi = this->m_vectors[i].GetModulus();
-            PolyType& m_veci        = this->m_vectors[i];
-            uint64_t modulus        = qi.ConvertToInt();
-
-            //  Portable code: this->m_vectors[i] += (temp *= t);
-            {
-                // second cooking of the params
-                const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&temp[0]);
-                uint64_t op2        = t_u64;
-                uint64_t* op3       = reinterpret_cast<uint64_t*>(&m_veci[0]);
-
-                intel::hexl::EltwiseFMAMod(op3, op1, op2, op3, ringDim, modulus, 1);
-            }
-            //  Portable code: this->m_vectors[i] *= qlInvModq[i];
-            {
-                // second cooking of the params
-                uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_veci[0]);
-                uint64_t op2  = qlInvModq[i].ConvertToInt();
-                uint64_t* op3 = nullptr;
-
-                intel::hexl::EltwiseFMAMod(op1, op1, op2, op3, ringDim, modulus, 1);
-            }
-*/
+        auto op1 = reinterpret_cast<const uint64_t*>(&tmp[0]);
+        auto op3 = reinterpret_cast<uint64_t*>(&m_vectors[i][0]);
+        intel::hexl::EltwiseFMAMod(op3, op1, t.ConvertToInt<uint64_t>(), op3, ringdm, qi.ConvertToInt<uint64_t>(), 1);
+        intel::hexl::EltwiseFMAMod(op3, op3, qlInvModq[i].ConvertToInt<uint64_t>(), nullptr, ringdm,
+                                   qi.ConvertToInt<uint64_t>(), 1);
     }
 }
 

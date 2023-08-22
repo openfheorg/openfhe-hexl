@@ -370,7 +370,7 @@ public:
     }
 
     std::string SerializedObjectName() const override {
-        return "DCRTPoly";
+        return "HexlDCRTPoly";
     }
 
     static uint32_t SerializedVersion() {
