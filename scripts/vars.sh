@@ -1,5 +1,1 @@
 OPENFHE_CONFIGURATOR_BRANCH=update_for_v1.1.0
-
-#HEXL_INSTALL_PREFIX=/usr/local
-#HEXL_INSTALL_PREFIX=~/local
-HEXL_INSTALL_PREFIX=../../../openfhe-staging

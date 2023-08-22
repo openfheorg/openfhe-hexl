@@ -3,10 +3,9 @@
 . ./scripts/vars.sh
 
 OPENFHE_DEST_REPO="../../openfhe-staging/openfhe-development"
-INTEL_HEXL_LIB="scripts/$HEXL_INSTALL_PREFIX/lib/libhexl.so.1.2.5"
+INTEL_HEXL_INSTALL_DIR="../../openfhe-staging"
 
-#if [ ! -f /usr/local/lib/libhexl.so.1.2.5 ]; then
-if [ ! -f $INTEL_HEXL_LIB ]; then
+if [ ! -f $INTEL_HEXL_INSTALL_DIR/lib/libhexl.so.1.2.5 ]; then
   pwd
   ./scripts/build-hexl.sh
 fi

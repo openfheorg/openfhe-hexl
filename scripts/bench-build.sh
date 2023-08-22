@@ -75,8 +75,6 @@ for variant in $VARIANTS; do
                                     s/WITH_HEXL/WITH_INTEL_HEXL/; \
                                     s/-/=/g;                      \
                                     s/WITH/-DWITH/g'`
-  cmake_flags=$cmake_flags" -DINTEL_HEXL_HINT_DIR="$HEXL_INSTALL_PREFIX
-  echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
 
   # no commans in directory names
   variant_dir=`echo $variant_orig | sed 's/,/-/g'`
@@ -88,6 +86,10 @@ for variant in $VARIANTS; do
   git checkout $OPENFHE_CONFIGURATOR_BRANCH
 
   CC=$cc CXX=$cxx ./scripts/stage-openfhe-development-hexl.sh
+
+  cmake_flags=$cmake_flags" -DINTEL_HEXL_HINT_DIR="$ROOT/$variant_dir"/openfhe-staging"
+  echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
+
   CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags ./scripts/build-openfhe-development.sh || abort "build of variant $variant_orig failed."
 done
 

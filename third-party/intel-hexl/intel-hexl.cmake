@@ -3,9 +3,13 @@
 
 include(ExternalProject)
 
-option(INTEL_HEXL_PREBUILT ON) # Set to ON/OFF to use prebuilt installation
+option(INTEL_HEXL_PREBUILT ON)  # Set to ON/OFF to use prebuilt installation
 
+set(INTEL_HEXL_PREBUILT ON)  # Force INTEL_HEXL_PREBUILT for now
 message(STATUS "INTEL_HEXL_PREBUILT ${INTEL_HEXL_PREBUILT}")
+
+set(CMAKE_INSTALL_PREFIX ${INTEL_HEXL_PREBUILT})
+message(STATUS "CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}")
 
 if (INTEL_HEXL_PREBUILT)  # Skip download from github
   find_package(HEXL 1.2.5 HINTS ${INTEL_HEXL_HINT_DIR} REQUIRED)
@@ -52,7 +56,6 @@ else()
       -DHEXL_TESTING=OFF
       -DHEXL_SHARED_LIB=${INTEL_HEXL_SHARED_LIB}
       -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-#      -DCMAKE_INSTALL_PREFIX=~/local
       UPDATE_COMMAND ""
       EXCLUDE_FROM_ALL TRUE)
 
