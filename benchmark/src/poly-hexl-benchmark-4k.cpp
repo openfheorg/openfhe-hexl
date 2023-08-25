@@ -301,4 +301,40 @@ static void DCRT_MulEq(benchmark::State& state) {
 }
 BENCHMARK(DCRT_MulEq)->Unit(benchmark::kMicrosecond)->Apply(DCRTArguments);
 
+static void Native_SubEq(benchmark::State& state) {
+    std::shared_ptr<std::vector<NativePoly>> polys = NativepolysEval;
+    auto a{(*polys)[0]};
+    size_t i{0};
+    while (state.KeepRunning())
+        a -= (*polys)[++i & POLY_NUM_M1];
+}
+BENCHMARK(Native_SubEq)->Unit(benchmark::kMicrosecond);
+
+static void DCRT_SubEq(benchmark::State& state) {
+    std::shared_ptr<std::vector<DCRTPoly>> polys = DCRTpolysEval[state.range(0)];
+    auto a{(*polys)[0]};
+    size_t i{0};
+    while (state.KeepRunning())
+        a -= (*polys)[++i & POLY_NUM_M1];
+}
+BENCHMARK(DCRT_SubEq)->Unit(benchmark::kMicrosecond)->Apply(DCRTArguments);
+
+static void Native_AddEq(benchmark::State& state) {
+    std::shared_ptr<std::vector<NativePoly>> polys = NativepolysEval;
+    auto a{(*polys)[0]};
+    size_t i{0};
+    while (state.KeepRunning())
+        a += (*polys)[++i & POLY_NUM_M1];
+}
+BENCHMARK(Native_AddEq)->Unit(benchmark::kMicrosecond);
+
+static void DCRT_AddEq(benchmark::State& state) {
+    std::shared_ptr<std::vector<DCRTPoly>> polys = DCRTpolysEval[state.range(0)];
+    auto a{(*polys)[0]};
+    size_t i{0};
+    while (state.KeepRunning())
+        a += (*polys)[++i & POLY_NUM_M1];
+}
+BENCHMARK(DCRT_AddEq)->Unit(benchmark::kMicrosecond)->Apply(DCRTArguments);
+
 BENCHMARK_MAIN();

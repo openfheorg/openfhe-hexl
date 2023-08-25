@@ -22,6 +22,7 @@ for variant in $VARIANTS; do
   gnu9=`echo $variant    | grep "GCC9"    | wc -l`
   gnu10=`echo $variant   | grep "GCC10"   | wc -l`
   gnu11=`echo $variant   | grep "GCC11"   | wc -l`
+  clang9=`echo $variant | grep "CLANG9" | wc -l`
   clang10=`echo $variant | grep "CLANG10" | wc -l`
   clang11=`echo $variant | grep "CLANG11" | wc -l`
   clang12=`echo $variant | grep "CLANG12" | wc -l`
@@ -39,6 +40,9 @@ for variant in $VARIANTS; do
   elif [ $gnu11 -eq 1 ]; then
     cc=/usr/bin/gcc-11
     cxx=/usr/bin/g++-11
+  elif [ $clang9 -eq 1 ]; then
+    cc=/usr/bin/clang-9
+    cxx=/usr/bin/clang++-9
   elif [ $clang10 -eq 1 ]; then
     cc=/usr/bin/clang-10
     cxx=/usr/bin/clang++-10
