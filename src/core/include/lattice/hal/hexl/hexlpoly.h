@@ -30,6 +30,7 @@
 //==================================================================================
 
 // TODO: Update functions to utilize hexl functionality
+// TODO: inherit from PolyImpl after hexl-fication complete
 
 #ifndef LBCRYPTO_INC_LATTICE_HAL_HEXL_HEXLPOLY_H
 #define LBCRYPTO_INC_LATTICE_HAL_HEXL_HEXLPOLY_H
@@ -56,11 +57,6 @@
 
 namespace lbcrypto {
 
-/**
- * @class HexlPolyImpl
- * @file poly.h
- * @brief Ideal lattice using a vector representation
- */
 template <typename VecType>
 class HexlPolyImpl final : public PolyInterface<HexlPolyImpl<VecType>, VecType, HexlPolyImpl> {
 public:
@@ -223,12 +219,28 @@ public:
         if (m_format != rhs.m_format)
             OPENFHE_THROW(not_implemented_error, "Format missmatch");
         auto tmp(*this);
-        tmp.m_values->ModAddNoCheckEq(*rhs.m_values);
+        if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
+            uint64_t* op1       = reinterpret_cast<uint64_t*>(&tmp[0]);
+            const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs[0]);
+            intel::hexl::EltwiseAddMod(op1, op1, op2, tmp.GetRingDimension(),
+                                       tmp.GetModulus().template ConvertToInt<uint64_t>());
+        }
+        else {
+            tmp.m_values->ModAddNoCheckEq(*rhs.m_values);
+        }
         return tmp;
     }
     HexlPolyImpl PlusNoCheck(const HexlPolyImpl& rhs) const {
         auto tmp(*this);
-        tmp.m_values->ModAddNoCheckEq(*rhs.m_values);
+        if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
+            uint64_t* op1       = reinterpret_cast<uint64_t*>(&tmp[0]);
+            const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs[0]);
+            intel::hexl::EltwiseAddMod(op1, op1, op2, tmp.GetRingDimension(),
+                                       tmp.GetModulus().template ConvertToInt<uint64_t>());
+        }
+        else {
+            tmp.m_values->ModAddNoCheckEq(*rhs.m_values);
+        }
         return tmp;
     }
     HexlPolyImpl& operator+=(const HexlPolyImpl& element) override;
@@ -254,13 +266,32 @@ public:
             OPENFHE_THROW(math_error, "Modulus missmatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
             OPENFHE_THROW(not_implemented_error, "operator* for HexlPolyImpl supported only in Format::EVALUATION");
-        auto tmp(*this);
-        tmp.m_values->ModMulNoCheckEq(*rhs.m_values);
-        return tmp;
+        if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
+            HexlPolyImpl tmp(m_params, m_format, true);
+            uint64_t* res       = reinterpret_cast<uint64_t*>(&tmp[0]);
+            const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&(*m_values)[0]);
+            const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs[0]);
+            intel::hexl::EltwiseMultMod(res, op1, op2, tmp.GetRingDimension(),
+                                        tmp.GetModulus().template ConvertToInt<uint64_t>(), 1);
+            return tmp;
+        }
+        else {
+            auto tmp(*this);
+            tmp.m_values->ModMulNoCheckEq(*rhs.m_values);
+            return tmp;
+        }
     }
     HexlPolyImpl TimesNoCheck(const HexlPolyImpl& rhs) const {
         auto tmp(*this);
-        tmp.m_values->ModMulNoCheckEq(*rhs.m_values);
+        if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
+            uint64_t* op1       = reinterpret_cast<uint64_t*>(&tmp[0]);
+            const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs[0]);
+            intel::hexl::EltwiseMultMod(op1, op1, op2, tmp.GetRingDimension(),
+                                        tmp.GetModulus().template ConvertToInt<uint64_t>(), 1);
+        }
+        else {
+            tmp.m_values->ModMulNoCheckEq(*rhs.m_values);
+        }
         return tmp;
     }
     HexlPolyImpl& operator*=(const HexlPolyImpl& rhs) override {
@@ -271,10 +302,18 @@ public:
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
             OPENFHE_THROW(not_implemented_error, "operator* for HexlPolyImpl supported only in Format::EVALUATION");
         if (m_values) {
-            m_values->ModMulNoCheckEq(*rhs.m_values);
+            if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
+                uint64_t* op1       = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
+                const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs[0]);
+                intel::hexl::EltwiseMultMod(op1, op1, op2, rhs.GetRingDimension(),
+                                            rhs.GetModulus().template ConvertToInt<uint64_t>(), 1);
+            }
+            else {
+                m_values->ModMulNoCheckEq(*rhs.m_values);
+            }
             return *this;
         }
-        m_values = std::make_unique<VecType>(m_params->GetRingDimension(), m_params->GetModulus());
+        m_values = std::make_unique<VecType>(rhs.GetRingDimension(), rhs.GetModulus());
         return *this;
     }
 

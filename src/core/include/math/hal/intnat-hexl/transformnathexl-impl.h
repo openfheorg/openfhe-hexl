@@ -40,22 +40,22 @@
 #include "config_core.h"
 #ifdef WITH_INTEL_HEXL
 
-#include "hexl/hexl.hpp"
+    #include "hexl/hexl.hpp"
 
-#include "math/hal/basicint.h"
-#include "math/hal/intnat-hexl/ubintnathexl.h"
-#include "math/hal/intnat-hexl/mubintvecnathexl.h"
-#include "math/hal/intnat-hexl/transformnathexl.h"
-#include "math/nbtheory.h"
+    #include "math/hal/basicint.h"
+    #include "math/hal/intnat-hexl/ubintnathexl.h"
+    #include "math/hal/intnat-hexl/mubintvecnathexl.h"
+    #include "math/hal/intnat-hexl/transformnathexl.h"
+    #include "math/nbtheory.h"
 
-#include "utils/exception.h"
-#include "utils/inttypes.h"
-#include "utils/utilities.h"
+    #include "utils/exception.h"
+    #include "utils/inttypes.h"
+    #include "utils/utilities.h"
 
-#include <map>
-#include <unordered_map>
-#include <utility>
-#include <vector>
+    #include <map>
+    #include <unordered_map>
+    #include <utility>
+    #include <vector>
 
 namespace intnathexl {
 
@@ -325,7 +325,7 @@ void NumberTheoreticTransformNat<VecType>::ForwardTransformToBitReverseInPlace(c
                 auto omegaFactor{(*element)[j1 + t]};
                 omegaFactor.ModMulFastConstEq(omega, modulus, preconOmega);
                 auto loVal{(*element)[j1 + 0]};
-#if defined(__GNUC__) && !defined(__clang__)
+    #if defined(__GNUC__) && !defined(__clang__)
                 auto hiVal{loVal + omegaFactor};
                 if (hiVal >= modulus)
                     hiVal -= modulus;
@@ -334,13 +334,13 @@ void NumberTheoreticTransformNat<VecType>::ForwardTransformToBitReverseInPlace(c
                 loVal -= omegaFactor;
                 (*element)[j1 + 0] = hiVal;
                 (*element)[j1 + t] = loVal;
-#else
+    #else
                 // fixes Clang slowdown issue, but requires lowVal be less than modulus
                 (*element)[j1 + 0] += omegaFactor - (omegaFactor >= (modulus - loVal) ? modulus : 0);
                 if (omegaFactor > loVal)
                     loVal += modulus;
                 (*element)[j1 + t] = loVal - omegaFactor;
-#endif
+    #endif
             }
         }
     }
@@ -350,7 +350,7 @@ void NumberTheoreticTransformNat<VecType>::ForwardTransformToBitReverseInPlace(c
         auto preconOmega{preconRootOfUnityTable[(i >> 1) + n]};
         omegaFactor.ModMulFastConstEq(omega, modulus, preconOmega);
         auto loVal{(*element)[i + 0]};
-#if defined(__GNUC__) && !defined(__clang__)
+    #if defined(__GNUC__) && !defined(__clang__)
         auto hiVal{loVal + omegaFactor};
         if (hiVal >= modulus)
             hiVal -= modulus;
@@ -359,12 +359,12 @@ void NumberTheoreticTransformNat<VecType>::ForwardTransformToBitReverseInPlace(c
         loVal -= omegaFactor;
         (*element)[i + 0] = hiVal;
         (*element)[i + 1] = loVal;
-#else
+    #else
         (*element)[i + 0] += omegaFactor - (omegaFactor >= (modulus - loVal) ? modulus : 0);
         if (omegaFactor > loVal)
             loVal += modulus;
         (*element)[i + t] = loVal - omegaFactor;
-#endif
+    #endif
     }
 }
 
@@ -514,7 +514,7 @@ void NumberTheoreticTransformNat<VecType>::InverseTransformFromBitReverseInPlace
         auto preconOmega{preconRootOfUnityInverseTable[(i + n) >> 1]};
         auto hiVal{(*element)[i + 1]};
         auto loVal{(*element)[i + 0]};
-#if defined(__GNUC__) && !defined(__clang__)
+    #if defined(__GNUC__) && !defined(__clang__)
         auto omegaFactor{loVal};
         if (omegaFactor < hiVal)
             omegaFactor += modulus;
@@ -527,7 +527,7 @@ void NumberTheoreticTransformNat<VecType>::InverseTransformFromBitReverseInPlace
         omegaFactor.ModMulFastConstEq(cycloOrderInv, modulus, preconCycloOrderInv);
         (*element)[i + 0] = loVal;
         (*element)[i + 1] = omegaFactor;
-#else
+    #else
         auto omegaFactor{loVal + (hiVal > loVal ? modulus : 0) - hiVal};
         loVal += hiVal - (hiVal >= (modulus - loVal) ? modulus : 0);
         loVal.ModMulFastConstEq(cycloOrderInv, modulus, preconCycloOrderInv);
@@ -535,7 +535,7 @@ void NumberTheoreticTransformNat<VecType>::InverseTransformFromBitReverseInPlace
         omegaFactor.ModMulFastConstEq(omega, modulus, preconOmega);
         omegaFactor.ModMulFastConstEq(cycloOrderInv, modulus, preconCycloOrderInv);
         (*element)[i + 1] = omegaFactor;
-#endif
+    #endif
     }
     for (uint32_t m{n >> 2}, t{2}, logt{2}; m >= 1; m >>= 1, t <<= 1, ++logt) {
         for (uint32_t i{0}; i < m; ++i) {
@@ -544,7 +544,7 @@ void NumberTheoreticTransformNat<VecType>::InverseTransformFromBitReverseInPlace
             for (uint32_t j1{i << logt}, j2{j1 + t}; j1 < j2; ++j1) {
                 auto hiVal{(*element)[j1 + t]};
                 auto loVal{(*element)[j1 + 0]};
-#if defined(__GNUC__) && !defined(__clang__)
+    #if defined(__GNUC__) && !defined(__clang__)
                 auto omegaFactor{loVal};
                 if (omegaFactor < hiVal)
                     omegaFactor += modulus;
@@ -555,12 +555,12 @@ void NumberTheoreticTransformNat<VecType>::InverseTransformFromBitReverseInPlace
                 omegaFactor.ModMulFastConstEq(omega, modulus, preconOmega);
                 (*element)[j1 + 0] = loVal;
                 (*element)[j1 + t] = omegaFactor;
-#else
+    #else
                 (*element)[j1 + 0] += hiVal - (hiVal >= (modulus - loVal) ? modulus : 0);
                 auto omegaFactor = loVal + (hiVal > loVal ? modulus : 0) - hiVal;
                 omegaFactor.ModMulFastConstEq(omega, modulus, preconOmega);
                 (*element)[j1 + t] = omegaFactor;
-#endif
+    #endif
             }
         }
     }
@@ -625,9 +625,8 @@ void ChineseRemainderTransformFTTNat<VecType>::ForwardTransformToBitReverseInPla
     p_ntt = &ntt_it->second;
     lock.unlock();
 
-    auto* data = reinterpret_cast<uint64_t*>(&element->at(0));
+    auto* data = reinterpret_cast<uint64_t*>(&((*element)[0]));
     p_ntt->ComputeForward(data, data, 1, 1);
-    element->SetModulus(modulus);
 }
 
 template <typename VecType>
@@ -670,8 +669,8 @@ void ChineseRemainderTransformFTTNat<VecType>::ForwardTransformToBitReverse(cons
     p_ntt = &ntt_it->second;
     lock.unlock();
 
-    const uint64_t* input = reinterpret_cast<const uint64_t*>(&element.at(0));
-    uint64_t* output      = reinterpret_cast<uint64_t*>(&result->at(0));
+    const uint64_t* input = reinterpret_cast<const uint64_t*>(&element[0]);
+    uint64_t* output      = reinterpret_cast<uint64_t*>(&((*result)[0]));
     p_ntt->ComputeForward(output, input, 1, 1);
     result->SetModulus(modulus);
 
@@ -718,9 +717,8 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverseInP
     }
     p_ntt = &ntt_it->second;
     lock.unlock();
-    auto* data = reinterpret_cast<uint64_t*>(&element->at(0));
+    auto* data = reinterpret_cast<uint64_t*>(&((*element)[0]));
     p_ntt->ComputeInverse(data, data, 1, 1);
-    element->SetModulus(modulus);
 }
 
 template <typename VecType>
@@ -770,8 +768,8 @@ void ChineseRemainderTransformFTTNat<VecType>::InverseTransformFromBitReverse(co
     }
     p_ntt = &ntt_it->second;
     lock.unlock();
-    auto* input      = reinterpret_cast<const uint64_t*>(&result->at(0));
-    uint64_t* output = reinterpret_cast<uint64_t*>(&result->at(0));
+    auto* input      = reinterpret_cast<const uint64_t*>(&element[0]);
+    uint64_t* output = reinterpret_cast<uint64_t*>(&((*result)[0]));
     p_ntt->ComputeInverse(output, input, 1, 1);
     result->SetModulus(modulus);
 
@@ -786,7 +784,7 @@ void ChineseRemainderTransformFTTNat<VecType>::PreCompute(const IntType& rootOfU
 
     auto mapSearch = m_rootOfUnityReverseTableByModulus.find(modulus);
     if (mapSearch == m_rootOfUnityReverseTableByModulus.end() || mapSearch->second.GetLength() != CycloOrderHf) {
-#pragma omp critical
+    #pragma omp critical
         {
             IntType x(1), xinv(1);
             usint msb  = lbcrypto::GetMSB64(CycloOrderHf - 1);
@@ -1174,7 +1172,7 @@ VecType ChineseRemainderTransformArbNat<VecType>::ForwardTransform(const VecType
     const ModulusRoot<IntType> nttModulusRoot      = {nttModulus, nttRoot};
     const ModulusRootPair<IntType> modulusRootPair = {modulusRoot, nttModulusRoot};
 
-#pragma omp critical
+    #pragma omp critical
     {
         if (BluesteinFFTNat<VecType>::m_rootOfUnityTableByModulusRoot[nttModulusRoot].GetLength() == 0) {
             BluesteinFFTNat<VecType>().PreComputeRootTableForNTT(cycloOrder, nttModulusRoot);
@@ -1213,7 +1211,7 @@ VecType ChineseRemainderTransformArbNat<VecType>::InverseTransform(const VecType
     const ModulusRoot<IntType> nttModulusRoot      = {nttModulus, nttRoot};
     const ModulusRootPair<IntType> modulusRootPair = {modulusRootInverse, nttModulusRoot};
 
-#pragma omp critical
+    #pragma omp critical
     {
         if (BluesteinFFTNat<VecType>::m_rootOfUnityTableByModulusRoot[nttModulusRoot].GetLength() == 0) {
             BluesteinFFTNat<VecType>().PreComputeRootTableForNTT(cycloOrder, nttModulusRoot);

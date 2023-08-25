@@ -76,7 +76,7 @@ for variant in $VARIANTS; do
                                     s/-/=/g;                      \
                                     s/WITH/-DWITH/g'`
 
-  # no commans in directory names
+  # no commas in directory names
   variant_dir=`echo $variant_orig | sed 's/,/-/g'`
   separator
   echo "Cloning openfhe-configurator for variant $variant_orig"

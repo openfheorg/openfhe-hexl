@@ -214,10 +214,15 @@ void HexlPolyImpl<VecType>::SetValues(VecType&& values, Format format) {
 template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Plus(const typename VecType::Integer& element) const {
     HexlPolyImpl<VecType> tmp(m_params, m_format);
-    if (m_format == Format::COEFFICIENT)
+    if (m_format == Format::COEFFICIENT) {
         tmp.SetValues((*m_values).ModAddAtIndex(0, element), m_format);
-    else
+    }
+    else {
+#if 0
+#else
         tmp.SetValues((*m_values).ModAdd(element), m_format);
+#endif
+    }
     return tmp;
 }
 
@@ -231,7 +236,10 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Minus(const typename VecType::Integ
 template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Times(const typename VecType::Integer& element) const {
     HexlPolyImpl<VecType> tmp(m_params, m_format);
+#if 0
+#else
     tmp.SetValues((*m_values).ModMul(element), m_format);
+#endif
     return tmp;
 }
 
@@ -289,7 +297,10 @@ template <typename VecType>
 HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator+=(const HexlPolyImpl& element) {
     if (!m_values)
         m_values = std::make_unique<VecType>(m_params->GetRingDimension(), m_params->GetModulus());
+#if 0
+#else
     m_values->ModAddEq(*element.m_values);
+#endif
     return *this;
 }
 
@@ -303,11 +314,14 @@ HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator-=(const HexlPolyImpl& ele
 
 template <typename VecType>
 void HexlPolyImpl<VecType>::AddILElementOne() {
+#if 0
+#else
     static const Integer ONE(1);
     usint vlen{m_params->GetRingDimension()};
     const auto& m{m_params->GetModulus()};
     for (usint i = 0; i < vlen; ++i)
         (*m_values)[i].ModAddFastEq(ONE, m);
+#endif
 }
 
 template <typename VecType>
@@ -397,18 +411,24 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::ModByTwo() const {
 template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Mod(const Integer& modulus) const {
     HexlPolyImpl<VecType> tmp(m_params, m_format);
+#if 0
+#else
     tmp.SetValues((*m_values).Mod(modulus), m_format);
+#endif
     return tmp;
 }
 
 template <typename VecType>
 void HexlPolyImpl<VecType>::SwitchModulus(const Integer& modulus, const Integer& rootOfUnity, const Integer& modulusArb,
                                           const Integer& rootOfUnityArb) {
-    if (m_values != nullptr) {
-        m_values->SwitchModulus(modulus);
-        auto c{m_params->GetCyclotomicOrder()};
-        m_params = std::make_shared<HexlPolyImpl::Params>(c, modulus, rootOfUnity, modulusArb, rootOfUnityArb);
-    }
+    if (!m_values)
+        OPENFHE_THROW(not_available_error, "Poly SwitchModulus on empty values");
+#if 0
+#else
+    m_values->SwitchModulus(modulus);
+#endif
+    auto c{m_params->GetCyclotomicOrder()};
+    m_params = std::make_shared<HexlPolyImpl::Params>(c, modulus, rootOfUnity, modulusArb, rootOfUnityArb);
 }
 
 template <typename VecType>
@@ -560,6 +580,9 @@ std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::PowersOfBase(usint bas
         ++nWindows;
     std::vector<HexlPolyImpl<VecType>> result(nWindows);
     Integer shift{0}, bbits{baseBits};
+
+    // TODO: result[0] = (*this); result[i] = result[i - 1] * TWO.ModExp(bbits, m);
+
     for (usint i = 0; i < nWindows; ++i, shift += bbits)
         result[i] = (*this) * TWO.ModExp(shift, m);
     return result;

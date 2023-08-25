@@ -235,11 +235,18 @@ public:
 
     NativeVectorT ModAdd(const NativeVectorT& b) const;
     NativeVectorT& ModAddEq(const NativeVectorT& b);
-    NativeVectorT& ModAddNoCheckEq(const NativeVectorT& b) {  // DONOW
-        size_t size{m_data.size()};
-        auto mv{m_modulus};
-        for (size_t i = 0; i < size; ++i)
-            m_data[i].ModAddFastEq(b[i], mv);
+    NativeVectorT& ModAddNoCheckEq(const NativeVectorT& b) {
+        if constexpr (HEXL_ADD_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+            uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
+            const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b.m_data[0]);
+            intel::hexl::EltwiseAddMod(op1, op1, op2, m_data.size(), m_modulus.m_value);
+        }
+        else {
+            size_t size{m_data.size()};
+            auto mv{m_modulus};
+            for (size_t i = 0; i < size; ++i)
+                m_data[i].ModAddFastEq(b[i], mv);
+        }
         return *this;
     }
 
@@ -254,17 +261,24 @@ public:
 
     NativeVectorT ModMul(const NativeVectorT& b) const;
     NativeVectorT& ModMulEq(const NativeVectorT& b);
-    NativeVectorT& ModMulNoCheckEq(const NativeVectorT& b) {  // DONOW
-        size_t size{m_data.size()};
-        auto mv{m_modulus};
+    NativeVectorT& ModMulNoCheckEq(const NativeVectorT& b) {
+        if constexpr (HEXL_MUL_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+            uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
+            const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b[0]);
+            intel::hexl::EltwiseMultMod(op1, op1, op2, m_data.size(), m_modulus.m_value, 1);
+        }
+        else {
+            size_t size{m_data.size()};
+            auto mv{m_modulus};
 #ifdef NATIVEINT_BARRET_MOD
-        auto mu{m_modulus.ComputeMu()};
-        for (size_t i = 0; i < size; ++i)
-            m_data[i].ModMulFastEq(b[i], mv, mu);
+            auto mu{m_modulus.ComputeMu()};
+            for (size_t i = 0; i < size; ++i)
+                m_data[i].ModMulFastEq(b[i], mv, mu);
 #else
-        for (size_t i = 0; i < size; ++i)
-            m_data[i].ModMulFastEq(b[i], mv);
+            for (size_t i = 0; i < size; ++i)
+                m_data[i].ModMulFastEq(b[i], mv);
 #endif
+        }
         return *this;
     }
     NativeVectorT MultWithOutMod(const NativeVectorT& b) const;
@@ -272,7 +286,7 @@ public:
     NativeVectorT ModExp(const IntegerType& b) const;
     NativeVectorT& ModExpEq(const IntegerType& b);
 
-    NativeVectorT ModInverse() const {  // DONOW
+    NativeVectorT ModInverse() const {
         size_t size{m_data.size()};
         auto mv{m_modulus};
         NativeVectorT ans(size, mv);

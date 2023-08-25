@@ -141,11 +141,28 @@ public:
     DCRTPolyType& operator-=(const Integer& rhs) override;
     DCRTPolyType& operator-=(const NativeInteger& rhs) override;
     DCRTPolyType& operator*=(const DCRTPolyType& rhs) override {
-        size_t size{m_vectors.size()};
+        if constexpr (HEXL_MUL_ENABLE) {
+            // if constexpr (HEXL_MUL_ENABLE && std::is_same_v<PolyType, NativePoly>) {
+            // TODO: compatibility checks
+            const auto& params{m_params->GetParams()};
+            uint64_t ringdm{m_params->GetRingDimension()};
+            uint64_t towers{m_vectors.size()};
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
-            m_vectors[i] *= rhs.m_vectors[i];
-        return *this;
+            for (uint64_t t = 0; t < towers; ++t) {
+                uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_vectors[t][0]);
+                const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs.m_vectors[t][0]);
+                intel::hexl::EltwiseMultMod(op1, op1, op2, ringdm,
+                                            params[t]->GetModulus().template ConvertToInt<uint64_t>(), 1);
+            }
+            return *this;
+        }
+        else {
+            size_t size{m_vectors.size()};
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+            for (size_t i = 0; i < size; ++i)
+                m_vectors[i] *= rhs.m_vectors[i];
+            return *this;
+        }
     }
     DCRTPolyType& operator*=(const Integer& rhs) override;
     DCRTPolyType& operator*=(const NativeInteger& rhs) override;
@@ -172,11 +189,29 @@ public:
             OPENFHE_THROW(math_error, "tower size mismatch; cannot add");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
             OPENFHE_THROW(math_error, "Modulus missmatch");
-        DCRTPolyType tmp(m_params, m_format);
+        if constexpr (HEXL_ADD_ENABLE) {
+            // if constexpr (HEXL_ADD_ENABLE && std::is_same_v<PolyType, NativePoly>) {
+            DCRTPolyType tmp(m_params, m_format, true);
+            const auto& params{m_params->GetParams()};
+            uint64_t ringdm{m_params->GetRingDimension()};
+            uint64_t towers{m_vectors.size()};
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
-            tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]);
-        return tmp;
+            for (uint64_t t = 0; t < towers; ++t) {
+                uint64_t* res       = reinterpret_cast<uint64_t*>(&tmp.m_vectors[t][0]);
+                const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_vectors[t][0]);
+                const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs.m_vectors[t][0]);
+                intel::hexl::EltwiseAddMod(res, op1, op2, ringdm,
+                                           params[t]->GetModulus().template ConvertToInt<uint64_t>());
+            }
+            return tmp;
+        }
+        else {
+            DCRTPolyType tmp(m_params, m_format);
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+            for (size_t i = 0; i < size; ++i)
+                tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]);
+            return tmp;
+        }
     }
 
     DCRTPolyType Minus(const DCRTPolyType& rhs) const override;
@@ -193,11 +228,29 @@ public:
             OPENFHE_THROW(math_error, "tower size mismatch; cannot multiply");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
             OPENFHE_THROW(math_error, "Modulus missmatch");
-        DCRTPolyType tmp(m_params, m_format);
+        if constexpr (HEXL_MUL_ENABLE) {
+            // if constexpr (HEXL_MUL_ENABLE && std::is_same_v<PolyType, NativePoly>) {
+            DCRTPolyType tmp(m_params, m_format, true);
+            const auto& params{m_params->GetParams()};
+            uint64_t ringdm{m_params->GetRingDimension()};
+            uint64_t towers{m_vectors.size()};
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i)
-            tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]);
-        return tmp;
+            for (uint64_t t = 0; t < towers; ++t) {
+                uint64_t* res       = reinterpret_cast<uint64_t*>(&tmp.m_vectors[t][0]);
+                const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_vectors[t][0]);
+                const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs.m_vectors[t][0]);
+                intel::hexl::EltwiseMultMod(res, op1, op2, ringdm,
+                                            params[t]->GetModulus().template ConvertToInt<uint64_t>(), 1);
+            }
+            return tmp;
+        }
+        else {
+            DCRTPolyType tmp(m_params, m_format);
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+            for (size_t i = 0; i < size; ++i)
+                tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]);
+            return tmp;
+        }
     }
     DCRTPolyType Times(const Integer& rhs) const override;
     DCRTPolyType Times(const std::vector<Integer>& rhs) const;

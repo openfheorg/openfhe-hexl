@@ -38,13 +38,13 @@
 #include "config_core.h"
 #ifdef WITH_INTEL_HEXL
 
-#include "hexl/hexl.hpp"
+    #include "hexl/hexl.hpp"
 
-#include "math/math-hal.h"
-#include "math/hal/intnat-hexl/mubintvecnathexl.h"
-#include "math/nbtheory-impl.h"
+    #include "math/math-hal.h"
+    #include "math/hal/intnat-hexl/mubintvecnathexl.h"
+    #include "math/nbtheory-impl.h"
 
-#include "utils/exception.h"
+    #include "utils/exception.h"
 
 namespace intnathexl {
 
@@ -103,9 +103,17 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::operator=(std::initializ
 }
 
 template <class IntegerType>
-void NativeVectorT<IntegerType>::SwitchModulus(const IntegerType& newModulus) {
-    // DONOW
-    /*
+void NativeVectorT<IntegerType>::SwitchModulus(const IntegerType& modulus) {
+    #if 1
+    uint64_t om{m_modulus.m_value};
+    NativeVectorT::SetModulus(modulus);
+    uint64_t nm{modulus.m_value};
+    uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+    if (nm > om)
+        intel::hexl::EltwiseCmpAdd(op1, op1, m_data.size(), intel::hexl::CMPINT::NLE, (om >> 1), nm - om);
+    else
+        intel::hexl::EltwiseCmpSubMod(op1, op1, m_data.size(), nm, intel::hexl::CMPINT::NLE, (om >> 1), (om - nm) % nm);
+    #else
     auto size{m_data.size()};
     auto halfQ{m_modulus.m_value >> 1};
     auto om{m_modulus.m_value};
@@ -129,31 +137,29 @@ void NativeVectorT<IntegerType>::SwitchModulus(const IntegerType& newModulus) {
                 v = v % nm;
         }
     }
-*/
-    IntegerType oldModulus(this->m_modulus);
-    IntegerType oldModulusByTwo(oldModulus >> 1);
-    IntegerType diff((oldModulus > newModulus) ? (oldModulus - newModulus) : (newModulus - oldModulus));
-
-    if (newModulus > oldModulus) {
-        uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
-        intel::hexl::EltwiseCmpAdd(op1, op1, m_data.size(), intel::hexl::CMPINT::NLE, oldModulusByTwo.ConvertToInt(),
-                                   diff.ConvertToInt());
-    }
-    else {  // newModulus <= oldModulus
-        uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
-        intel::hexl::EltwiseCmpSubMod(op1, op1, m_data.size(), newModulus.ConvertToInt(), intel::hexl::CMPINT::NLE,
-                                      oldModulusByTwo.ConvertToInt(), diff.ConvertToInt() % newModulus.ConvertToInt());
-    }
-    this->SetModulus(newModulus);
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::Mod(const IntegerType& modulus) const {
-    // DONOW
-    auto ans(*this);
-    if (modulus.m_value == 2)
-        return ans.ModByTwoEq();
+    #if 1
+    uint64_t nm{modulus.m_value};
+    if (nm == 2)
+        return NativeVectorT::ModByTwo();
+    uint64_t om{m_modulus.m_value};
+    NativeVectorT ans(m_data.size(), m_modulus);
+    uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
+    const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+    if (nm > om)
+        intel::hexl::EltwiseCmpAdd(res, op1, m_data.size(), intel::hexl::CMPINT::NLE, (om >> 1), nm - om);
+    else
+        intel::hexl::EltwiseCmpSubMod(res, op1, m_data.size(), nm, intel::hexl::CMPINT::NLE, (om >> 1), (om - nm) % nm);
+    return ans;
+    #else
     auto nm{modulus.m_value};
+    if (nm == 2)
+        return NativeVectorT::ModByTwo();
+    auto ans(*this);
     auto halfQ{m_modulus.m_value >> 1};
     auto om{m_modulus.m_value};
     auto size{m_data.size()};
@@ -176,29 +182,23 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::Mod(const IntegerType& mo
         }
     }
     return ans;
-    /*
-    if (modulus == 2) {
-        return this->ModByTwo();
-    }
-    else {
-        NativeVectorT ans(this->GetLength(), this->GetModulus());
-        IntegerType halfQ(this->GetModulus() >> 1);
-        for (size_t i = 0; i < ans.GetLength(); i++) {
-            if (this->m_data[i] > halfQ) {
-                ans[i] = this->m_data[i].ModSub(this->GetModulus(), modulus);
-            }
-            else {
-                ans[i] = this->m_data[i].Mod(modulus);
-            }
-        }
-        return ans;
-    }
-*/
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModEq(const IntegerType& modulus) {
-    // DONOW
+    #if 1
+    uint64_t nm{modulus.m_value};
+    if (nm == 2)
+        return NativeVectorT::ModByTwoEq();
+    uint64_t om{m_modulus.m_value};
+    uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+    if (nm > om)
+        intel::hexl::EltwiseCmpAdd(op1, op1, m_data.size(), intel::hexl::CMPINT::NLE, (om >> 1), nm - om);
+    else
+        intel::hexl::EltwiseCmpSubMod(op1, op1, m_data.size(), nm, intel::hexl::CMPINT::NLE, (om >> 1), (om - nm) % nm);
+    return *this;
+    #else
     if (modulus.m_value == 2)
         return this->NativeVectorT::ModByTwoEq();
     auto nm{modulus.m_value};
@@ -224,27 +224,18 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModEq(const IntegerType&
         }
     }
     return *this;
-    /*
-    if (modulus == 2) {
-        return this->ModByTwoEq();
-    }
-    else {
-        IntegerType halfQ(this->GetModulus() >> 1);
-        for (size_t i = 0; i < this->GetLength(); i++) {
-            if (this->m_data[i] > halfQ) {
-                this->m_data[i].ModSubEq(this->GetModulus(), modulus);
-            }
-            else {
-                this->m_data[i].ModEq(modulus);
-            }
-        }
-        return *this;
-    }
-*/
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModAdd(const IntegerType& b) const {
+    #if 0
+    NativeVectorT ans(m_data.size(), m_modulus);
+    uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
+    const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+    intel::hexl::EltwiseAddMod(res, op1, b.m_value >= m_modulus.m_value ? b.m_value % m_modulus.m_value : b.m_value, m_data.size(), m_modulus.m_value);
+    return ans;
+    #else
     auto ans(*this);
     auto mv{m_modulus};
     auto bv{b};
@@ -253,10 +244,16 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModAdd(const IntegerType&
     for (size_t i = 0; i < ans.m_data.size(); ++i)
         ans.m_data[i] = ans.m_data[i].ModAddFast(bv, mv);
     return ans;
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModAddEq(const IntegerType& b) {
+    #if 0
+    uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+    intel::hexl::EltwiseAddMod(op1, op1, b.m_value >= m_modulus.m_value ? b.m_value % m_modulus.m_value : b.m_value, m_data.size(), m_modulus.m_value);
+    return *this;
+    #else
     auto mv{m_modulus};
     auto bv{b};
     if (bv.m_value >= mv.m_value)
@@ -264,6 +261,7 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModAddEq(const IntegerTy
     for (size_t i = 0; i < m_data.size(); ++i)
         m_data[i] = m_data[i].ModAddFast(bv, mv);
     return *this;
+    #endif
 }
 
 template <class IntegerType>
@@ -275,7 +273,7 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModAddAtIndex(size_t i, c
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModAddAtIndexEq(size_t i, const IntegerType& b) {
-    this->NativeVectorT::at(i).ModAddEq(b, m_modulus);
+    NativeVectorT::at(i).ModAddEq(b, m_modulus);
     return *this;
 }
 
@@ -283,21 +281,37 @@ template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModAdd(const NativeVectorT& b) const {
     if (m_modulus != b.m_modulus || m_data.size() != b.m_data.size())
         OPENFHE_THROW(lbcrypto::math_error, "ModAdd called on NativeVectorT's with different parameters.");
+    #if 0
+    NativeVectorT ans(m_data.size(), m_modulus);
+    uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
+    const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+    const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b.m_data[0]);
+    intel::hexl::EltwiseAddMod(res, op1, op2, m_data.size(), m_modulus.m_value);
+    return ans;
+    #else
     auto mv{m_modulus};
     auto ans(*this);
     for (size_t i = 0; i < ans.m_data.size(); ++i)
         ans.m_data[i].ModAddFastEq(b[i], mv);
     return ans;
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModAddEq(const NativeVectorT& b) {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
         OPENFHE_THROW(lbcrypto::math_error, "ModAddEq called on NativeVectorT's with different parameters.");
+    #if 0
+    uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+    const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b.m_data[0]);
+    intel::hexl::EltwiseAddMod(op1, op1, op2, m_data.size(), m_modulus.m_value);
+    return *this;
+    #else
     auto mv{m_modulus};
     for (size_t i = 0; i < m_data.size(); ++i)
         m_data[i].ModAddFastEq(b[i], mv);
     return *this;
+    #endif
 }
 
 template <class IntegerType>
@@ -345,6 +359,14 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModSubEq(const NativeVec
 
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModMul(const IntegerType& b) const {
+    #if 1
+    NativeVectorT ans(m_data.size(), m_modulus);
+    uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
+    const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+    intel::hexl::EltwiseFMAMod(res, op1, b.m_value >= m_modulus.m_value ? b.m_value % m_modulus.m_value : b.m_value,
+                               nullptr, m_data.size(), m_modulus.m_value, 1);
+    return ans;
+    #else
     auto mv{m_modulus};
     auto bv{b};
     auto ans(*this);
@@ -354,10 +376,17 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModMul(const IntegerType&
     for (size_t i = 0; i < ans.m_data.size(); ++i)
         ans[i].ModMulFastConstEq(bv, mv, bconst);
     return ans;
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModMulEq(const IntegerType& b) {
+    #if 1
+    uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+    intel::hexl::EltwiseFMAMod(op1, op1, b.m_value >= m_modulus.m_value ? b.m_value % m_modulus.m_value : b.m_value,
+                               nullptr, m_data.size(), m_modulus.m_value, 1);
+    return *this;
+    #else
     auto mv{m_modulus};
     auto bv{b};
     if (bv.m_value >= mv.m_value)
@@ -366,52 +395,58 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModMulEq(const IntegerTy
     for (size_t i = 0; i < m_data.size(); ++i)
         m_data[i].ModMulFastConstEq(bv, mv, bconst);
     return *this;
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModMul(const NativeVectorT& b) const {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
         OPENFHE_THROW(lbcrypto::math_error, "ModMul called on NativeVectorT's with different parameters.");
+    #if 1
+    NativeVectorT ans(m_data.size(), m_modulus);
+    uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
+    const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+    const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b.m_data[0]);
+    intel::hexl::EltwiseMultMod(res, op1, op2, m_data.size(), m_modulus.m_value, 1);
+    return ans;
+    #else
     auto ans(*this);
     uint32_t size(m_data.size());
     auto mv{m_modulus};
-#ifdef NATIVEINT_BARRET_MOD
+        #ifdef NATIVEINT_BARRET_MOD
     auto mu{m_modulus.ComputeMu()};
     for (uint32_t i = 0; i < size; ++i)
         ans[i].ModMulFastEq(b[i], mv, mu);
-#else
+        #else
     for (uint32_t i = 0; i < size; ++i)
         ans[i].ModMulFastEq(b[i], mv);
-#endif
+        #endif
     return ans;
+    #endif
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModMulEq(const NativeVectorT& b) {
-    // DOOW
-    /*
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
         OPENFHE_THROW(lbcrypto::math_error, "ModMulEq called on NativeVectorT's with different parameters.");
+    #if 1
+    uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
+    const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b[0]);
+    intel::hexl::EltwiseMultMod(op1, op1, op2, m_data.size(), m_modulus.m_value, 1);
+    return *this;
+    #else
     auto mv{m_modulus};
     size_t size{m_data.size()};
-#ifdef NATIVEINT_BARRET_MOD
+        #ifdef NATIVEINT_BARRET_MOD
     auto mu{m_modulus.ComputeMu()};
     for (size_t i = 0; i < size; ++i)
         m_data[i].ModMulFastEq(b[i], mv, mu);
-#else
+        #else
     for (size_t i = 0; i < size; ++i)
         m_data[i].ModMulFastEq(b[i], mv);
-#endif
+        #endif
     return *this;
-*/
-    if ((this->m_data.size() != b.m_data.size()) || this->m_modulus != b.m_modulus) {
-        OPENFHE_THROW(lbcrypto::math_error, "ModMulEq called on NativeVectorT's with different parameters.");
-    }
-
-    uint64_t* m_data_ptr       = reinterpret_cast<uint64_t*>(&m_data[0]);
-    const uint64_t* b_data_ptr = reinterpret_cast<const uint64_t*>(&b[0]);
-    intel::hexl::EltwiseMultMod(m_data_ptr, m_data_ptr, b_data_ptr, m_data.size(), m_modulus.ConvertToInt(), 1);
-    return *this;
+    #endif
 }
 
 template <class IntegerType>
