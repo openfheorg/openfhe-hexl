@@ -77,7 +77,7 @@ void HexlDCRTPolyImpl<VecType>::DropLastElementAndScale(const std::vector<Native
             auto op1 = reinterpret_cast<uint64_t*>(&m_vectors[i][0]);
             auto op3 = reinterpret_cast<const uint64_t*>(&tmp[0]);
             intel::hexl::EltwiseFMAMod(op1, op1, qlInvModq[i].ConvertToInt<uint64_t>(), op3, ringdm,
-                                       qi.ConvertToInt<uint64_t>(), 1);
+                                       qi.template ConvertToInt<uint64_t>(), 1);
         }
         else {
             m_vectors[i] *= qlInvModq[i];
@@ -112,10 +112,10 @@ void HexlDCRTPolyImpl<VecType>::ModReduce(const NativeInteger& t, const std::vec
         if constexpr (HEXL_MUL_ENABLE) {
             auto op1 = reinterpret_cast<const uint64_t*>(&tmp[0]);
             auto op3 = reinterpret_cast<uint64_t*>(&m_vectors[i][0]);
-            intel::hexl::EltwiseFMAMod(op3, op1, t.ConvertToInt<uint64_t>(), op3, ringdm, qi.ConvertToInt<uint64_t>(),
-                                       1);
+            intel::hexl::EltwiseFMAMod(op3, op1, t.ConvertToInt<uint64_t>(), op3, ringdm,
+                                       qi.template ConvertToInt<uint64_t>(), 1);
             intel::hexl::EltwiseFMAMod(op3, op3, qlInvModq[i].ConvertToInt<uint64_t>(), nullptr, ringdm,
-                                       qi.ConvertToInt<uint64_t>(), 1);
+                                       qi.template ConvertToInt<uint64_t>(), 1);
         }
         else {
             m_vectors[i] += (tmp *= t);
