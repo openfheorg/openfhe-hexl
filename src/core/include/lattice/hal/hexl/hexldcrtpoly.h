@@ -147,7 +147,7 @@ public:
             const auto& params{m_params->GetParams()};
             uint64_t ringdm{m_params->GetRingDimension()};
             uint64_t towers{m_vectors.size()};
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(towers))
             for (uint64_t t = 0; t < towers; ++t) {
                 uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_vectors[t][0]);
                 const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&rhs.m_vectors[t][0]);
@@ -157,10 +157,10 @@ public:
             return *this;
         }
         else {
-            size_t size{m_vectors.size()};
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-            for (size_t i = 0; i < size; ++i)
-                m_vectors[i] *= rhs.m_vectors[i];
+            size_t towers{m_vectors.size()};
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(towers))
+            for (size_t t = 0; t < towers; ++t)
+                m_vectors[t] *= rhs.m_vectors[t];
             return *this;
         }
     }
@@ -195,7 +195,7 @@ public:
             const auto& params{m_params->GetParams()};
             uint64_t ringdm{m_params->GetRingDimension()};
             uint64_t towers{m_vectors.size()};
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(towers))
             for (uint64_t t = 0; t < towers; ++t) {
                 uint64_t* res       = reinterpret_cast<uint64_t*>(&tmp.m_vectors[t][0]);
                 const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_vectors[t][0]);
@@ -207,9 +207,10 @@ public:
         }
         else {
             DCRTPolyType tmp(m_params, m_format);
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-            for (size_t i = 0; i < size; ++i)
-                tmp.m_vectors[i] = m_vectors[i].PlusNoCheck(rhs.m_vectors[i]);
+            uint64_t towers{m_vectors.size()};
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(towers))
+            for (size_t t = 0; t < towers; ++t)
+                tmp.m_vectors[t] = m_vectors[t].PlusNoCheck(rhs.m_vectors[t]);
             return tmp;
         }
     }
@@ -234,7 +235,7 @@ public:
             const auto& params{m_params->GetParams()};
             uint64_t ringdm{m_params->GetRingDimension()};
             uint64_t towers{m_vectors.size()};
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(towers))
             for (uint64_t t = 0; t < towers; ++t) {
                 uint64_t* res       = reinterpret_cast<uint64_t*>(&tmp.m_vectors[t][0]);
                 const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_vectors[t][0]);
@@ -246,9 +247,10 @@ public:
         }
         else {
             DCRTPolyType tmp(m_params, m_format);
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-            for (size_t i = 0; i < size; ++i)
-                tmp.m_vectors[i] = m_vectors[i].TimesNoCheck(rhs.m_vectors[i]);
+            uint64_t towers{m_vectors.size()};
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(towers))
+            for (size_t t = 0; t < towers; ++t)
+                tmp.m_vectors[t] = m_vectors[t].TimesNoCheck(rhs.m_vectors[t]);
             return tmp;
         }
     }
