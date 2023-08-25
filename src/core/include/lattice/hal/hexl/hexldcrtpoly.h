@@ -154,15 +154,14 @@ public:
                 intel::hexl::EltwiseMultMod(op1, op1, op2, ringdm,
                                             params[t]->GetModulus().template ConvertToInt<uint64_t>(), 1);
             }
-            return *this;
         }
         else {
             size_t towers{m_vectors.size()};
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(towers))
             for (size_t t = 0; t < towers; ++t)
                 m_vectors[t] *= rhs.m_vectors[t];
-            return *this;
         }
+        return *this;
     }
     DCRTPolyType& operator*=(const Integer& rhs) override;
     DCRTPolyType& operator*=(const NativeInteger& rhs) override;

@@ -216,13 +216,9 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Plus(const typename VecType::Intege
     HexlPolyImpl<VecType> tmp(m_params, m_format);
     if (m_format == Format::COEFFICIENT) {
         tmp.SetValues((*m_values).ModAddAtIndex(0, element), m_format);
+        return tmp;
     }
-    else {
-#if 0
-#else
-        tmp.SetValues((*m_values).ModAdd(element), m_format);
-#endif
-    }
+    tmp.SetValues((*m_values).ModAdd(element), m_format);
     return tmp;
 }
 
@@ -236,10 +232,7 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Minus(const typename VecType::Integ
 template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Times(const typename VecType::Integer& element) const {
     HexlPolyImpl<VecType> tmp(m_params, m_format);
-#if 0
-#else
     tmp.SetValues((*m_values).ModMul(element), m_format);
-#endif
     return tmp;
 }
 
@@ -297,10 +290,15 @@ template <typename VecType>
 HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator+=(const HexlPolyImpl& element) {
     if (!m_values)
         m_values = std::make_unique<VecType>(m_params->GetRingDimension(), m_params->GetModulus());
-#if 0
-#else
-    m_values->ModAddEq(*element.m_values);
-#endif
+    if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
+        uint64_t* op1       = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
+        const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&element[0]);
+        intel::hexl::EltwiseAddMod(op1, op1, op2, m_params->GetRingDimension(),
+                                   m_params->GetModulus().template ConvertToInt<uint64_t>());
+    }
+    else {
+        m_values->ModAddEq(*element.m_values);
+    }
     return *this;
 }
 
@@ -314,14 +312,18 @@ HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator-=(const HexlPolyImpl& ele
 
 template <typename VecType>
 void HexlPolyImpl<VecType>::AddILElementOne() {
-#if 0
-#else
-    static const Integer ONE(1);
-    usint vlen{m_params->GetRingDimension()};
-    const auto& m{m_params->GetModulus()};
-    for (usint i = 0; i < vlen; ++i)
-        (*m_values)[i].ModAddFastEq(ONE, m);
-#endif
+    if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
+        uint64_t* op1 = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
+        intel::hexl::EltwiseAddMod(op1, op1, 1, m_params->GetRingDimension(),
+                                   m_params->GetModulus().template ConvertToInt<uint64_t>());
+    }
+    else {
+        static const Integer ONE(1);
+        usint vlen{m_params->GetRingDimension()};
+        const auto& m{m_params->GetModulus()};
+        for (usint i = 0; i < vlen; ++i)
+            (*m_values)[i].ModAddFastEq(ONE, m);
+    }
 }
 
 template <typename VecType>
@@ -411,10 +413,7 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::ModByTwo() const {
 template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Mod(const Integer& modulus) const {
     HexlPolyImpl<VecType> tmp(m_params, m_format);
-#if 0
-#else
     tmp.SetValues((*m_values).Mod(modulus), m_format);
-#endif
     return tmp;
 }
 
@@ -423,10 +422,21 @@ void HexlPolyImpl<VecType>::SwitchModulus(const Integer& modulus, const Integer&
                                           const Integer& rootOfUnityArb) {
     if (!m_values)
         OPENFHE_THROW(not_available_error, "Poly SwitchModulus on empty values");
-#if 0
-#else
-    m_values->SwitchModulus(modulus);
-#endif
+    if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
+        uint64_t om{m_values->GetModulus().ConvertToInt()};
+        m_values->SetModulus(modulus);
+        uint64_t nm{modulus.ConvertToInt()};
+        uint64_t* op1 = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
+        if (nm > om)
+            intel::hexl::EltwiseCmpAdd(op1, op1, m_params->GetRingDimension(), intel::hexl::CMPINT::NLE, (om >> 1),
+                                       nm - om);
+        else
+            intel::hexl::EltwiseCmpSubMod(op1, op1, m_params->GetRingDimension(), nm, intel::hexl::CMPINT::NLE,
+                                          (om >> 1), (om - nm) % nm);
+    }
+    else {
+        m_values->SwitchModulus(modulus);
+    }
     auto c{m_params->GetCyclotomicOrder()};
     m_params = std::make_shared<HexlPolyImpl::Params>(c, modulus, rootOfUnity, modulusArb, rootOfUnityArb);
 }
