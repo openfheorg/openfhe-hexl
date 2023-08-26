@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2023, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -37,9 +37,9 @@
 
 #ifdef WITH_INTEL_HEXL
 
-#include "math/hal/intnat-hexl/ubintnathexl.h"
-#include "math/hal/intnat-hexl/mubintvecnathexl.h"
-#include "math/hal/intnat-hexl/transformnathexl.h"
+    #include "math/hal/intnat-hexl/ubintnathexl.h"
+    #include "math/hal/intnat-hexl/mubintvecnathexl.h"
+    #include "math/hal/intnat-hexl/transformnathexl.h"
 
 namespace lbcrypto {
 
@@ -50,9 +50,9 @@ using NativeVector  = intnathexl::NativeVector;
 
 #else
 
-#include "math/hal/intnat/ubintnat.h"
-#include "math/hal/intnat/mubintvecnat.h"
-#include "math/hal/intnat/transformnat.h"
+    #include "math/hal/intnat/ubintnat.h"
+    #include "math/hal/intnat/mubintvecnat.h"
+    #include "math/hal/intnat/transformnat.h"
 
 namespace lbcrypto {
 

@@ -1,0 +1,892 @@
+<!DOCTYPE html><html><head><!-- --></head><body style="background-color:#000000;color:#808080">
+<tr>
+<b>poly-hexl-benchmark-4k</b><br>
+<tr>
+<b></b><br>
+<tr>
+<b>CPU Model Intel(R) Xeon(R) Platinum 8360Y CPU @ 2.40GHz</b><br>
+<tr>
+<b>g++ version (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0</b><br>
+<tr>
+<b>clang version version 10.0.0-4ubuntu1 </b><br>
+<tr>
+<b></b><br>
+<table>
+<tr>
+<td style="text-align:center"><b>BENCHMARK</b></td>	<td style="text-align:center"><b>CLANG13-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>CLANG17-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG16-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG12-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG11-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG10-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG9-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG15-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG14-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC11-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC10-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC9-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	</tr>
+<tr>
+<td style="text-align:center"><b>Native_add</b></td>	<td style="text-align:center">1.93</td>
+<td style="text-align:center">1.74</td>
+<td style="color:#0000ff;text-align:center">1.10919</td>
+<td style="text-align:center">1.8</td>
+<td style="text-align:center">1.07222</td>
+<td style="text-align:center">1.83</td>
+<td style="text-align:center">1.05465</td>
+<td style="text-align:center">1.73</td>
+<td style="color:#00ff00;text-align:center">1.11561</td>
+<td style="text-align:center">1.66</td>
+<td style="color:#00ff00;text-align:center">1.16265</td>
+<td style="text-align:center">2.12</td>
+<td style="text-align:center">0.910377</td>
+<td style="text-align:center">1.65</td>
+<td style="color:#00ff00;text-align:center">1.1697</td>
+<td style="text-align:center">1.98</td>
+<td style="text-align:center">0.974747</td>
+<td style="text-align:center">2.27</td>
+<td style="color:#ff0000;text-align:center">0.85022</td>
+<td style="text-align:center">2.19</td>
+<td style="color:#ff0000;text-align:center">0.881279</td>
+<td style="text-align:center">2.3</td>
+<td style="color:#ff0000;text-align:center">0.83913</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_add/towers:1</b></td>	<td style="text-align:center">2.05</td>
+<td style="text-align:center">1.87</td>
+<td style="text-align:center">1.09626</td>
+<td style="text-align:center">1.94</td>
+<td style="text-align:center">1.0567</td>
+<td style="text-align:center">1.83</td>
+<td style="color:#00ff00;text-align:center">1.12022</td>
+<td style="text-align:center">1.89</td>
+<td style="text-align:center">1.08466</td>
+<td style="text-align:center">1.75</td>
+<td style="color:#00ff00;text-align:center">1.17143</td>
+<td style="text-align:center">2.39</td>
+<td style="color:#ff0000;text-align:center">0.857741</td>
+<td style="text-align:center">1.76</td>
+<td style="color:#00ff00;text-align:center">1.16477</td>
+<td style="text-align:center">2.02</td>
+<td style="text-align:center">1.01485</td>
+<td style="text-align:center">2.19</td>
+<td style="text-align:center">0.936073</td>
+<td style="text-align:center">2.1</td>
+<td style="text-align:center">0.97619</td>
+<td style="text-align:center">2.29</td>
+<td style="color:#ff0000;text-align:center">0.895197</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_add/towers:2</b></td>	<td style="text-align:center">4.27</td>
+<td style="text-align:center">4.14</td>
+<td style="text-align:center">1.0314</td>
+<td style="text-align:center">4.23</td>
+<td style="text-align:center">1.00946</td>
+<td style="text-align:center">4.11</td>
+<td style="text-align:center">1.03893</td>
+<td style="text-align:center">3.71</td>
+<td style="color:#00ff00;text-align:center">1.15094</td>
+<td style="text-align:center">3.84</td>
+<td style="color:#00ff00;text-align:center">1.11198</td>
+<td style="text-align:center">5.08</td>
+<td style="color:#ff0000;text-align:center">0.840551</td>
+<td style="text-align:center">3.99</td>
+<td style="text-align:center">1.07018</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1.01425</td>
+<td style="text-align:center">4.51</td>
+<td style="text-align:center">0.946785</td>
+<td style="text-align:center">4.34</td>
+<td style="text-align:center">0.983871</td>
+<td style="text-align:center">4.64</td>
+<td style="text-align:center">0.920259</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_add/towers:4</b></td>	<td style="text-align:center">10.8</td>
+<td style="text-align:center">10.6</td>
+<td style="text-align:center">1.01887</td>
+<td style="text-align:center">10.7</td>
+<td style="text-align:center">1.00935</td>
+<td style="text-align:center">10.5</td>
+<td style="text-align:center">1.02857</td>
+<td style="text-align:center">10.4</td>
+<td style="color:#00ff00;text-align:center">1.03846</td>
+<td style="text-align:center">9.93</td>
+<td style="color:#00ff00;text-align:center">1.08761</td>
+<td style="text-align:center">12</td>
+<td style="color:#ff0000;text-align:center">0.9</td>
+<td style="text-align:center">10.5</td>
+<td style="text-align:center">1.02857</td>
+<td style="text-align:center">10.5</td>
+<td style="text-align:center">1.02857</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">0.981818</td>
+<td style="text-align:center">10.9</td>
+<td style="text-align:center">0.990826</td>
+<td style="text-align:center">11.3</td>
+<td style="text-align:center">0.955752</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_add/towers:8</b></td>	<td style="text-align:center">25.4</td>
+<td style="text-align:center">26.1</td>
+<td style="text-align:center">0.97318</td>
+<td style="text-align:center">25.9</td>
+<td style="text-align:center">0.980695</td>
+<td style="text-align:center">25.8</td>
+<td style="text-align:center">0.984496</td>
+<td style="text-align:center">26.5</td>
+<td style="text-align:center">0.958491</td>
+<td style="text-align:center">23.9</td>
+<td style="color:#00ff00;text-align:center">1.06276</td>
+<td style="text-align:center">28.2</td>
+<td style="color:#ff0000;text-align:center">0.900709</td>
+<td style="text-align:center">25.6</td>
+<td style="text-align:center">0.992187</td>
+<td style="text-align:center">26.2</td>
+<td style="text-align:center">0.969466</td>
+<td style="text-align:center">26.4</td>
+<td style="text-align:center">0.962121</td>
+<td style="text-align:center">26.8</td>
+<td style="color:#ff0000;text-align:center">0.947761</td>
+<td style="text-align:center">27.2</td>
+<td style="color:#ff0000;text-align:center">0.933824</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>Native_mul</b></td>	<td style="text-align:center">2.27</td>
+<td style="text-align:center">2.22</td>
+<td style="text-align:center">1.02252</td>
+<td style="text-align:center">2.34</td>
+<td style="text-align:center">0.970085</td>
+<td style="text-align:center">2.32</td>
+<td style="text-align:center">0.978448</td>
+<td style="text-align:center">2.12</td>
+<td style="color:#00ff00;text-align:center">1.07075</td>
+<td style="text-align:center">2.22</td>
+<td style="text-align:center">1.02252</td>
+<td style="text-align:center">2.09</td>
+<td style="color:#00ff00;text-align:center">1.08612</td>
+<td style="text-align:center">2.11</td>
+<td style="color:#00ff00;text-align:center">1.07583</td>
+<td style="text-align:center">2.37</td>
+<td style="color:#ff0000;text-align:center">0.957806</td>
+<td style="text-align:center">2.47</td>
+<td style="color:#ff0000;text-align:center">0.919028</td>
+<td style="text-align:center">2.29</td>
+<td style="text-align:center">0.991266</td>
+<td style="text-align:center">2.17</td>
+<td style="color:#00ff00;text-align:center">1.04608</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_mul/towers:1</b></td>	<td style="text-align:center">2.33</td>
+<td style="text-align:center">2.26</td>
+<td style="color:#00ff00;text-align:center">1.03097</td>
+<td style="text-align:center">2.36</td>
+<td style="text-align:center">0.987288</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#00ff00;text-align:center">1.03556</td>
+<td style="text-align:center">2.29</td>
+<td style="color:#00ff00;text-align:center">1.01747</td>
+<td style="text-align:center">2.24</td>
+<td style="color:#00ff00;text-align:center">1.04018</td>
+<td style="text-align:center">2.29</td>
+<td style="color:#00ff00;text-align:center">1.01747</td>
+<td style="text-align:center">2.19</td>
+<td style="color:#00ff00;text-align:center">1.06393</td>
+<td style="text-align:center">2.33</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2.5</td>
+<td style="color:#ff0000;text-align:center">0.932</td>
+<td style="text-align:center">2.29</td>
+<td style="color:#00ff00;text-align:center">1.01747</td>
+<td style="text-align:center">2.37</td>
+<td style="text-align:center">0.983122</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_mul/towers:2</b></td>	<td style="text-align:center">5.15</td>
+<td style="text-align:center">5.05</td>
+<td style="color:#00ff00;text-align:center">1.0198</td>
+<td style="text-align:center">5.05</td>
+<td style="color:#00ff00;text-align:center">1.0198</td>
+<td style="text-align:center">5.07</td>
+<td style="color:#00ff00;text-align:center">1.01578</td>
+<td style="text-align:center">4.93</td>
+<td style="color:#00ff00;text-align:center">1.04462</td>
+<td style="text-align:center">5.01</td>
+<td style="color:#00ff00;text-align:center">1.02794</td>
+<td style="text-align:center">5.12</td>
+<td style="color:#00ff00;text-align:center">1.00586</td>
+<td style="text-align:center">5.13</td>
+<td style="color:#00ff00;text-align:center">1.0039</td>
+<td style="text-align:center">5.19</td>
+<td style="text-align:center">0.992293</td>
+<td style="text-align:center">5.52</td>
+<td style="color:#ff0000;text-align:center">0.932971</td>
+<td style="text-align:center">5.11</td>
+<td style="color:#00ff00;text-align:center">1.00783</td>
+<td style="text-align:center">5.15</td>
+<td style="color:#00ff00;text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_mul/towers:4</b></td>	<td style="text-align:center">13</td>
+<td style="text-align:center">12.7</td>
+<td style="color:#00ff00;text-align:center">1.02362</td>
+<td style="text-align:center">12.7</td>
+<td style="color:#00ff00;text-align:center">1.02362</td>
+<td style="text-align:center">12.7</td>
+<td style="color:#00ff00;text-align:center">1.02362</td>
+<td style="text-align:center">12.8</td>
+<td style="color:#00ff00;text-align:center">1.01562</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1.06557</td>
+<td style="text-align:center">12.8</td>
+<td style="color:#00ff00;text-align:center">1.01562</td>
+<td style="text-align:center">12.7</td>
+<td style="color:#00ff00;text-align:center">1.02362</td>
+<td style="text-align:center">12.8</td>
+<td style="color:#00ff00;text-align:center">1.01562</td>
+<td style="text-align:center">13.6</td>
+<td style="color:#ff0000;text-align:center">0.955882</td>
+<td style="text-align:center">13.3</td>
+<td style="color:#ff0000;text-align:center">0.977444</td>
+<td style="text-align:center">13.1</td>
+<td style="color:#ff0000;text-align:center">0.992366</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_mul/towers:8</b></td>	<td style="text-align:center">27.7</td>
+<td style="text-align:center">27.8</td>
+<td style="text-align:center">0.996403</td>
+<td style="text-align:center">27.6</td>
+<td style="color:#00ff00;text-align:center">1.00362</td>
+<td style="text-align:center">28</td>
+<td style="text-align:center">0.989286</td>
+<td style="text-align:center">28.2</td>
+<td style="color:#ff0000;text-align:center">0.98227</td>
+<td style="text-align:center">26.4</td>
+<td style="color:#00ff00;text-align:center">1.04924</td>
+<td style="text-align:center">27.7</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">27.8</td>
+<td style="text-align:center">0.996403</td>
+<td style="text-align:center">28</td>
+<td style="text-align:center">0.989286</td>
+<td style="text-align:center">29.1</td>
+<td style="color:#ff0000;text-align:center">0.95189</td>
+<td style="text-align:center">29.5</td>
+<td style="color:#ff0000;text-align:center">0.938983</td>
+<td style="text-align:center">28.1</td>
+<td style="color:#ff0000;text-align:center">0.985765</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>Native_ntt</b></td>	<td style="text-align:center">12.8</td>
+<td style="text-align:center">6.68</td>
+<td style="color:#00ff00;text-align:center">1.91617</td>
+<td style="text-align:center">12.9</td>
+<td style="color:#ff0000;text-align:center">0.992248</td>
+<td style="text-align:center">6.72</td>
+<td style="color:#00ff00;text-align:center">1.90476</td>
+<td style="text-align:center">10.8</td>
+<td style="color:#0000ff;text-align:center">1.18518</td>
+<td style="text-align:center">7.48</td>
+<td style="color:#0000ff;text-align:center">1.71123</td>
+<td style="text-align:center">11.9</td>
+<td style="text-align:center">1.07563</td>
+<td style="text-align:center">12.1</td>
+<td style="text-align:center">1.05785</td>
+<td style="text-align:center">13</td>
+<td style="color:#ff0000;text-align:center">0.984615</td>
+<td style="text-align:center">10.9</td>
+<td style="color:#0000ff;text-align:center">1.17431</td>
+<td style="text-align:center">7.31</td>
+<td style="color:#0000ff;text-align:center">1.75103</td>
+<td style="text-align:center">12.5</td>
+<td style="color:#ff0000;text-align:center">1.024</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_ntt/towers:1</b></td>	<td style="text-align:center">12.9</td>
+<td style="text-align:center">6.64</td>
+<td style="color:#00ff00;text-align:center">1.94277</td>
+<td style="text-align:center">12.9</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">6.62</td>
+<td style="color:#00ff00;text-align:center">1.94864</td>
+<td style="text-align:center">10.8</td>
+<td style="color:#0000ff;text-align:center">1.19444</td>
+<td style="text-align:center">7.32</td>
+<td style="color:#0000ff;text-align:center">1.76229</td>
+<td style="text-align:center">11.7</td>
+<td style="color:#0000ff;text-align:center">1.10256</td>
+<td style="text-align:center">12.3</td>
+<td style="color:#ff0000;text-align:center">1.04878</td>
+<td style="text-align:center">12.9</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">11.2</td>
+<td style="color:#0000ff;text-align:center">1.15179</td>
+<td style="text-align:center">7.7</td>
+<td style="color:#0000ff;text-align:center">1.67532</td>
+<td style="text-align:center">12.5</td>
+<td style="color:#ff0000;text-align:center">1.032</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_ntt/towers:2</b></td>	<td style="text-align:center">26.2</td>
+<td style="text-align:center">18.1</td>
+<td style="color:#0000ff;text-align:center">1.44751</td>
+<td style="text-align:center">21.3</td>
+<td style="color:#0000ff;text-align:center">1.23005</td>
+<td style="text-align:center">13.9</td>
+<td style="color:#00ff00;text-align:center">1.88489</td>
+<td style="text-align:center">18.6</td>
+<td style="color:#0000ff;text-align:center">1.4086</td>
+<td style="text-align:center">18.6</td>
+<td style="color:#0000ff;text-align:center">1.4086</td>
+<td style="text-align:center">23.6</td>
+<td style="color:#0000ff;text-align:center">1.11017</td>
+<td style="text-align:center">25</td>
+<td style="color:#ff0000;text-align:center">1.048</td>
+<td style="text-align:center">26</td>
+<td style="color:#ff0000;text-align:center">1.00769</td>
+<td style="text-align:center">23.7</td>
+<td style="color:#0000ff;text-align:center">1.10549</td>
+<td style="text-align:center">14.9</td>
+<td style="color:#0000ff;text-align:center">1.75839</td>
+<td style="text-align:center">25.3</td>
+<td style="color:#ff0000;text-align:center">1.03557</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_ntt/towers:4</b></td>	<td style="text-align:center">52</td>
+<td style="text-align:center">36.9</td>
+<td style="color:#0000ff;text-align:center">1.40921</td>
+<td style="text-align:center">48.4</td>
+<td style="text-align:center">1.07438</td>
+<td style="text-align:center">33.4</td>
+<td style="color:#00ff00;text-align:center">1.55689</td>
+<td style="text-align:center">42</td>
+<td style="color:#0000ff;text-align:center">1.23809</td>
+<td style="text-align:center">38</td>
+<td style="color:#0000ff;text-align:center">1.36842</td>
+<td style="text-align:center">43.3</td>
+<td style="color:#0000ff;text-align:center">1.20092</td>
+<td style="text-align:center">51</td>
+<td style="color:#ff0000;text-align:center">1.01961</td>
+<td style="text-align:center">46.8</td>
+<td style="color:#0000ff;text-align:center">1.11111</td>
+<td style="text-align:center">44</td>
+<td style="color:#0000ff;text-align:center">1.18182</td>
+<td style="text-align:center">34.5</td>
+<td style="color:#00ff00;text-align:center">1.50725</td>
+<td style="text-align:center">51.6</td>
+<td style="color:#ff0000;text-align:center">1.00775</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_ntt/towers:8</b></td>	<td style="text-align:center">104</td>
+<td style="text-align:center">84.1</td>
+<td style="color:#0000ff;text-align:center">1.23662</td>
+<td style="text-align:center">95.2</td>
+<td style="text-align:center">1.09244</td>
+<td style="text-align:center">81.2</td>
+<td style="color:#0000ff;text-align:center">1.28079</td>
+<td style="text-align:center">86.4</td>
+<td style="color:#0000ff;text-align:center">1.2037</td>
+<td style="text-align:center">81.8</td>
+<td style="color:#0000ff;text-align:center">1.27139</td>
+<td style="text-align:center">89</td>
+<td style="color:#0000ff;text-align:center">1.16854</td>
+<td style="text-align:center">103</td>
+<td style="color:#ff0000;text-align:center">1.00971</td>
+<td style="text-align:center">99.1</td>
+<td style="color:#ff0000;text-align:center">1.04944</td>
+<td style="text-align:center">91</td>
+<td style="color:#0000ff;text-align:center">1.14286</td>
+<td style="text-align:center">74.6</td>
+<td style="color:#00ff00;text-align:center">1.3941</td>
+<td style="text-align:center">98.5</td>
+<td style="color:#ff0000;text-align:center">1.05584</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>Native_intt</b></td>	<td style="text-align:center">10.8</td>
+<td style="text-align:center">10.2</td>
+<td style="text-align:center">1.05882</td>
+<td style="text-align:center">11.3</td>
+<td style="color:#ff0000;text-align:center">0.955752</td>
+<td style="text-align:center">10.6</td>
+<td style="text-align:center">1.01887</td>
+<td style="text-align:center">10.7</td>
+<td style="text-align:center">1.00935</td>
+<td style="text-align:center">10.8</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">10.6</td>
+<td style="text-align:center">1.01887</td>
+<td style="text-align:center">10.7</td>
+<td style="text-align:center">1.00935</td>
+<td style="text-align:center">7.21</td>
+<td style="color:#00ff00;text-align:center">1.49792</td>
+<td style="text-align:center">7.76</td>
+<td style="color:#0000ff;text-align:center">1.39175</td>
+<td style="text-align:center">7.93</td>
+<td style="color:#0000ff;text-align:center">1.36192</td>
+<td style="text-align:center">7.81</td>
+<td style="color:#0000ff;text-align:center">1.38284</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_intt/towers:1</b></td>	<td style="text-align:center">10.7</td>
+<td style="text-align:center">10.6</td>
+<td style="text-align:center">1.00943</td>
+<td style="text-align:center">11.3</td>
+<td style="color:#ff0000;text-align:center">0.946903</td>
+<td style="text-align:center">10.6</td>
+<td style="text-align:center">1.00943</td>
+<td style="text-align:center">10.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">7.25</td>
+<td style="color:#00ff00;text-align:center">1.47586</td>
+<td style="text-align:center">10.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">10.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">7.11</td>
+<td style="color:#00ff00;text-align:center">1.50492</td>
+<td style="text-align:center">7.74</td>
+<td style="color:#0000ff;text-align:center">1.38243</td>
+<td style="text-align:center">7.76</td>
+<td style="color:#0000ff;text-align:center">1.37887</td>
+<td style="text-align:center">10.9</td>
+<td style="color:#ff0000;text-align:center">0.981651</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_intt/towers:2</b></td>	<td style="text-align:center">22.1</td>
+<td style="text-align:center">21.2</td>
+<td style="color:#ff0000;text-align:center">1.04245</td>
+<td style="text-align:center">18.8</td>
+<td style="color:#0000ff;text-align:center">1.17553</td>
+<td style="text-align:center">17.9</td>
+<td style="color:#00ff00;text-align:center">1.23464</td>
+<td style="text-align:center">21.4</td>
+<td style="color:#ff0000;text-align:center">1.03271</td>
+<td style="text-align:center">18.2</td>
+<td style="color:#00ff00;text-align:center">1.21429</td>
+<td style="text-align:center">21.5</td>
+<td style="color:#ff0000;text-align:center">1.02791</td>
+<td style="text-align:center">18.1</td>
+<td style="color:#00ff00;text-align:center">1.22099</td>
+<td style="text-align:center">19</td>
+<td style="color:#0000ff;text-align:center">1.16316</td>
+<td style="text-align:center">18.8</td>
+<td style="color:#0000ff;text-align:center">1.17553</td>
+<td style="text-align:center">18.8</td>
+<td style="color:#0000ff;text-align:center">1.17553</td>
+<td style="text-align:center">19.2</td>
+<td style="color:#0000ff;text-align:center">1.15104</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_intt/towers:4</b></td>	<td style="text-align:center">51</td>
+<td style="text-align:center">36.9</td>
+<td style="color:#00ff00;text-align:center">1.38211</td>
+<td style="text-align:center">43.6</td>
+<td style="color:#0000ff;text-align:center">1.16972</td>
+<td style="text-align:center">36.7</td>
+<td style="color:#00ff00;text-align:center">1.38965</td>
+<td style="text-align:center">37.7</td>
+<td style="color:#0000ff;text-align:center">1.35278</td>
+<td style="text-align:center">37</td>
+<td style="color:#00ff00;text-align:center">1.37838</td>
+<td style="text-align:center">43.8</td>
+<td style="color:#0000ff;text-align:center">1.16438</td>
+<td style="text-align:center">46.8</td>
+<td style="color:#ff0000;text-align:center">1.08974</td>
+<td style="text-align:center">41.6</td>
+<td style="color:#0000ff;text-align:center">1.22596</td>
+<td style="text-align:center">41</td>
+<td style="color:#0000ff;text-align:center">1.2439</td>
+<td style="text-align:center">35.8</td>
+<td style="color:#00ff00;text-align:center">1.42458</td>
+<td style="text-align:center">41.8</td>
+<td style="color:#0000ff;text-align:center">1.2201</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_intt/towers:8</b></td>	<td style="text-align:center">102</td>
+<td style="text-align:center">78.3</td>
+<td style="color:#0000ff;text-align:center">1.30268</td>
+<td style="text-align:center">86</td>
+<td style="color:#0000ff;text-align:center">1.18605</td>
+<td style="text-align:center">74.2</td>
+<td style="color:#00ff00;text-align:center">1.37466</td>
+<td style="text-align:center">81.7</td>
+<td style="color:#0000ff;text-align:center">1.24847</td>
+<td style="text-align:center">77.9</td>
+<td style="color:#00ff00;text-align:center">1.30937</td>
+<td style="text-align:center">84.1</td>
+<td style="color:#0000ff;text-align:center">1.21284</td>
+<td style="text-align:center">95.9</td>
+<td style="color:#ff0000;text-align:center">1.06361</td>
+<td style="text-align:center">86.6</td>
+<td style="color:#0000ff;text-align:center">1.17783</td>
+<td style="text-align:center">82.5</td>
+<td style="color:#0000ff;text-align:center">1.23636</td>
+<td style="text-align:center">74.6</td>
+<td style="color:#00ff00;text-align:center">1.36729</td>
+<td style="text-align:center">84.4</td>
+<td style="color:#0000ff;text-align:center">1.20853</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>Native_MulEq</b></td>	<td style="text-align:center">1.63</td>
+<td style="text-align:center">1.45</td>
+<td style="color:#0000ff;text-align:center">1.12414</td>
+<td style="text-align:center">1.66</td>
+<td style="color:#ff0000;text-align:center">0.981928</td>
+<td style="text-align:center">1.34</td>
+<td style="color:#00ff00;text-align:center">1.21642</td>
+<td style="text-align:center">1.63</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.28</td>
+<td style="color:#00ff00;text-align:center">1.27344</td>
+<td style="text-align:center">1.36</td>
+<td style="color:#0000ff;text-align:center">1.19853</td>
+<td style="text-align:center">1.63</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.32</td>
+<td style="color:#00ff00;text-align:center">1.23485</td>
+<td style="text-align:center">1.32</td>
+<td style="color:#00ff00;text-align:center">1.23485</td>
+<td style="text-align:center">1.35</td>
+<td style="color:#0000ff;text-align:center">1.20741</td>
+<td style="text-align:center">1.61</td>
+<td style="color:#ff0000;text-align:center">1.01242</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_MulEq/towers:1</b></td>	<td style="text-align:center">1.45</td>
+<td style="text-align:center">1.45</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.31</td>
+<td style="color:#00ff00;text-align:center">1.10687</td>
+<td style="text-align:center">1.45</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.44</td>
+<td style="color:#ff0000;text-align:center">1.00694</td>
+<td style="text-align:center">1.48</td>
+<td style="color:#ff0000;text-align:center">0.97973</td>
+<td style="text-align:center">1.46</td>
+<td style="color:#ff0000;text-align:center">0.993151</td>
+<td style="text-align:center">1.45</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.3</td>
+<td style="color:#00ff00;text-align:center">1.11539</td>
+<td style="text-align:center">1.5</td>
+<td style="color:#ff0000;text-align:center">0.966667</td>
+<td style="text-align:center">1.33</td>
+<td style="color:#00ff00;text-align:center">1.09023</td>
+<td style="text-align:center">1.31</td>
+<td style="color:#00ff00;text-align:center">1.10687</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_MulEq/towers:2</b></td>	<td style="text-align:center">2.94</td>
+<td style="text-align:center">2.96</td>
+<td style="text-align:center">0.993243</td>
+<td style="text-align:center">2.77</td>
+<td style="text-align:center">1.06137</td>
+<td style="text-align:center">2.78</td>
+<td style="text-align:center">1.05755</td>
+<td style="text-align:center">2.86</td>
+<td style="text-align:center">1.02797</td>
+<td style="text-align:center">2.82</td>
+<td style="text-align:center">1.04255</td>
+<td style="text-align:center">2.92</td>
+<td style="text-align:center">1.00685</td>
+<td style="text-align:center">2.85</td>
+<td style="text-align:center">1.03158</td>
+<td style="text-align:center">2.81</td>
+<td style="text-align:center">1.04626</td>
+<td style="text-align:center">2.88</td>
+<td style="text-align:center">1.02083</td>
+<td style="text-align:center">2.89</td>
+<td style="text-align:center">1.0173</td>
+<td style="text-align:center">2.89</td>
+<td style="text-align:center">1.0173</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_MulEq/towers:4</b></td>	<td style="text-align:center">6.48</td>
+<td style="text-align:center">6.11</td>
+<td style="text-align:center">1.06056</td>
+<td style="text-align:center">6.3</td>
+<td style="text-align:center">1.02857</td>
+<td style="text-align:center">6.14</td>
+<td style="text-align:center">1.05537</td>
+<td style="text-align:center">6.14</td>
+<td style="text-align:center">1.05537</td>
+<td style="text-align:center">6.01</td>
+<td style="text-align:center">1.0782</td>
+<td style="text-align:center">6.5</td>
+<td style="text-align:center">0.996923</td>
+<td style="text-align:center">6.31</td>
+<td style="text-align:center">1.02694</td>
+<td style="text-align:center">6.26</td>
+<td style="text-align:center">1.03514</td>
+<td style="text-align:center">6.51</td>
+<td style="text-align:center">0.995392</td>
+<td style="text-align:center">6.09</td>
+<td style="text-align:center">1.06404</td>
+<td style="text-align:center">6.56</td>
+<td style="text-align:center">0.987805</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_MulEq/towers:8</b></td>	<td style="text-align:center">13</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.03175</td>
+<td style="text-align:center">12.5</td>
+<td style="text-align:center">1.04</td>
+<td style="text-align:center">12.4</td>
+<td style="text-align:center">1.04839</td>
+<td style="text-align:center">12.7</td>
+<td style="text-align:center">1.02362</td>
+<td style="text-align:center">12.3</td>
+<td style="text-align:center">1.05691</td>
+<td style="text-align:center">12.7</td>
+<td style="text-align:center">1.02362</td>
+<td style="text-align:center">12.8</td>
+<td style="text-align:center">1.01562</td>
+<td style="text-align:center">12.8</td>
+<td style="text-align:center">1.01562</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">12.5</td>
+<td style="text-align:center">1.04</td>
+<td style="text-align:center">13.3</td>
+<td style="text-align:center">0.977444</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>Native_SubEq</b></td>	<td style="text-align:center">1.36</td>
+<td style="text-align:center">1.13</td>
+<td style="color:#00ff00;text-align:center">1.20354</td>
+<td style="text-align:center">1.2</td>
+<td style="color:#00ff00;text-align:center">1.13333</td>
+<td style="text-align:center">1.37</td>
+<td style="text-align:center">0.992701</td>
+<td style="text-align:center">1.32</td>
+<td style="text-align:center">1.0303</td>
+<td style="text-align:center">1.29</td>
+<td style="text-align:center">1.05426</td>
+<td style="text-align:center">1.63</td>
+<td style="color:#ffff00;text-align:center">0.834356</td>
+<td style="text-align:center">1.18</td>
+<td style="color:#00ff00;text-align:center">1.15254</td>
+<td style="text-align:center">1.3</td>
+<td style="text-align:center">1.04615</td>
+<td style="text-align:center">19.6</td>
+<td style="color:#ff0000;text-align:center">0.069388</td>
+<td style="text-align:center">18.9</td>
+<td style="color:#ff0000;text-align:center">0.071958</td>
+<td style="text-align:center">18.6</td>
+<td style="color:#ffff00;text-align:center">0.073118</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_SubEq/towers:1</b></td>	<td style="text-align:center">1.33</td>
+<td style="text-align:center">0.937</td>
+<td style="color:#0000ff;text-align:center">1.41942</td>
+<td style="text-align:center">0.938</td>
+<td style="color:#0000ff;text-align:center">1.41791</td>
+<td style="text-align:center">1.33</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.19</td>
+<td style="color:#00ff00;text-align:center">1.11765</td>
+<td style="text-align:center">1.2</td>
+<td style="color:#00ff00;text-align:center">1.10833</td>
+<td style="text-align:center">1.64</td>
+<td style="color:#ffff00;text-align:center">0.810976</td>
+<td style="text-align:center">1.15</td>
+<td style="color:#00ff00;text-align:center">1.15652</td>
+<td style="text-align:center">1.33</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">19.6</td>
+<td style="color:#ff0000;text-align:center">0.067857</td>
+<td style="text-align:center">18.7</td>
+<td style="color:#ff0000;text-align:center">0.071123</td>
+<td style="text-align:center">18.6</td>
+<td style="color:#ffff00;text-align:center">0.071505</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_SubEq/towers:2</b></td>	<td style="text-align:center">2.75</td>
+<td style="text-align:center">2.13</td>
+<td style="color:#00ff00;text-align:center">1.29108</td>
+<td style="text-align:center">2.17</td>
+<td style="color:#00ff00;text-align:center">1.26728</td>
+<td style="text-align:center">2.73</td>
+<td style="text-align:center">1.00733</td>
+<td style="text-align:center">2.39</td>
+<td style="color:#0000ff;text-align:center">1.15063</td>
+<td style="text-align:center">2.34</td>
+<td style="color:#0000ff;text-align:center">1.17521</td>
+<td style="text-align:center">3.39</td>
+<td style="color:#ffff00;text-align:center">0.811209</td>
+<td style="text-align:center">2.2</td>
+<td style="color:#00ff00;text-align:center">1.25</td>
+<td style="text-align:center">2.73</td>
+<td style="text-align:center">1.00733</td>
+<td style="text-align:center">39.2</td>
+<td style="color:#ff0000;text-align:center">0.070153</td>
+<td style="text-align:center">37.5</td>
+<td style="color:#ff0000;text-align:center">0.073333</td>
+<td style="text-align:center">37.2</td>
+<td style="color:#ffff00;text-align:center">0.073925</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_SubEq/towers:4</b></td>	<td style="text-align:center">5.98</td>
+<td style="text-align:center">5.19</td>
+<td style="color:#00ff00;text-align:center">1.15222</td>
+<td style="text-align:center">5.22</td>
+<td style="color:#00ff00;text-align:center">1.14559</td>
+<td style="text-align:center">5.97</td>
+<td style="text-align:center">1.00168</td>
+<td style="text-align:center">5.58</td>
+<td style="text-align:center">1.07168</td>
+<td style="text-align:center">5.47</td>
+<td style="text-align:center">1.09324</td>
+<td style="text-align:center">7.3</td>
+<td style="color:#ffff00;text-align:center">0.819178</td>
+<td style="text-align:center">5.15</td>
+<td style="color:#00ff00;text-align:center">1.16117</td>
+<td style="text-align:center">5.95</td>
+<td style="text-align:center">1.00504</td>
+<td style="text-align:center">78.6</td>
+<td style="color:#ff0000;text-align:center">0.076081</td>
+<td style="text-align:center">75.2</td>
+<td style="color:#ff0000;text-align:center">0.079521</td>
+<td style="text-align:center">74.8</td>
+<td style="color:#ff0000;text-align:center">0.079947</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_SubEq/towers:8</b></td>	<td style="text-align:center">12</td>
+<td style="text-align:center">10.6</td>
+<td style="color:#00ff00;text-align:center">1.13207</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1.14286</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">11.3</td>
+<td style="text-align:center">1.06195</td>
+<td style="text-align:center">10.8</td>
+<td style="color:#00ff00;text-align:center">1.11111</td>
+<td style="text-align:center">14.7</td>
+<td style="color:#ffff00;text-align:center">0.816327</td>
+<td style="text-align:center">10.4</td>
+<td style="color:#00ff00;text-align:center">1.15385</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">157</td>
+<td style="color:#ff0000;text-align:center">0.076433</td>
+<td style="text-align:center">151</td>
+<td style="color:#ff0000;text-align:center">0.07947</td>
+<td style="text-align:center">150</td>
+<td style="color:#ff0000;text-align:center">0.08</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>Native_AddEq</b></td>	<td style="text-align:center">1.06</td>
+<td style="text-align:center">1.01</td>
+<td style="text-align:center">1.0495</td>
+<td style="text-align:center">1.06</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.945</td>
+<td style="color:#0000ff;text-align:center">1.12169</td>
+<td style="text-align:center">1.05</td>
+<td style="text-align:center">1.00952</td>
+<td style="text-align:center">0.773</td>
+<td style="color:#00ff00;text-align:center">1.37128</td>
+<td style="text-align:center">1.35</td>
+<td style="color:#ff0000;text-align:center">0.785185</td>
+<td style="text-align:center">1.04</td>
+<td style="text-align:center">1.01923</td>
+<td style="text-align:center">1.01</td>
+<td style="text-align:center">1.0495</td>
+<td style="text-align:center">1.1</td>
+<td style="text-align:center">0.963636</td>
+<td style="text-align:center">1.27</td>
+<td style="color:#ffff00;text-align:center">0.834646</td>
+<td style="text-align:center">1.27</td>
+<td style="color:#ffff00;text-align:center">0.834646</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_AddEq/towers:1</b></td>	<td style="text-align:center">0.987</td>
+<td style="text-align:center">0.812</td>
+<td style="color:#00ff00;text-align:center">1.21552</td>
+<td style="text-align:center">0.834</td>
+<td style="color:#00ff00;text-align:center">1.18345</td>
+<td style="text-align:center">0.981</td>
+<td style="text-align:center">1.00612</td>
+<td style="text-align:center">1.02</td>
+<td style="text-align:center">0.967647</td>
+<td style="text-align:center">0.996</td>
+<td style="text-align:center">0.990964</td>
+<td style="text-align:center">1.36</td>
+<td style="color:#ff0000;text-align:center">0.725735</td>
+<td style="text-align:center">1.02</td>
+<td style="text-align:center">0.967647</td>
+<td style="text-align:center">0.842</td>
+<td style="color:#00ff00;text-align:center">1.17221</td>
+<td style="text-align:center">1.12</td>
+<td style="color:#ffff00;text-align:center">0.88125</td>
+<td style="text-align:center">1.02</td>
+<td style="text-align:center">0.967647</td>
+<td style="text-align:center">1.11</td>
+<td style="color:#ffff00;text-align:center">0.889189</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_AddEq/towers:2</b></td>	<td style="text-align:center">2.09</td>
+<td style="text-align:center">1.92</td>
+<td style="text-align:center">1.08854</td>
+<td style="text-align:center">1.96</td>
+<td style="text-align:center">1.06633</td>
+<td style="text-align:center">1.92</td>
+<td style="text-align:center">1.08854</td>
+<td style="text-align:center">2.02</td>
+<td style="text-align:center">1.03465</td>
+<td style="text-align:center">1.79</td>
+<td style="color:#00ff00;text-align:center">1.1676</td>
+<td style="text-align:center">2.92</td>
+<td style="color:#ff0000;text-align:center">0.715753</td>
+<td style="text-align:center">2.03</td>
+<td style="text-align:center">1.02956</td>
+<td style="text-align:center">1.93</td>
+<td style="text-align:center">1.0829</td>
+<td style="text-align:center">2.45</td>
+<td style="color:#ffff00;text-align:center">0.853061</td>
+<td style="text-align:center">2.37</td>
+<td style="color:#ffff00;text-align:center">0.881857</td>
+<td style="text-align:center">2.48</td>
+<td style="color:#ffff00;text-align:center">0.842742</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_AddEq/towers:4</b></td>	<td style="text-align:center">5.05</td>
+<td style="text-align:center">5.04</td>
+<td style="text-align:center">1.00198</td>
+<td style="text-align:center">4.98</td>
+<td style="text-align:center">1.01406</td>
+<td style="text-align:center">4.99</td>
+<td style="text-align:center">1.01202</td>
+<td style="text-align:center">5.04</td>
+<td style="text-align:center">1.00198</td>
+<td style="text-align:center">4.71</td>
+<td style="color:#00ff00;text-align:center">1.07219</td>
+<td style="text-align:center">6.48</td>
+<td style="color:#ff0000;text-align:center">0.779321</td>
+<td style="text-align:center">4.96</td>
+<td style="text-align:center">1.01815</td>
+<td style="text-align:center">5.01</td>
+<td style="text-align:center">1.00798</td>
+<td style="text-align:center">5.51</td>
+<td style="text-align:center">0.916515</td>
+<td style="text-align:center">5.26</td>
+<td style="text-align:center">0.960076</td>
+<td style="text-align:center">5.73</td>
+<td style="color:#ffff00;text-align:center">0.881326</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>DCRT_AddEq/towers:8</b></td>	<td style="text-align:center">10.2</td>
+<td style="text-align:center">10.3</td>
+<td style="text-align:center">0.990291</td>
+<td style="text-align:center">10.1</td>
+<td style="text-align:center">1.0099</td>
+<td style="text-align:center">10.2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">10.3</td>
+<td style="text-align:center">0.990291</td>
+<td style="text-align:center">9.6</td>
+<td style="color:#00ff00;text-align:center">1.0625</td>
+<td style="text-align:center">12.3</td>
+<td style="color:#ff0000;text-align:center">0.829268</td>
+<td style="text-align:center">10.1</td>
+<td style="text-align:center">1.0099</td>
+<td style="text-align:center">10.3</td>
+<td style="text-align:center">0.990291</td>
+<td style="text-align:center">11.1</td>
+<td style="text-align:center">0.918919</td>
+<td style="text-align:center">10.7</td>
+<td style="text-align:center">0.953271</td>
+<td style="text-align:center">11.5</td>
+<td style="color:#ffff00;text-align:center">0.886957</td>
+</tr>
+</body></html>

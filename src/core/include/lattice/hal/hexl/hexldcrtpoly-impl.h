@@ -125,6 +125,44 @@ void HexlDCRTPolyImpl<VecType>::ModReduce(const NativeInteger& t, const std::vec
 }
 
 template <typename VecType>
+std::vector<HexlDCRTPolyImpl<VecType>> HexlDCRTPolyImpl<VecType>::PowersOfBase(usint baseBits) const {
+    // prepare for the calculations by gathering a big integer version of each of the little moduli
+    std::vector<Integer> mods;
+    mods.reserve(m_params->GetParams().size());
+    for (auto& p : m_params->GetParams())
+        mods.emplace_back(p->GetModulus());
+
+    usint nBits    = m_params->GetModulus().GetLengthForBase(2);
+    usint nWindows = nBits / baseBits;
+    if (nBits % baseBits != 0)
+        nWindows++;
+
+    std::vector<HexlDCRTPolyImpl<VecType>> result;
+    result.reserve(nWindows);
+    Integer twoPow(1);
+    size_t towers{m_vectors.size()};
+    [[maybe_unused]] uint64_t ringdm{this->GetRingDimension()};
+    for (usint i = 0; i < nWindows; ++i) {
+        HexlDCRTPolyImpl<VecType> x(m_params, m_format);
+        twoPow.LShiftEq(baseBits);
+
+        for (size_t t = 0; t < towers; ++t) {
+            if constexpr (HEXL_MUL_ENABLE) {
+                uint64_t* res       = reinterpret_cast<uint64_t*>(&x.m_vectors[t][0]);
+                const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_vectors[t][0]);
+                intel::hexl::EltwiseFMAMod(res, op1, twoPow.Mod(mods[t]).ConvertToInt(), nullptr, ringdm,
+                                           mods[t].ConvertToInt(), 1);
+            }
+            else {
+                x.m_vectors[t] = m_vectors[t] * twoPow.Mod(mods[t]).ConvertToInt();
+            }
+        }
+        result.push_back(std::move(x));
+    }
+    return result;
+}
+
+template <typename VecType>
 HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const PolyLargeType& rhs,
                                             const std::shared_ptr<HexlDCRTPolyImpl::Params>& params) noexcept
     : HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(params, rhs.GetFormat(), true) {
@@ -386,44 +424,6 @@ std::vector<HexlDCRTPolyImpl<VecType>> HexlDCRTPolyImpl<VecType>::CRTDecompose(u
             currentDCRTPoly.SwitchFormat();
             result[j + arrWindows[i]] = std::move(currentDCRTPoly);
         }
-    }
-    return result;
-}
-
-template <typename VecType>
-std::vector<HexlDCRTPolyImpl<VecType>> HexlDCRTPolyImpl<VecType>::PowersOfBase(usint baseBits) const {
-    // prepare for the calculations by gathering a big integer version of each of the little moduli
-    std::vector<Integer> mods;
-    mods.reserve(m_params->GetParams().size());
-    for (auto& p : m_params->GetParams())
-        mods.emplace_back(p->GetModulus());
-
-    usint nBits    = m_params->GetModulus().GetLengthForBase(2);
-    usint nWindows = nBits / baseBits;
-    if (nBits % baseBits != 0)
-        nWindows++;
-
-    std::vector<HexlDCRTPolyImpl<VecType>> result;
-    result.reserve(nWindows);
-    Integer twoPow(1);
-    size_t towers{m_vectors.size()};
-    [[maybe_unused]] uint64_t ringdm{this->GetRingDimension()};
-    for (usint i = 0; i < nWindows; ++i) {
-        HexlDCRTPolyImpl<VecType> x(m_params, m_format);
-        twoPow.LShiftEq(baseBits);
-
-        for (size_t t = 0; t < towers; ++t) {
-            if constexpr (HEXL_MUL_ENABLE) {
-                uint64_t* res       = reinterpret_cast<uint64_t*>(&x.m_vectors[t][0]);
-                const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_vectors[t][0]);
-                intel::hexl::EltwiseFMAMod(res, op1, twoPow.Mod(mods[t]).ConvertToInt(), nullptr, ringdm,
-                                           mods[t].ConvertToInt(), 1);
-            }
-            else {
-                x.m_vectors[t] = m_vectors[t] * twoPow.Mod(mods[t]).ConvertToInt();
-            }
-        }
-        result.push_back(std::move(x));
     }
     return result;
 }

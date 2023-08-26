@@ -35,19 +35,18 @@
 
 // TODO: remove this file. will require changes to openfhe-development
 
-
 #include "config_core.h"
 #ifdef WITH_INTEL_HEXL
 
-#include "math/math-hal.h"
-#include "math/hal/transform.h"
+    #include "math/math-hal.h"
+    #include "math/hal/transform.h"
 
-#include "math/binaryuniformgenerator-impl.h"
-#include "math/discretegaussiangenerator-impl.h"
-#include "math/discreteuniformgenerator-impl.h"
-#include "math/matrix-impl.h"
-#include "math/nbtheory-impl.h"
-#include "math/ternaryuniformgenerator-impl.h"
+    #include "math/binaryuniformgenerator-impl.h"
+    #include "math/discretegaussiangenerator-impl.h"
+    #include "math/discreteuniformgenerator-impl.h"
+    #include "math/matrix-impl.h"
+    #include "math/nbtheory-impl.h"
+    #include "math/ternaryuniformgenerator-impl.h"
 
 namespace lbcrypto {
 
