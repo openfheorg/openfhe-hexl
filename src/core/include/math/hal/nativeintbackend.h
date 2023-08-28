@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2023, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -29,22 +29,17 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-/*
-  This file contains the definitions for the HEXL accelerated native math backend
- */
+#ifndef __NATIVEINTBACKEND_H__
+#define __NATIVEINTBACKEND_H__
 
-#ifndef SRC_CORE_INCLUDE_MATH_HAL_INTNATHEXL_BACKENDNAT_H_
-#define SRC_CORE_INCLUDE_MATH_HAL_INTNATHEXL_BACKENDNAT_H_
-
-#include "math/hal/intnat-hexl/ubintnathexl.h"
-#include "math/hal/intnat-hexl/mubintvecnathexl.h"
-#include "math/hal/intnat-hexl/transformnathexl.h"
-
+#include "config_core.h"
 #include "math/hal/basicint.h"
 
-#if NATIVEINT != 64
-    #error "Building with HEXL optimizations requires NATIVE_SIZE == 64"
-#endif
+#ifdef WITH_INTEL_HEXL
+
+    #include "math/hal/intnat-hexl/ubintnathexl.h"
+    #include "math/hal/intnat-hexl/mubintvecnathexl.h"
+    #include "math/hal/intnat-hexl/transformnathexl.h"
 
 namespace lbcrypto {
 
@@ -53,8 +48,22 @@ using NativeVector  = intnathexl::NativeVector;
 
 }  // namespace lbcrypto
 
-// Promote to global namespace
+#else
+
+    #include "math/hal/intnat/ubintnat.h"
+    #include "math/hal/intnat/mubintvecnat.h"
+    #include "math/hal/intnat/transformnat.h"
+
+namespace lbcrypto {
+
+using NativeInteger = intnat::NativeInteger;
+using NativeVector  = intnat::NativeVector;
+
+}  // namespace lbcrypto
+
+#endif
+
 using NativeInteger = lbcrypto::NativeInteger;
 using NativeVector  = lbcrypto::NativeVector;
 
-#endif /* SRC_CORE_INCLUDE_MATH_HAL_INTNATHEXL_BACKENDNAT_H_ */
+#endif

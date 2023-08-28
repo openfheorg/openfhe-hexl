@@ -22,9 +22,15 @@ for variant in $VARIANTS; do
   gnu9=`echo $variant    | grep "GCC9"    | wc -l`
   gnu10=`echo $variant   | grep "GCC10"   | wc -l`
   gnu11=`echo $variant   | grep "GCC11"   | wc -l`
+  clang9=`echo $variant | grep "CLANG9" | wc -l`
   clang10=`echo $variant | grep "CLANG10" | wc -l`
   clang11=`echo $variant | grep "CLANG11" | wc -l`
   clang12=`echo $variant | grep "CLANG12" | wc -l`
+  clang13=`echo $variant | grep "CLANG13" | wc -l`
+  clang14=`echo $variant | grep "CLANG14" | wc -l`
+  clang15=`echo $variant | grep "CLANG15" | wc -l`
+  clang16=`echo $variant | grep "CLANG16" | wc -l`
+  clang17=`echo $variant | grep "CLANG17" | wc -l`
   if [ $gnu9 -eq 1 ]; then
     cc=/usr/bin/gcc-9
     cxx=/usr/bin/g++-9
@@ -34,6 +40,9 @@ for variant in $VARIANTS; do
   elif [ $gnu11 -eq 1 ]; then
     cc=/usr/bin/gcc-11
     cxx=/usr/bin/g++-11
+  elif [ $clang9 -eq 1 ]; then
+    cc=/usr/bin/clang-9
+    cxx=/usr/bin/clang++-9
   elif [ $clang10 -eq 1 ]; then
     cc=/usr/bin/clang-10
     cxx=/usr/bin/clang++-10
@@ -43,9 +52,24 @@ for variant in $VARIANTS; do
   elif [ $clang12 -eq 1 ]; then
     cc=/usr/bin/clang-12
     cxx=/usr/bin/clang++-12
+  elif [ $clang13 -eq 1 ]; then
+    cc=/usr/bin/clang-13
+    cxx=/usr/bin/clang++-13
+  elif [ $clang14 -eq 1 ]; then
+    cc=/usr/bin/clang-14
+    cxx=/usr/bin/clang++-14
+  elif [ $clang15 -eq 1 ]; then
+    cc=/usr/bin/clang-15
+    cxx=/usr/bin/clang++-15
+  elif [ $clang16 -eq 1 ]; then
+    cc=/usr/bin/clang-16
+    cxx=/usr/bin/clang++-16
+  elif [ $clang17 -eq 1 ]; then
+    cc=/usr/bin/clang-17
+    cxx=/usr/bin/clang++-17
   else
     abort "unable to parse compiler options"
-  fi 
+  fi
 
   # transform variant to proper cmake flags
   cmake_flags=`echo $variant | sed 's/^/WITH_/;                   \
@@ -56,9 +80,7 @@ for variant in $VARIANTS; do
                                     s/-/=/g;                      \
                                     s/WITH/-DWITH/g'`
 
-  echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
-
-  # no commans in directory names
+  # no commas in directory names
   variant_dir=`echo $variant_orig | sed 's/,/-/g'`
   separator
   echo "Cloning openfhe-configurator for variant $variant_orig"
@@ -67,7 +89,11 @@ for variant in $VARIANTS; do
   cd $variant_dir || abort "clone of variant $variant_orig failed."
   git checkout $OPENFHE_CONFIGURATOR_BRANCH
 
-  ./scripts/stage-openfhe-development-hexl.sh
+  CC=$cc CXX=$cxx ./scripts/stage-openfhe-development-hexl.sh
+
+  cmake_flags=$cmake_flags" -DINTEL_HEXL_HINT_DIR="$ROOT/$variant_dir"/openfhe-staging"
+  echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
+
   CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags ./scripts/build-openfhe-development.sh || abort "build of variant $variant_orig failed."
 done
 

@@ -1,9 +1,11 @@
 #!/bin/sh
 
-OPENFHE_DEST_REPO="../../openfhe-staging/openfhe-development"
-OPENFHE_HEXL_SOURCE_REPO="."
+. ./scripts/vars.sh
 
-if [ ! -f /usr/local/lib/libhexl.so.1.2.5 ]; then
+OPENFHE_DEST_REPO="../../openfhe-staging/openfhe-development"
+INTEL_HEXL_INSTALL_DIR="../../openfhe-staging"
+
+if [ ! -f $INTEL_HEXL_INSTALL_DIR/lib/libhexl.so.1.2.5 ]; then
   pwd
   ./scripts/build-hexl.sh
 fi
@@ -14,6 +16,7 @@ if [ ! -d $OPENFHE_DEST_REPO ]; then
   exit 1
 fi
 
+cp CMakeLists.txt $OPENFHE_DEST_REPO
 cp -r src $OPENFHE_DEST_REPO
 cp -r benchmark $OPENFHE_DEST_REPO
 cp -r third-party $OPENFHE_DEST_REPO

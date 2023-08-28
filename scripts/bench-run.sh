@@ -14,6 +14,8 @@ lscpu             > lscpu.out
 
 date              > start
 
+echo $VARIANTS
+
 for variant in $VARIANTS; do
   variant=`echo $variant | sed 's/,/-/g'`
   for benchmark in $BENCHMARKS; do

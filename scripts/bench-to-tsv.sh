@@ -79,3 +79,9 @@ for benchmark in $BENCHMARKS; do
   sed -r 's/(\s+)?\S+//3' < $benchmark.tsv > $benchmark.tsv3
   mv $benchmark.tsv3 $benchmark.tsv
 done
+
+if [ -f $RUNDIR/utils/bench-color-html ]; then
+  for benchmark in $BENCHMARKS; do
+    ./utils/bench-color-html 0.1 < $benchmark.tsv > $benchmark.html
+  done
+fi
