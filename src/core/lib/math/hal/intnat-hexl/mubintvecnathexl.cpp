@@ -265,7 +265,7 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModEq(const IntegerType&
 template <class IntegerType>
 NativeVectorT<IntegerType>::NativeVectorT(usint length, const IntegerType& modulus,
                                           std::initializer_list<std::string> rhs) noexcept
-    : m_modulus{modulus}, m_data(length) {
+    : m_data(length), m_modulus{modulus} {
     const size_t len = (rhs.size() < m_data.size()) ? rhs.size() : m_data.size();
     for (size_t i = 0; i < len; ++i)
         m_data[i] = *(rhs.begin() + i) % m_modulus;
@@ -274,7 +274,7 @@ NativeVectorT<IntegerType>::NativeVectorT(usint length, const IntegerType& modul
 template <class IntegerType>
 NativeVectorT<IntegerType>::NativeVectorT(usint length, const IntegerType& modulus,
                                           std::initializer_list<uint64_t> rhs) noexcept
-    : m_modulus{modulus}, m_data(length) {
+    : m_data(length), m_modulus{modulus} {
     const size_t len = (rhs.size() < m_data.size()) ? rhs.size() : m_data.size();
     for (size_t i = 0; i < len; ++i)
         m_data[i].m_value = BasicInt(*(rhs.begin() + i)) % m_modulus.m_value;

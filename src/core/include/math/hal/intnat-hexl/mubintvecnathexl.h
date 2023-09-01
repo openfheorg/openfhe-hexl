@@ -52,12 +52,6 @@
 #include <utility>
 #include <vector>
 
-// the following should be set to 1 in order to have native vector use block
-// allocations then determine if you want dynamic or static allocations by
-// settingdefining STAIC_POOLS on line 24 of
-// xallocator.cpp
-#define BLOCK_VECTOR_ALLOCATION 0  // set to 1 to use block allocations
-
 /**
  * @namespace intnathexl
  * The namespace of intnathexl
@@ -120,14 +114,8 @@ template <class IntegerType>
 class NativeVectorT final : public lbcrypto::BigVectorInterface<NativeVectorT<IntegerType>, IntegerType>,
                             public lbcrypto::Serializable {
 private:
-    // m_modulus stores the internal modulus of the vector.
+    intel::hexl::AlignedVector64<IntegerType> m_data{};
     IntegerType m_modulus{0};
-
-#if BLOCK_VECTOR_ALLOCATION != 1
-    std::vector<IntegerType> m_data{};
-#else
-    xvector<IntegerType> m_data;
-#endif
 
     // function to check if the index is a valid index.
     bool IndexCheck(size_t length) const {
@@ -145,15 +133,15 @@ public:
 
     explicit constexpr NativeVectorT(usint length) noexcept : m_data(length) {}
 
-    constexpr NativeVectorT(usint length, const IntegerType& modulus) noexcept : m_modulus{modulus}, m_data(length) {}
+    constexpr NativeVectorT(usint length, const IntegerType& modulus) noexcept : m_data(length), m_modulus{modulus} {}
 
     constexpr NativeVectorT(usint length, const IntegerType& modulus, const IntegerType& val) noexcept
-        : m_modulus{modulus}, m_data(length, val.Mod(modulus)) {}
+        : m_data(length, val.Mod(modulus)), m_modulus{modulus} {}
 
-    constexpr NativeVectorT(const NativeVectorT& v) noexcept : m_modulus{v.m_modulus}, m_data{v.m_data} {}
+    constexpr NativeVectorT(const NativeVectorT& v) noexcept : m_data{v.m_data}, m_modulus{v.m_modulus} {}
 
     constexpr NativeVectorT(NativeVectorT&& v) noexcept
-        : m_modulus{std::move(v.m_modulus)}, m_data{std::move(v.m_data)} {}
+        : m_data{std::move(v.m_data)}, m_modulus{std::move(v.m_modulus)} {}
 
     NativeVectorT(usint length, const IntegerType& modulus, std::initializer_list<std::string> rhs) noexcept;
 
