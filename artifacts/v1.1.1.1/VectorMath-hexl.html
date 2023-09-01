@@ -1,0 +1,2617 @@
+<!DOCTYPE html><html><head><!-- --></head><body style="background-color:#000000;color:#808080">
+<tr>
+<b>VectorMath-hexl</b><br>
+<tr>
+<b></b><br>
+<tr>
+<b>CPU Model Intel(R) Xeon(R) Platinum 8360Y CPU @ 2.40GHz</b><br>
+<tr>
+<b>g++ version (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0</b><br>
+<tr>
+<b>clang version version 10.0.0-4ubuntu1 </b><br>
+<tr>
+<b></b><br>
+<table>
+<tr>
+<td style="text-align:center"><b>BENCHMARK</b></td>	<td style="text-align:center"><b>CLANG13-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>CLANG17-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG16-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG12-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG11-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG10-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG9-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG15-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG14-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC11-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC10-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC9-OPENMP-OFF-NATIVEOPT-ON-HEXL-ON</b></td>	<td style="text-align:center"><b>speedup</b></td>	</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddNoCheckEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.126</td>
+<td style="text-align:center">0.115</td>
+<td style="color:#00ff00;text-align:center">1.09565</td>
+<td style="text-align:center">0.126</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.126</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.126</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.126</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.113</td>
+<td style="color:#00ff00;text-align:center">1.11504</td>
+<td style="text-align:center">0.126</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.126</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.176</td>
+<td style="color:#ffff00;text-align:center">0.715909</td>
+<td style="text-align:center">0.174</td>
+<td style="color:#ffff00;text-align:center">0.724138</td>
+<td style="text-align:center">0.256</td>
+<td style="color:#ff0000;text-align:center">0.492188</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddNoCheckEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">0.63</td>
+<td style="text-align:center">0.582</td>
+<td style="color:#00ff00;text-align:center">1.08247</td>
+<td style="text-align:center">0.63</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.635</td>
+<td style="text-align:center">0.992126</td>
+<td style="text-align:center">0.635</td>
+<td style="text-align:center">0.992126</td>
+<td style="text-align:center">0.636</td>
+<td style="text-align:center">0.990566</td>
+<td style="text-align:center">0.565</td>
+<td style="color:#00ff00;text-align:center">1.11504</td>
+<td style="text-align:center">0.627</td>
+<td style="text-align:center">1.00479</td>
+<td style="text-align:center">0.636</td>
+<td style="text-align:center">0.990566</td>
+<td style="text-align:center">0.771</td>
+<td style="color:#ffff00;text-align:center">0.817121</td>
+<td style="text-align:center">0.764</td>
+<td style="color:#ffff00;text-align:center">0.824607</td>
+<td style="text-align:center">1</td>
+<td style="color:#ff0000;text-align:center">0.63</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddNoCheckEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">3.03</td>
+<td style="text-align:center">3.01</td>
+<td style="color:#00ff00;text-align:center">1.00665</td>
+<td style="text-align:center">3.02</td>
+<td style="color:#00ff00;text-align:center">1.00331</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3</td>
+<td style="color:#00ff00;text-align:center">1.01</td>
+<td style="text-align:center">3.02</td>
+<td style="color:#00ff00;text-align:center">1.00331</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.09</td>
+<td style="color:#00ff00;text-align:center">0.980583</td>
+<td style="text-align:center">3.04</td>
+<td style="color:#00ff00;text-align:center">0.996711</td>
+<td style="text-align:center">3.99</td>
+<td style="color:#ff0000;text-align:center">0.759398</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddNoCheckEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">6.03</td>
+<td style="text-align:center">6</td>
+<td style="color:#00ff00;text-align:center">1.005</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.02</td>
+<td style="color:#00ff00;text-align:center">1.00166</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">0.978896</td>
+<td style="text-align:center">6.07</td>
+<td style="color:#00ff00;text-align:center">0.99341</td>
+<td style="text-align:center">7.97</td>
+<td style="color:#ff0000;text-align:center">0.756587</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulNoCheckEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.981</td>
+<td style="text-align:center">0.979</td>
+<td style="color:#ff0000;text-align:center">1.00204</td>
+<td style="text-align:center">0.979</td>
+<td style="color:#ff0000;text-align:center">1.00204</td>
+<td style="text-align:center">0.981</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.03</td>
+<td style="color:#ff0000;text-align:center">0.952427</td>
+<td style="text-align:center">1.03</td>
+<td style="color:#ff0000;text-align:center">0.952427</td>
+<td style="text-align:center">0.979</td>
+<td style="color:#ff0000;text-align:center">1.00204</td>
+<td style="text-align:center">0.98</td>
+<td style="color:#ff0000;text-align:center">1.00102</td>
+<td style="text-align:center">0.98</td>
+<td style="color:#ff0000;text-align:center">1.00102</td>
+<td style="text-align:center">0.915</td>
+<td style="color:#00ff00;text-align:center">1.07213</td>
+<td style="text-align:center">0.92</td>
+<td style="color:#00ff00;text-align:center">1.0663</td>
+<td style="text-align:center">0.922</td>
+<td style="color:#00ff00;text-align:center">1.06399</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulNoCheckEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">3.64</td>
+<td style="text-align:center">3.63</td>
+<td style="text-align:center">1.00276</td>
+<td style="text-align:center">3.62</td>
+<td style="text-align:center">1.00553</td>
+<td style="text-align:center">3.63</td>
+<td style="text-align:center">1.00276</td>
+<td style="text-align:center">3.83</td>
+<td style="text-align:center">0.950392</td>
+<td style="text-align:center">3.83</td>
+<td style="text-align:center">0.950392</td>
+<td style="text-align:center">3.63</td>
+<td style="text-align:center">1.00276</td>
+<td style="text-align:center">3.63</td>
+<td style="text-align:center">1.00276</td>
+<td style="text-align:center">3.63</td>
+<td style="text-align:center">1.00276</td>
+<td style="text-align:center">3.54</td>
+<td style="text-align:center">1.02825</td>
+<td style="text-align:center">3.56</td>
+<td style="text-align:center">1.02247</td>
+<td style="text-align:center">3.57</td>
+<td style="text-align:center">1.01961</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulNoCheckEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">14.7</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">15.7</td>
+<td style="text-align:center">0.936306</td>
+<td style="text-align:center">15.7</td>
+<td style="text-align:center">0.936306</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.7</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulNoCheckEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">29.3</td>
+<td style="text-align:center">29.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">29.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">29.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">31.4</td>
+<td style="text-align:center">0.933121</td>
+<td style="text-align:center">31.4</td>
+<td style="text-align:center">0.933121</td>
+<td style="text-align:center">29.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">29.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">29.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">29.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">29.4</td>
+<td style="text-align:center">0.996599</td>
+<td style="text-align:center">29.4</td>
+<td style="text-align:center">0.996599</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Up<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.364</td>
+<td style="text-align:center">0.29</td>
+<td style="color:#0000ff;text-align:center">1.25517</td>
+<td style="text-align:center">0.291</td>
+<td style="color:#0000ff;text-align:center">1.25086</td>
+<td style="text-align:center">0.282</td>
+<td style="color:#0000ff;text-align:center">1.29078</td>
+<td style="text-align:center">0.282</td>
+<td style="color:#0000ff;text-align:center">1.29078</td>
+<td style="text-align:center">0.291</td>
+<td style="color:#0000ff;text-align:center">1.25086</td>
+<td style="text-align:center">0.248</td>
+<td style="color:#00ff00;text-align:center">1.46774</td>
+<td style="text-align:center">0.295</td>
+<td style="color:#0000ff;text-align:center">1.2339</td>
+<td style="text-align:center">0.32</td>
+<td style="color:#0000ff;text-align:center">1.1375</td>
+<td style="text-align:center">0.383</td>
+<td style="text-align:center">0.950392</td>
+<td style="text-align:center">0.424</td>
+<td style="color:#ff0000;text-align:center">0.858491</td>
+<td style="text-align:center">0.349</td>
+<td style="text-align:center">1.04298</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Up<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.63</td>
+<td style="text-align:center">1.39</td>
+<td style="color:#0000ff;text-align:center">1.17266</td>
+<td style="text-align:center">1.4</td>
+<td style="color:#0000ff;text-align:center">1.16429</td>
+<td style="text-align:center">1.3</td>
+<td style="color:#00ff00;text-align:center">1.25385</td>
+<td style="text-align:center">1.3</td>
+<td style="color:#00ff00;text-align:center">1.25385</td>
+<td style="text-align:center">1.39</td>
+<td style="color:#0000ff;text-align:center">1.17266</td>
+<td style="text-align:center">1.31</td>
+<td style="color:#00ff00;text-align:center">1.24428</td>
+<td style="text-align:center">1.38</td>
+<td style="color:#0000ff;text-align:center">1.18116</td>
+<td style="text-align:center">1.46</td>
+<td style="color:#0000ff;text-align:center">1.11644</td>
+<td style="text-align:center">1.54</td>
+<td style="text-align:center">1.05844</td>
+<td style="text-align:center">1.71</td>
+<td style="color:#ff0000;text-align:center">0.953216</td>
+<td style="text-align:center">1.54</td>
+<td style="text-align:center">1.05844</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Up<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">6.86</td>
+<td style="text-align:center">5.93</td>
+<td style="color:#0000ff;text-align:center">1.15683</td>
+<td style="text-align:center">5.93</td>
+<td style="color:#0000ff;text-align:center">1.15683</td>
+<td style="text-align:center">5.71</td>
+<td style="color:#00ff00;text-align:center">1.2014</td>
+<td style="text-align:center">5.71</td>
+<td style="color:#00ff00;text-align:center">1.2014</td>
+<td style="text-align:center">5.86</td>
+<td style="color:#00ff00;text-align:center">1.17065</td>
+<td style="text-align:center">5.63</td>
+<td style="color:#00ff00;text-align:center">1.21847</td>
+<td style="text-align:center">5.97</td>
+<td style="color:#0000ff;text-align:center">1.14908</td>
+<td style="text-align:center">6.19</td>
+<td style="color:#0000ff;text-align:center">1.10824</td>
+<td style="text-align:center">6.39</td>
+<td style="text-align:center">1.07355</td>
+<td style="text-align:center">7.05</td>
+<td style="color:#ff0000;text-align:center">0.97305</td>
+<td style="text-align:center">6.39</td>
+<td style="text-align:center">1.07355</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Up<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">13.5</td>
+<td style="text-align:center">11.9</td>
+<td style="color:#0000ff;text-align:center">1.13445</td>
+<td style="text-align:center">11.6</td>
+<td style="color:#00ff00;text-align:center">1.16379</td>
+<td style="text-align:center">11.3</td>
+<td style="color:#00ff00;text-align:center">1.19469</td>
+<td style="text-align:center">11.3</td>
+<td style="color:#00ff00;text-align:center">1.19469</td>
+<td style="text-align:center">11.5</td>
+<td style="color:#00ff00;text-align:center">1.17391</td>
+<td style="text-align:center">11.1</td>
+<td style="color:#00ff00;text-align:center">1.21622</td>
+<td style="text-align:center">11.5</td>
+<td style="color:#00ff00;text-align:center">1.17391</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#0000ff;text-align:center">1.10656</td>
+<td style="text-align:center">12.8</td>
+<td style="text-align:center">1.05469</td>
+<td style="text-align:center">14</td>
+<td style="color:#ff0000;text-align:center">0.964286</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.07143</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Down<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.497</td>
+<td style="text-align:center">0.486</td>
+<td style="text-align:center">1.02263</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.514</td>
+<td style="text-align:center">0.966926</td>
+<td style="text-align:center">0.517</td>
+<td style="text-align:center">0.961315</td>
+<td style="text-align:center">0.456</td>
+<td style="color:#00ff00;text-align:center">1.08991</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.554</td>
+<td style="color:#ff0000;text-align:center">0.897112</td>
+<td style="text-align:center">0.559</td>
+<td style="color:#ff0000;text-align:center">0.889088</td>
+<td style="text-align:center">0.558</td>
+<td style="color:#ff0000;text-align:center">0.890681</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Down<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">2.03</td>
+<td style="text-align:center">2.04</td>
+<td style="color:#00ff00;text-align:center">0.995098</td>
+<td style="text-align:center">2.07</td>
+<td style="color:#00ff00;text-align:center">0.980676</td>
+<td style="text-align:center">2.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.11</td>
+<td style="color:#00ff00;text-align:center">0.962085</td>
+<td style="text-align:center">2.12</td>
+<td style="color:#00ff00;text-align:center">0.957547</td>
+<td style="text-align:center">2.02</td>
+<td style="color:#00ff00;text-align:center">1.00495</td>
+<td style="text-align:center">2.05</td>
+<td style="color:#00ff00;text-align:center">0.990244</td>
+<td style="text-align:center">2.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.26</td>
+<td style="color:#ff0000;text-align:center">0.89823</td>
+<td style="text-align:center">2.28</td>
+<td style="color:#ff0000;text-align:center">0.890351</td>
+<td style="text-align:center">2.28</td>
+<td style="color:#ff0000;text-align:center">0.890351</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Down<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">8.5</td>
+<td style="text-align:center">8.6</td>
+<td style="color:#00ff00;text-align:center">0.988372</td>
+<td style="text-align:center">8.7</td>
+<td style="color:#00ff00;text-align:center">0.977011</td>
+<td style="text-align:center">8.49</td>
+<td style="color:#00ff00;text-align:center">1.00118</td>
+<td style="text-align:center">8.82</td>
+<td style="text-align:center">0.963719</td>
+<td style="text-align:center">8.82</td>
+<td style="text-align:center">0.963719</td>
+<td style="text-align:center">8.37</td>
+<td style="color:#00ff00;text-align:center">1.01553</td>
+<td style="text-align:center">8.65</td>
+<td style="color:#00ff00;text-align:center">0.982659</td>
+<td style="text-align:center">8.61</td>
+<td style="color:#00ff00;text-align:center">0.987224</td>
+<td style="text-align:center">9.25</td>
+<td style="color:#ff0000;text-align:center">0.918919</td>
+<td style="text-align:center">9.46</td>
+<td style="color:#ff0000;text-align:center">0.89852</td>
+<td style="text-align:center">9.46</td>
+<td style="color:#ff0000;text-align:center">0.89852</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_SwitchModulus_Down<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">16.7</td>
+<td style="text-align:center">16.9</td>
+<td style="color:#00ff00;text-align:center">0.988166</td>
+<td style="text-align:center">17.2</td>
+<td style="color:#00ff00;text-align:center">0.97093</td>
+<td style="text-align:center">16.7</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">17.4</td>
+<td style="text-align:center">0.95977</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">0.965318</td>
+<td style="text-align:center">16.4</td>
+<td style="color:#00ff00;text-align:center">1.01829</td>
+<td style="text-align:center">17</td>
+<td style="color:#00ff00;text-align:center">0.982353</td>
+<td style="text-align:center">16.8</td>
+<td style="color:#00ff00;text-align:center">0.994048</td>
+<td style="text-align:center">18.2</td>
+<td style="color:#ff0000;text-align:center">0.917582</td>
+<td style="text-align:center">18.8</td>
+<td style="color:#ff0000;text-align:center">0.888298</td>
+<td style="text-align:center">18.7</td>
+<td style="color:#ff0000;text-align:center">0.893048</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Up<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.328</td>
+<td style="text-align:center">0.266</td>
+<td style="color:#0000ff;text-align:center">1.23308</td>
+<td style="text-align:center">0.257</td>
+<td style="color:#00ff00;text-align:center">1.27626</td>
+<td style="text-align:center">0.249</td>
+<td style="color:#00ff00;text-align:center">1.31727</td>
+<td style="text-align:center">0.25</td>
+<td style="color:#00ff00;text-align:center">1.312</td>
+<td style="text-align:center">0.267</td>
+<td style="color:#0000ff;text-align:center">1.22846</td>
+<td style="text-align:center">0.249</td>
+<td style="color:#00ff00;text-align:center">1.31727</td>
+<td style="text-align:center">0.258</td>
+<td style="color:#00ff00;text-align:center">1.27132</td>
+<td style="text-align:center">0.286</td>
+<td style="color:#0000ff;text-align:center">1.14685</td>
+<td style="text-align:center">0.281</td>
+<td style="color:#0000ff;text-align:center">1.16726</td>
+<td style="text-align:center">0.32</td>
+<td style="color:#ff0000;text-align:center">1.025</td>
+<td style="text-align:center">0.28</td>
+<td style="color:#0000ff;text-align:center">1.17143</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Up<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.21</td>
+<td style="text-align:center">1.14</td>
+<td style="text-align:center">1.0614</td>
+<td style="text-align:center">1.13</td>
+<td style="text-align:center">1.0708</td>
+<td style="text-align:center">1.16</td>
+<td style="text-align:center">1.0431</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1.05217</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1.05217</td>
+<td style="text-align:center">1.16</td>
+<td style="text-align:center">1.0431</td>
+<td style="text-align:center">1.13</td>
+<td style="text-align:center">1.0708</td>
+<td style="text-align:center">1.19</td>
+<td style="text-align:center">1.01681</td>
+<td style="text-align:center">1.16</td>
+<td style="text-align:center">1.0431</td>
+<td style="text-align:center">1.19</td>
+<td style="text-align:center">1.01681</td>
+<td style="text-align:center">1.16</td>
+<td style="text-align:center">1.0431</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Up<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">5.63</td>
+<td style="text-align:center">5.59</td>
+<td style="text-align:center">1.00716</td>
+<td style="text-align:center">5.58</td>
+<td style="text-align:center">1.00896</td>
+<td style="text-align:center">5.6</td>
+<td style="text-align:center">1.00536</td>
+<td style="text-align:center">5.61</td>
+<td style="text-align:center">1.00357</td>
+<td style="text-align:center">5.61</td>
+<td style="text-align:center">1.00357</td>
+<td style="text-align:center">5.97</td>
+<td style="text-align:center">0.943049</td>
+<td style="text-align:center">5.59</td>
+<td style="text-align:center">1.00716</td>
+<td style="text-align:center">5.6</td>
+<td style="text-align:center">1.00536</td>
+<td style="text-align:center">5.53</td>
+<td style="text-align:center">1.01808</td>
+<td style="text-align:center">5.6</td>
+<td style="text-align:center">1.00536</td>
+<td style="text-align:center">5.58</td>
+<td style="text-align:center">1.00896</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Up<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">11.5</td>
+<td style="text-align:center">10.9</td>
+<td style="text-align:center">1.05505</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">11.5</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">11.4</td>
+<td style="text-align:center">1.00877</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">10.8</td>
+<td style="text-align:center">1.06482</td>
+<td style="text-align:center">11.1</td>
+<td style="text-align:center">1.03604</td>
+<td style="text-align:center">10.9</td>
+<td style="text-align:center">1.05505</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Down<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.476</td>
+<td style="text-align:center">0.478</td>
+<td style="text-align:center">0.995816</td>
+<td style="text-align:center">0.475</td>
+<td style="text-align:center">1.00211</td>
+<td style="text-align:center">0.476</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.499</td>
+<td style="text-align:center">0.953908</td>
+<td style="text-align:center">0.499</td>
+<td style="text-align:center">0.953908</td>
+<td style="text-align:center">0.475</td>
+<td style="text-align:center">1.00211</td>
+<td style="text-align:center">0.474</td>
+<td style="text-align:center">1.00422</td>
+<td style="text-align:center">0.479</td>
+<td style="text-align:center">0.993737</td>
+<td style="text-align:center">0.496</td>
+<td style="text-align:center">0.959677</td>
+<td style="text-align:center">0.506</td>
+<td style="text-align:center">0.940711</td>
+<td style="text-align:center">0.508</td>
+<td style="text-align:center">0.937008</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Down<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.68</td>
+<td style="text-align:center">1.69</td>
+<td style="text-align:center">0.994083</td>
+<td style="text-align:center">1.7</td>
+<td style="text-align:center">0.988235</td>
+<td style="text-align:center">1.67</td>
+<td style="text-align:center">1.00599</td>
+<td style="text-align:center">1.77</td>
+<td style="text-align:center">0.949153</td>
+<td style="text-align:center">1.77</td>
+<td style="text-align:center">0.949153</td>
+<td style="text-align:center">1.66</td>
+<td style="text-align:center">1.01205</td>
+<td style="text-align:center">1.7</td>
+<td style="text-align:center">0.988235</td>
+<td style="text-align:center">1.68</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.76</td>
+<td style="text-align:center">0.954545</td>
+<td style="text-align:center">1.81</td>
+<td style="text-align:center">0.928177</td>
+<td style="text-align:center">1.82</td>
+<td style="text-align:center">0.923077</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Down<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">7.57</td>
+<td style="text-align:center">7.66</td>
+<td style="text-align:center">0.988251</td>
+<td style="text-align:center">7.73</td>
+<td style="text-align:center">0.979301</td>
+<td style="text-align:center">7.56</td>
+<td style="text-align:center">1.00132</td>
+<td style="text-align:center">7.95</td>
+<td style="text-align:center">0.952201</td>
+<td style="text-align:center">7.94</td>
+<td style="text-align:center">0.953401</td>
+<td style="text-align:center">7.55</td>
+<td style="text-align:center">1.00265</td>
+<td style="text-align:center">7.73</td>
+<td style="text-align:center">0.979301</td>
+<td style="text-align:center">7.57</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">8.01</td>
+<td style="text-align:center">0.945069</td>
+<td style="text-align:center">8.25</td>
+<td style="text-align:center">0.917576</td>
+<td style="text-align:center">8.25</td>
+<td style="text-align:center">0.917576</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_Down<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">15.2</td>
+<td style="text-align:center">15.3</td>
+<td style="color:#00ff00;text-align:center">0.993464</td>
+<td style="text-align:center">15.5</td>
+<td style="color:#00ff00;text-align:center">0.980645</td>
+<td style="text-align:center">15.2</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">15.9</td>
+<td style="text-align:center">0.955975</td>
+<td style="text-align:center">15.9</td>
+<td style="text-align:center">0.955975</td>
+<td style="text-align:center">15.1</td>
+<td style="color:#00ff00;text-align:center">1.00662</td>
+<td style="text-align:center">15.5</td>
+<td style="color:#00ff00;text-align:center">0.980645</td>
+<td style="text-align:center">15.2</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">0.95</td>
+<td style="text-align:center">16.9</td>
+<td style="color:#ff0000;text-align:center">0.899408</td>
+<td style="text-align:center">16.9</td>
+<td style="color:#ff0000;text-align:center">0.899408</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_ModByTwo<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.24</td>
+<td style="text-align:center">0.307</td>
+<td style="color:#ffff00;text-align:center">0.781759</td>
+<td style="text-align:center">0.307</td>
+<td style="color:#ffff00;text-align:center">0.781759</td>
+<td style="text-align:center">0.241</td>
+<td style="color:#00ff00;text-align:center">0.995851</td>
+<td style="text-align:center">0.24</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">0.26</td>
+<td style="text-align:center">0.923077</td>
+<td style="text-align:center">0.269</td>
+<td style="color:#ffff00;text-align:center">0.892193</td>
+<td style="text-align:center">0.308</td>
+<td style="color:#ffff00;text-align:center">0.779221</td>
+<td style="text-align:center">0.239</td>
+<td style="color:#00ff00;text-align:center">1.00418</td>
+<td style="text-align:center">0.318</td>
+<td style="color:#ffff00;text-align:center">0.754717</td>
+<td style="text-align:center">0.394</td>
+<td style="color:#ff0000;text-align:center">0.609137</td>
+<td style="text-align:center">0.317</td>
+<td style="color:#ffff00;text-align:center">0.757098</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_ModByTwo<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.27</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#ff0000;text-align:center">0.824675</td>
+<td style="text-align:center">1.55</td>
+<td style="color:#ff0000;text-align:center">0.819355</td>
+<td style="text-align:center">1.26</td>
+<td style="color:#00ff00;text-align:center">1.00794</td>
+<td style="text-align:center">1.27</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.35</td>
+<td style="text-align:center">0.940741</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">0.907143</td>
+<td style="text-align:center">1.55</td>
+<td style="color:#ff0000;text-align:center">0.819355</td>
+<td style="text-align:center">1.27</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.46</td>
+<td style="color:#ffff00;text-align:center">0.869863</td>
+<td style="text-align:center">1.51</td>
+<td style="color:#ff0000;text-align:center">0.84106</td>
+<td style="text-align:center">1.47</td>
+<td style="color:#ffff00;text-align:center">0.863946</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_ModByTwo<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">5.39</td>
+<td style="text-align:center">6.66</td>
+<td style="color:#ff0000;text-align:center">0.809309</td>
+<td style="text-align:center">6.49</td>
+<td style="color:#ff0000;text-align:center">0.830508</td>
+<td style="text-align:center">5.39</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">5.39</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">5.84</td>
+<td style="text-align:center">0.922945</td>
+<td style="text-align:center">5.97</td>
+<td style="text-align:center">0.902848</td>
+<td style="text-align:center">6.49</td>
+<td style="color:#ff0000;text-align:center">0.830508</td>
+<td style="text-align:center">5.39</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.08</td>
+<td style="color:#ffff00;text-align:center">0.886513</td>
+<td style="text-align:center">5.87</td>
+<td style="text-align:center">0.918228</td>
+<td style="text-align:center">6.05</td>
+<td style="color:#ffff00;text-align:center">0.890909</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mod_ModByTwo<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">10.5</td>
+<td style="text-align:center">12.8</td>
+<td style="color:#ff0000;text-align:center">0.820312</td>
+<td style="text-align:center">12.6</td>
+<td style="color:#ff0000;text-align:center">0.833333</td>
+<td style="text-align:center">10.6</td>
+<td style="color:#00ff00;text-align:center">0.990566</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11.2</td>
+<td style="text-align:center">0.9375</td>
+<td style="text-align:center">11.6</td>
+<td style="text-align:center">0.905172</td>
+<td style="text-align:center">12.6</td>
+<td style="color:#ff0000;text-align:center">0.833333</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11.8</td>
+<td style="color:#ffff00;text-align:center">0.889831</td>
+<td style="text-align:center">11.6</td>
+<td style="text-align:center">0.905172</td>
+<td style="text-align:center">11.8</td>
+<td style="color:#ffff00;text-align:center">0.889831</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Up<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.355</td>
+<td style="text-align:center">0.29</td>
+<td style="color:#0000ff;text-align:center">1.22414</td>
+<td style="text-align:center">0.29</td>
+<td style="color:#0000ff;text-align:center">1.22414</td>
+<td style="text-align:center">0.279</td>
+<td style="color:#0000ff;text-align:center">1.2724</td>
+<td style="text-align:center">0.281</td>
+<td style="color:#0000ff;text-align:center">1.26334</td>
+<td style="text-align:center">0.291</td>
+<td style="color:#0000ff;text-align:center">1.21993</td>
+<td style="text-align:center">0.246</td>
+<td style="color:#00ff00;text-align:center">1.44309</td>
+<td style="text-align:center">0.291</td>
+<td style="color:#0000ff;text-align:center">1.21993</td>
+<td style="text-align:center">0.318</td>
+<td style="color:#0000ff;text-align:center">1.11635</td>
+<td style="text-align:center">0.35</td>
+<td style="text-align:center">1.01429</td>
+<td style="text-align:center">0.39</td>
+<td style="color:#ff0000;text-align:center">0.910256</td>
+<td style="text-align:center">0.348</td>
+<td style="text-align:center">1.02012</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Up<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.62</td>
+<td style="text-align:center">1.39</td>
+<td style="color:#0000ff;text-align:center">1.16547</td>
+<td style="text-align:center">1.39</td>
+<td style="color:#0000ff;text-align:center">1.16547</td>
+<td style="text-align:center">1.3</td>
+<td style="color:#00ff00;text-align:center">1.24615</td>
+<td style="text-align:center">1.3</td>
+<td style="color:#00ff00;text-align:center">1.24615</td>
+<td style="text-align:center">1.38</td>
+<td style="color:#0000ff;text-align:center">1.17391</td>
+<td style="text-align:center">1.31</td>
+<td style="color:#00ff00;text-align:center">1.23664</td>
+<td style="text-align:center">1.38</td>
+<td style="color:#0000ff;text-align:center">1.17391</td>
+<td style="text-align:center">1.46</td>
+<td style="color:#0000ff;text-align:center">1.10959</td>
+<td style="text-align:center">1.54</td>
+<td style="text-align:center">1.05195</td>
+<td style="text-align:center">1.71</td>
+<td style="color:#ff0000;text-align:center">0.947368</td>
+<td style="text-align:center">1.54</td>
+<td style="text-align:center">1.05195</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Up<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">6.85</td>
+<td style="text-align:center">6.05</td>
+<td style="color:#0000ff;text-align:center">1.13223</td>
+<td style="text-align:center">5.92</td>
+<td style="color:#0000ff;text-align:center">1.15709</td>
+<td style="text-align:center">5.7</td>
+<td style="color:#00ff00;text-align:center">1.20175</td>
+<td style="text-align:center">5.7</td>
+<td style="color:#00ff00;text-align:center">1.20175</td>
+<td style="text-align:center">5.86</td>
+<td style="color:#00ff00;text-align:center">1.16894</td>
+<td style="text-align:center">5.63</td>
+<td style="color:#00ff00;text-align:center">1.2167</td>
+<td style="text-align:center">5.86</td>
+<td style="color:#00ff00;text-align:center">1.16894</td>
+<td style="text-align:center">6.19</td>
+<td style="color:#0000ff;text-align:center">1.10662</td>
+<td style="text-align:center">6.38</td>
+<td style="text-align:center">1.07367</td>
+<td style="text-align:center">7.05</td>
+<td style="color:#ff0000;text-align:center">0.971631</td>
+<td style="text-align:center">6.39</td>
+<td style="text-align:center">1.07199</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Up<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">13.6</td>
+<td style="text-align:center">11.8</td>
+<td style="color:#0000ff;text-align:center">1.15254</td>
+<td style="text-align:center">11.7</td>
+<td style="color:#0000ff;text-align:center">1.16239</td>
+<td style="text-align:center">11.3</td>
+<td style="color:#00ff00;text-align:center">1.20354</td>
+<td style="text-align:center">11.3</td>
+<td style="color:#00ff00;text-align:center">1.20354</td>
+<td style="text-align:center">11.6</td>
+<td style="color:#00ff00;text-align:center">1.17241</td>
+<td style="text-align:center">11.1</td>
+<td style="color:#00ff00;text-align:center">1.22523</td>
+<td style="text-align:center">11.5</td>
+<td style="color:#00ff00;text-align:center">1.18261</td>
+<td style="text-align:center">12.1</td>
+<td style="color:#0000ff;text-align:center">1.12397</td>
+<td style="text-align:center">12.7</td>
+<td style="text-align:center">1.07087</td>
+<td style="text-align:center">13.9</td>
+<td style="color:#ff0000;text-align:center">0.978417</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.07936</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Down<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.497</td>
+<td style="text-align:center">0.482</td>
+<td style="text-align:center">1.03112</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.513</td>
+<td style="text-align:center">0.968811</td>
+<td style="text-align:center">0.515</td>
+<td style="text-align:center">0.965049</td>
+<td style="text-align:center">0.455</td>
+<td style="color:#00ff00;text-align:center">1.09231</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.497</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.553</td>
+<td style="color:#ffff00;text-align:center">0.898734</td>
+<td style="text-align:center">0.558</td>
+<td style="color:#ff0000;text-align:center">0.890681</td>
+<td style="text-align:center">0.585</td>
+<td style="color:#ff0000;text-align:center">0.849573</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Down<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">2.03</td>
+<td style="text-align:center">2.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.06</td>
+<td style="color:#00ff00;text-align:center">0.985437</td>
+<td style="text-align:center">2.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.11</td>
+<td style="color:#00ff00;text-align:center">0.962085</td>
+<td style="text-align:center">2.11</td>
+<td style="color:#00ff00;text-align:center">0.962085</td>
+<td style="text-align:center">2.01</td>
+<td style="color:#00ff00;text-align:center">1.00995</td>
+<td style="text-align:center">2.04</td>
+<td style="color:#00ff00;text-align:center">0.995098</td>
+<td style="text-align:center">2.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#ff0000;text-align:center">0.902222</td>
+<td style="text-align:center">2.28</td>
+<td style="color:#ff0000;text-align:center">0.890351</td>
+<td style="text-align:center">2.27</td>
+<td style="color:#ff0000;text-align:center">0.894273</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Down<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">8.63</td>
+<td style="text-align:center">8.61</td>
+<td style="color:#00ff00;text-align:center">1.00232</td>
+<td style="text-align:center">8.81</td>
+<td style="text-align:center">0.979569</td>
+<td style="text-align:center">8.49</td>
+<td style="color:#00ff00;text-align:center">1.01649</td>
+<td style="text-align:center">8.93</td>
+<td style="text-align:center">0.966405</td>
+<td style="text-align:center">8.82</td>
+<td style="text-align:center">0.978458</td>
+<td style="text-align:center">8.36</td>
+<td style="color:#00ff00;text-align:center">1.0323</td>
+<td style="text-align:center">8.62</td>
+<td style="color:#00ff00;text-align:center">1.00116</td>
+<td style="text-align:center">8.5</td>
+<td style="color:#00ff00;text-align:center">1.01529</td>
+<td style="text-align:center">9.26</td>
+<td style="color:#ff0000;text-align:center">0.931965</td>
+<td style="text-align:center">9.45</td>
+<td style="color:#ff0000;text-align:center">0.913228</td>
+<td style="text-align:center">9.46</td>
+<td style="color:#ff0000;text-align:center">0.912262</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_Down<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">16.7</td>
+<td style="text-align:center">16.9</td>
+<td style="color:#00ff00;text-align:center">0.988166</td>
+<td style="text-align:center">17.1</td>
+<td style="color:#00ff00;text-align:center">0.976608</td>
+<td style="text-align:center">16.9</td>
+<td style="color:#00ff00;text-align:center">0.988166</td>
+<td style="text-align:center">17.4</td>
+<td style="text-align:center">0.95977</td>
+<td style="text-align:center">17.4</td>
+<td style="text-align:center">0.95977</td>
+<td style="text-align:center">16.4</td>
+<td style="color:#00ff00;text-align:center">1.01829</td>
+<td style="text-align:center">17</td>
+<td style="color:#00ff00;text-align:center">0.982353</td>
+<td style="text-align:center">16.7</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">18.3</td>
+<td style="color:#ff0000;text-align:center">0.912568</td>
+<td style="text-align:center">18.8</td>
+<td style="color:#ff0000;text-align:center">0.888298</td>
+<td style="text-align:center">18.7</td>
+<td style="color:#ff0000;text-align:center">0.893048</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_ModByTwo<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.239</td>
+<td style="text-align:center">0.304</td>
+<td style="color:#ffff00;text-align:center">0.786184</td>
+<td style="text-align:center">0.304</td>
+<td style="color:#ffff00;text-align:center">0.786184</td>
+<td style="text-align:center">0.255</td>
+<td style="text-align:center">0.937255</td>
+<td style="text-align:center">0.239</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">0.261</td>
+<td style="text-align:center">0.915709</td>
+<td style="text-align:center">0.265</td>
+<td style="text-align:center">0.901887</td>
+<td style="text-align:center">0.306</td>
+<td style="color:#ffff00;text-align:center">0.781046</td>
+<td style="text-align:center">0.237</td>
+<td style="color:#00ff00;text-align:center">1.00844</td>
+<td style="text-align:center">0.385</td>
+<td style="color:#ff0000;text-align:center">0.620779</td>
+<td style="text-align:center">0.384</td>
+<td style="color:#ff0000;text-align:center">0.622396</td>
+<td style="text-align:center">0.315</td>
+<td style="color:#ffff00;text-align:center">0.75873</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_ModByTwo<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.26</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#ff0000;text-align:center">0.818182</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#ff0000;text-align:center">0.818182</td>
+<td style="text-align:center">1.37</td>
+<td style="text-align:center">0.919708</td>
+<td style="text-align:center">1.26</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.34</td>
+<td style="text-align:center">0.940299</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">0.9</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#ff0000;text-align:center">0.818182</td>
+<td style="text-align:center">1.26</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.5</td>
+<td style="color:#ff0000;text-align:center">0.84</td>
+<td style="text-align:center">1.48</td>
+<td style="color:#ff0000;text-align:center">0.851351</td>
+<td style="text-align:center">1.46</td>
+<td style="color:#ffff00;text-align:center">0.863014</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_ModByTwo<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">5.48</td>
+<td style="text-align:center">6.48</td>
+<td style="color:#ff0000;text-align:center">0.845679</td>
+<td style="text-align:center">6.48</td>
+<td style="color:#ff0000;text-align:center">0.845679</td>
+<td style="text-align:center">6.13</td>
+<td style="color:#ffff00;text-align:center">0.893964</td>
+<td style="text-align:center">5.38</td>
+<td style="color:#00ff00;text-align:center">1.01859</td>
+<td style="text-align:center">5.68</td>
+<td style="text-align:center">0.964789</td>
+<td style="text-align:center">5.97</td>
+<td style="text-align:center">0.917923</td>
+<td style="text-align:center">6.49</td>
+<td style="color:#ff0000;text-align:center">0.844376</td>
+<td style="text-align:center">5.38</td>
+<td style="color:#00ff00;text-align:center">1.01859</td>
+<td style="text-align:center">6.05</td>
+<td style="text-align:center">0.905785</td>
+<td style="text-align:center">5.87</td>
+<td style="text-align:center">0.93356</td>
+<td style="text-align:center">6.05</td>
+<td style="text-align:center">0.905785</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModEq_ModByTwo<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">10.7</td>
+<td style="text-align:center">12.8</td>
+<td style="color:#ff0000;text-align:center">0.835937</td>
+<td style="text-align:center">12.8</td>
+<td style="color:#ff0000;text-align:center">0.835937</td>
+<td style="text-align:center">11.9</td>
+<td style="color:#ffff00;text-align:center">0.89916</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1.01905</td>
+<td style="text-align:center">11</td>
+<td style="color:#00ff00;text-align:center">0.972727</td>
+<td style="text-align:center">11.7</td>
+<td style="text-align:center">0.91453</td>
+<td style="text-align:center">12.6</td>
+<td style="color:#ff0000;text-align:center">0.849206</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1.01905</td>
+<td style="text-align:center">11.8</td>
+<td style="text-align:center">0.90678</td>
+<td style="text-align:center">11.6</td>
+<td style="text-align:center">0.922414</td>
+<td style="text-align:center">11.8</td>
+<td style="text-align:center">0.90678</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAdd<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.249</td>
+<td style="text-align:center">0.233</td>
+<td style="color:#00ff00;text-align:center">1.06867</td>
+<td style="text-align:center">0.248</td>
+<td style="text-align:center">1.00403</td>
+<td style="text-align:center">0.274</td>
+<td style="text-align:center">0.908759</td>
+<td style="text-align:center">0.252</td>
+<td style="text-align:center">0.988095</td>
+<td style="text-align:center">0.254</td>
+<td style="text-align:center">0.980315</td>
+<td style="text-align:center">0.227</td>
+<td style="color:#00ff00;text-align:center">1.09692</td>
+<td style="text-align:center">0.246</td>
+<td style="text-align:center">1.01219</td>
+<td style="text-align:center">0.25</td>
+<td style="text-align:center">0.996</td>
+<td style="text-align:center">0.35</td>
+<td style="color:#ffff00;text-align:center">0.711429</td>
+<td style="text-align:center">0.342</td>
+<td style="color:#ffff00;text-align:center">0.72807</td>
+<td style="text-align:center">0.947</td>
+<td style="color:#ff0000;text-align:center">0.262936</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAdd<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.36</td>
+<td style="text-align:center">1.32</td>
+<td style="text-align:center">1.0303</td>
+<td style="text-align:center">1.35</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">1.48</td>
+<td style="text-align:center">0.918919</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.16</td>
+<td style="color:#00ff00;text-align:center">1.17241</td>
+<td style="text-align:center">1.35</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#ffff00;text-align:center">0.85</td>
+<td style="text-align:center">1.57</td>
+<td style="color:#ffff00;text-align:center">0.866242</td>
+<td style="text-align:center">3.67</td>
+<td style="color:#ff0000;text-align:center">0.370572</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAdd<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">5.4</td>
+<td style="text-align:center">5.29</td>
+<td style="color:#00ff00;text-align:center">1.02079</td>
+<td style="text-align:center">5.38</td>
+<td style="color:#00ff00;text-align:center">1.00372</td>
+<td style="text-align:center">6.06</td>
+<td style="color:#ffff00;text-align:center">0.891089</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">5.53</td>
+<td style="color:#00ff00;text-align:center">0.976492</td>
+<td style="text-align:center">5.38</td>
+<td style="color:#00ff00;text-align:center">1.00372</td>
+<td style="text-align:center">5.55</td>
+<td style="color:#00ff00;text-align:center">0.972973</td>
+<td style="text-align:center">6.06</td>
+<td style="color:#ffff00;text-align:center">0.891089</td>
+<td style="text-align:center">6.08</td>
+<td style="color:#ffff00;text-align:center">0.888158</td>
+<td style="text-align:center">14.2</td>
+<td style="color:#ff0000;text-align:center">0.380282</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAdd<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">10.5</td>
+<td style="text-align:center">10.4</td>
+<td style="color:#00ff00;text-align:center">1.00961</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11.8</td>
+<td style="color:#ffff00;text-align:center">0.889831</td>
+<td style="text-align:center">10.6</td>
+<td style="color:#00ff00;text-align:center">0.990566</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11</td>
+<td style="color:#00ff00;text-align:center">0.954545</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11.9</td>
+<td style="color:#ffff00;text-align:center">0.882353</td>
+<td style="text-align:center">11.8</td>
+<td style="color:#ffff00;text-align:center">0.889831</td>
+<td style="text-align:center">28.1</td>
+<td style="color:#ff0000;text-align:center">0.373665</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAddEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.121</td>
+<td style="text-align:center">0.106</td>
+<td style="color:#0000ff;text-align:center">1.14151</td>
+<td style="text-align:center">0.117</td>
+<td style="text-align:center">1.03419</td>
+<td style="text-align:center">0.141</td>
+<td style="color:#ffff00;text-align:center">0.858156</td>
+<td style="text-align:center">0.121</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.121</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.084</td>
+<td style="color:#00ff00;text-align:center">1.44048</td>
+<td style="text-align:center">0.117</td>
+<td style="text-align:center">1.03419</td>
+<td style="text-align:center">0.121</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.191</td>
+<td style="color:#ffff00;text-align:center">0.633508</td>
+<td style="text-align:center">0.187</td>
+<td style="color:#ffff00;text-align:center">0.647059</td>
+<td style="text-align:center">0.738</td>
+<td style="color:#ff0000;text-align:center">0.163957</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAddEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">0.485</td>
+<td style="text-align:center">0.424</td>
+<td style="color:#0000ff;text-align:center">1.14387</td>
+<td style="text-align:center">0.469</td>
+<td style="text-align:center">1.03411</td>
+<td style="text-align:center">0.558</td>
+<td style="color:#ffff00;text-align:center">0.869176</td>
+<td style="text-align:center">0.486</td>
+<td style="text-align:center">0.997942</td>
+<td style="text-align:center">0.486</td>
+<td style="text-align:center">0.997942</td>
+<td style="text-align:center">0.333</td>
+<td style="color:#00ff00;text-align:center">1.45646</td>
+<td style="text-align:center">0.468</td>
+<td style="text-align:center">1.03632</td>
+<td style="text-align:center">0.485</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.737</td>
+<td style="color:#ffff00;text-align:center">0.658073</td>
+<td style="text-align:center">0.745</td>
+<td style="color:#ffff00;text-align:center">0.651007</td>
+<td style="text-align:center">2.93</td>
+<td style="color:#ff0000;text-align:center">0.165529</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAddEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">2.25</td>
+<td style="text-align:center">2.27</td>
+<td style="color:#00ff00;text-align:center">0.991189</td>
+<td style="text-align:center">2.26</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">2.87</td>
+<td style="color:#ffff00;text-align:center">0.783972</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.3</td>
+<td style="color:#00ff00;text-align:center">0.978261</td>
+<td style="text-align:center">2.26</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.09</td>
+<td style="color:#ffff00;text-align:center">0.728155</td>
+<td style="text-align:center">3.09</td>
+<td style="color:#ffff00;text-align:center">0.728155</td>
+<td style="text-align:center">11.7</td>
+<td style="color:#ff0000;text-align:center">0.192308</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModAddEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">4.5</td>
+<td style="text-align:center">4.55</td>
+<td style="color:#00ff00;text-align:center">0.989011</td>
+<td style="text-align:center">4.52</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">5.75</td>
+<td style="color:#ffff00;text-align:center">0.782609</td>
+<td style="text-align:center">4.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">4.51</td>
+<td style="color:#00ff00;text-align:center">0.997783</td>
+<td style="text-align:center">4.6</td>
+<td style="color:#00ff00;text-align:center">0.978261</td>
+<td style="text-align:center">4.52</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">4.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.17</td>
+<td style="color:#ffff00;text-align:center">0.729335</td>
+<td style="text-align:center">6.17</td>
+<td style="color:#ffff00;text-align:center">0.729335</td>
+<td style="text-align:center">23.4</td>
+<td style="color:#ff0000;text-align:center">0.192308</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAdd<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.265</td>
+<td style="text-align:center">0.253</td>
+<td style="color:#00ff00;text-align:center">1.04743</td>
+<td style="text-align:center">0.264</td>
+<td style="color:#00ff00;text-align:center">1.00379</td>
+<td style="text-align:center">0.336</td>
+<td style="color:#ffff00;text-align:center">0.78869</td>
+<td style="text-align:center">0.266</td>
+<td style="color:#00ff00;text-align:center">0.996241</td>
+<td style="text-align:center">0.268</td>
+<td style="color:#00ff00;text-align:center">0.988806</td>
+<td style="text-align:center">0.269</td>
+<td style="color:#00ff00;text-align:center">0.98513</td>
+<td style="text-align:center">0.264</td>
+<td style="color:#00ff00;text-align:center">1.00379</td>
+<td style="text-align:center">0.263</td>
+<td style="color:#00ff00;text-align:center">1.00761</td>
+<td style="text-align:center">0.345</td>
+<td style="color:#ffff00;text-align:center">0.768116</td>
+<td style="text-align:center">0.35</td>
+<td style="color:#ffff00;text-align:center">0.757143</td>
+<td style="text-align:center">0.424</td>
+<td style="color:#ff0000;text-align:center">0.625</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAdd<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.6</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.74</td>
+<td style="text-align:center">0.91954</td>
+<td style="text-align:center">1.61</td>
+<td style="color:#00ff00;text-align:center">0.993789</td>
+<td style="text-align:center">1.61</td>
+<td style="color:#00ff00;text-align:center">0.993789</td>
+<td style="text-align:center">1.55</td>
+<td style="color:#00ff00;text-align:center">1.03226</td>
+<td style="text-align:center">1.61</td>
+<td style="color:#00ff00;text-align:center">0.993789</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.75</td>
+<td style="text-align:center">0.914286</td>
+<td style="text-align:center">1.75</td>
+<td style="text-align:center">0.914286</td>
+<td style="text-align:center">1.89</td>
+<td style="color:#ff0000;text-align:center">0.846561</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAdd<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">6.16</td>
+<td style="text-align:center">6.23</td>
+<td style="color:#00ff00;text-align:center">0.988764</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.62</td>
+<td style="text-align:center">0.930514</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.28</td>
+<td style="color:#00ff00;text-align:center">0.980892</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.61</td>
+<td style="text-align:center">0.931921</td>
+<td style="text-align:center">7.01</td>
+<td style="color:#ff0000;text-align:center">0.878745</td>
+<td style="text-align:center">7.14</td>
+<td style="color:#ff0000;text-align:center">0.862745</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAdd<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">12.2</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">12.4</td>
+<td style="color:#00ff00;text-align:center">0.983871</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">0.924242</td>
+<td style="text-align:center">12.8</td>
+<td style="color:#00ff00;text-align:center">0.953125</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">12.4</td>
+<td style="color:#00ff00;text-align:center">0.983871</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">0.938462</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">0.938462</td>
+<td style="text-align:center">14.2</td>
+<td style="color:#ff0000;text-align:center">0.859155</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.128</td>
+<td style="text-align:center">0.117</td>
+<td style="color:#00ff00;text-align:center">1.09402</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.129</td>
+<td style="text-align:center">0.992248</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.129</td>
+<td style="text-align:center">0.992248</td>
+<td style="text-align:center">0.114</td>
+<td style="color:#00ff00;text-align:center">1.12281</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.206</td>
+<td style="color:#ffff00;text-align:center">0.621359</td>
+<td style="text-align:center">0.18</td>
+<td style="color:#ffff00;text-align:center">0.711111</td>
+<td style="text-align:center">0.261</td>
+<td style="color:#ff0000;text-align:center">0.490421</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">0.642</td>
+<td style="text-align:center">0.595</td>
+<td style="color:#00ff00;text-align:center">1.07899</td>
+<td style="text-align:center">0.639</td>
+<td style="text-align:center">1.00469</td>
+<td style="text-align:center">0.642</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.644</td>
+<td style="text-align:center">0.996894</td>
+<td style="text-align:center">0.643</td>
+<td style="text-align:center">0.998445</td>
+<td style="text-align:center">0.578</td>
+<td style="color:#00ff00;text-align:center">1.11073</td>
+<td style="text-align:center">0.639</td>
+<td style="text-align:center">1.00469</td>
+<td style="text-align:center">0.644</td>
+<td style="text-align:center">0.996894</td>
+<td style="text-align:center">0.878</td>
+<td style="color:#ffff00;text-align:center">0.731207</td>
+<td style="text-align:center">0.777</td>
+<td style="color:#ffff00;text-align:center">0.826255</td>
+<td style="text-align:center">1.01</td>
+<td style="color:#ff0000;text-align:center">0.635644</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">3.03</td>
+<td style="text-align:center">3.01</td>
+<td style="color:#00ff00;text-align:center">1.00665</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.1</td>
+<td style="color:#00ff00;text-align:center">0.977419</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.48</td>
+<td style="color:#ffff00;text-align:center">0.87069</td>
+<td style="text-align:center">3.09</td>
+<td style="color:#00ff00;text-align:center">0.980583</td>
+<td style="text-align:center">3.99</td>
+<td style="color:#ff0000;text-align:center">0.759398</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModAddEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">6.04</td>
+<td style="text-align:center">6</td>
+<td style="color:#00ff00;text-align:center">1.00667</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1.00166</td>
+<td style="text-align:center">6.04</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1.00166</td>
+<td style="text-align:center">6.04</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.21</td>
+<td style="color:#00ff00;text-align:center">0.972625</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1.00166</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1.00166</td>
+<td style="text-align:center">6.91</td>
+<td style="color:#ffff00;text-align:center">0.874096</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">0.980519</td>
+<td style="text-align:center">7.99</td>
+<td style="color:#ff0000;text-align:center">0.755945</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMul<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.317</td>
+<td style="text-align:center">0.313</td>
+<td style="text-align:center">1.01278</td>
+<td style="text-align:center">0.316</td>
+<td style="text-align:center">1.00317</td>
+<td style="text-align:center">0.314</td>
+<td style="text-align:center">1.00955</td>
+<td style="text-align:center">0.289</td>
+<td style="color:#00ff00;text-align:center">1.09689</td>
+<td style="text-align:center">0.3</td>
+<td style="color:#00ff00;text-align:center">1.05667</td>
+<td style="text-align:center">0.322</td>
+<td style="color:#ff0000;text-align:center">0.984472</td>
+<td style="text-align:center">0.313</td>
+<td style="text-align:center">1.01278</td>
+<td style="text-align:center">0.313</td>
+<td style="text-align:center">1.01278</td>
+<td style="text-align:center">0.337</td>
+<td style="color:#ff0000;text-align:center">0.940653</td>
+<td style="text-align:center">0.335</td>
+<td style="color:#ff0000;text-align:center">0.946269</td>
+<td style="text-align:center">0.335</td>
+<td style="color:#ff0000;text-align:center">0.946269</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMul<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.41</td>
+<td style="text-align:center">1.41</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">1.00714</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.43</td>
+<td style="text-align:center">0.986014</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">1.00714</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">1.00714</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.43</td>
+<td style="text-align:center">0.986014</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.43</td>
+<td style="text-align:center">0.986014</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMul<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">6.72</td>
+<td style="text-align:center">6.7</td>
+<td style="text-align:center">1.00299</td>
+<td style="text-align:center">6.7</td>
+<td style="text-align:center">1.00299</td>
+<td style="text-align:center">6.7</td>
+<td style="text-align:center">1.00299</td>
+<td style="text-align:center">6.42</td>
+<td style="text-align:center">1.04673</td>
+<td style="text-align:center">6.46</td>
+<td style="text-align:center">1.04025</td>
+<td style="text-align:center">6.68</td>
+<td style="text-align:center">1.00599</td>
+<td style="text-align:center">6.69</td>
+<td style="text-align:center">1.00448</td>
+<td style="text-align:center">6.7</td>
+<td style="text-align:center">1.00299</td>
+<td style="text-align:center">6.65</td>
+<td style="text-align:center">1.01053</td>
+<td style="text-align:center">6.65</td>
+<td style="text-align:center">1.01053</td>
+<td style="text-align:center">6.66</td>
+<td style="text-align:center">1.00901</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMul<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">13.1</td>
+<td style="text-align:center">13.6</td>
+<td style="text-align:center">0.963235</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">0.992424</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">0.992424</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.03968</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">1.00769</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">0.992424</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">0.992424</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">0.992424</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">1.00769</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">1.00769</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">1.00769</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMulEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.157</td>
+<td style="text-align:center">0.155</td>
+<td style="color:#00ff00;text-align:center">1.0129</td>
+<td style="text-align:center">0.156</td>
+<td style="color:#00ff00;text-align:center">1.00641</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.15</td>
+<td style="color:#00ff00;text-align:center">1.04667</td>
+<td style="text-align:center">0.152</td>
+<td style="color:#00ff00;text-align:center">1.03289</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.165</td>
+<td style="color:#ff0000;text-align:center">0.951515</td>
+<td style="text-align:center">0.164</td>
+<td style="color:#ff0000;text-align:center">0.957317</td>
+<td style="text-align:center">0.167</td>
+<td style="color:#ff0000;text-align:center">0.94012</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMulEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">0.608</td>
+<td style="text-align:center">0.608</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.607</td>
+<td style="text-align:center">1.00165</td>
+<td style="text-align:center">0.606</td>
+<td style="text-align:center">1.0033</td>
+<td style="text-align:center">0.592</td>
+<td style="text-align:center">1.02703</td>
+<td style="text-align:center">0.587</td>
+<td style="text-align:center">1.03577</td>
+<td style="text-align:center">0.607</td>
+<td style="text-align:center">1.00165</td>
+<td style="text-align:center">0.607</td>
+<td style="text-align:center">1.00165</td>
+<td style="text-align:center">0.599</td>
+<td style="text-align:center">1.01503</td>
+<td style="text-align:center">0.649</td>
+<td style="text-align:center">0.936826</td>
+<td style="text-align:center">0.64</td>
+<td style="text-align:center">0.95</td>
+<td style="text-align:center">0.65</td>
+<td style="text-align:center">0.935385</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMulEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">2.71</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.34</td>
+<td style="color:#00ff00;text-align:center">1.15812</td>
+<td style="text-align:center">2.34</td>
+<td style="color:#00ff00;text-align:center">1.15812</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.7</td>
+<td style="color:#ff0000;text-align:center">1.0037</td>
+<td style="text-align:center">2.7</td>
+<td style="color:#ff0000;text-align:center">1.0037</td>
+<td style="text-align:center">2.7</td>
+<td style="color:#ff0000;text-align:center">1.0037</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_ModMulEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">5.41</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">4.66</td>
+<td style="color:#00ff00;text-align:center">1.16094</td>
+<td style="text-align:center">4.67</td>
+<td style="color:#00ff00;text-align:center">1.15846</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#ff0000;text-align:center">1.00185</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#ff0000;text-align:center">1.00185</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#ff0000;text-align:center">1.00185</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMul<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">1.15</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.2</td>
+<td style="text-align:center">0.958333</td>
+<td style="text-align:center">1.2</td>
+<td style="text-align:center">0.958333</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.09</td>
+<td style="text-align:center">1.05505</td>
+<td style="text-align:center">1.1</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">1.1</td>
+<td style="text-align:center">1.04546</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMul<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">4.21</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.2</td>
+<td style="text-align:center">1.00238</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.44</td>
+<td style="text-align:center">0.948198</td>
+<td style="text-align:center">4.44</td>
+<td style="text-align:center">0.948198</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.14</td>
+<td style="text-align:center">1.01691</td>
+<td style="text-align:center">4.15</td>
+<td style="text-align:center">1.01446</td>
+<td style="text-align:center">4.17</td>
+<td style="text-align:center">1.00959</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMul<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">17.3</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.9</td>
+<td style="text-align:center">0.96648</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">18.5</td>
+<td style="text-align:center">0.935135</td>
+<td style="text-align:center">18.5</td>
+<td style="text-align:center">0.935135</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.7</td>
+<td style="text-align:center">0.977401</td>
+<td style="text-align:center">17.1</td>
+<td style="text-align:center">1.0117</td>
+<td style="text-align:center">17.2</td>
+<td style="text-align:center">1.00581</td>
+<td style="text-align:center">17.2</td>
+<td style="text-align:center">1.00581</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMul<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">34.6</td>
+<td style="text-align:center">34.9</td>
+<td style="text-align:center">0.991404</td>
+<td style="text-align:center">34.6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">34.6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">37.2</td>
+<td style="text-align:center">0.930108</td>
+<td style="text-align:center">36.9</td>
+<td style="text-align:center">0.937669</td>
+<td style="text-align:center">34.6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">35.1</td>
+<td style="text-align:center">0.985755</td>
+<td style="text-align:center">34.8</td>
+<td style="text-align:center">0.994253</td>
+<td style="text-align:center">34.2</td>
+<td style="text-align:center">1.0117</td>
+<td style="text-align:center">35</td>
+<td style="text-align:center">0.988571</td>
+<td style="text-align:center">35.7</td>
+<td style="text-align:center">0.969188</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">1.04</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.09</td>
+<td style="color:#ff0000;text-align:center">0.954128</td>
+<td style="text-align:center">1.09</td>
+<td style="color:#ff0000;text-align:center">0.954128</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">0.948</td>
+<td style="color:#00ff00;text-align:center">1.09705</td>
+<td style="text-align:center">0.952</td>
+<td style="color:#00ff00;text-align:center">1.09244</td>
+<td style="text-align:center">0.956</td>
+<td style="color:#00ff00;text-align:center">1.08787</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">3.87</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.18</td>
+<td style="color:#ff0000;text-align:center">0.925837</td>
+<td style="text-align:center">4.19</td>
+<td style="color:#ff0000;text-align:center">0.923628</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.66</td>
+<td style="color:#00ff00;text-align:center">1.05738</td>
+<td style="text-align:center">3.68</td>
+<td style="color:#00ff00;text-align:center">1.05163</td>
+<td style="text-align:center">3.7</td>
+<td style="color:#00ff00;text-align:center">1.04595</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">15.5</td>
+<td style="text-align:center">16.8</td>
+<td style="color:#ff0000;text-align:center">0.922619</td>
+<td style="text-align:center">15.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">15.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">16.5</td>
+<td style="color:#ff0000;text-align:center">0.939394</td>
+<td style="text-align:center">16.5</td>
+<td style="color:#ff0000;text-align:center">0.939394</td>
+<td style="text-align:center">15.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">15.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">15.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">15.1</td>
+<td style="color:#00ff00;text-align:center">1.02649</td>
+<td style="text-align:center">15.2</td>
+<td style="color:#00ff00;text-align:center">1.01974</td>
+<td style="text-align:center">15.3</td>
+<td style="color:#00ff00;text-align:center">1.01307</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_ModMulEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">30.9</td>
+<td style="text-align:center">30.9</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">30.9</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">30.9</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">33.1</td>
+<td style="text-align:center">0.933535</td>
+<td style="text-align:center">33.1</td>
+<td style="text-align:center">0.933535</td>
+<td style="text-align:center">30.9</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">32.2</td>
+<td style="text-align:center">0.959627</td>
+<td style="text-align:center">32.2</td>
+<td style="text-align:center">0.959627</td>
+<td style="text-align:center">30.2</td>
+<td style="text-align:center">1.02318</td>
+<td style="text-align:center">30.4</td>
+<td style="text-align:center">1.01645</td>
+<td style="text-align:center">30.6</td>
+<td style="text-align:center">1.0098</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Add<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.265</td>
+<td style="text-align:center">0.253</td>
+<td style="color:#00ff00;text-align:center">1.04743</td>
+<td style="text-align:center">0.264</td>
+<td style="color:#00ff00;text-align:center">1.00379</td>
+<td style="text-align:center">0.336</td>
+<td style="color:#ffff00;text-align:center">0.78869</td>
+<td style="text-align:center">0.265</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">0.267</td>
+<td style="color:#00ff00;text-align:center">0.992509</td>
+<td style="text-align:center">0.269</td>
+<td style="color:#00ff00;text-align:center">0.98513</td>
+<td style="text-align:center">0.264</td>
+<td style="color:#00ff00;text-align:center">1.00379</td>
+<td style="text-align:center">0.263</td>
+<td style="color:#00ff00;text-align:center">1.00761</td>
+<td style="text-align:center">0.345</td>
+<td style="color:#ffff00;text-align:center">0.768116</td>
+<td style="text-align:center">0.351</td>
+<td style="color:#ffff00;text-align:center">0.754986</td>
+<td style="text-align:center">0.424</td>
+<td style="color:#ff0000;text-align:center">0.625</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Add<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.6</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.74</td>
+<td style="text-align:center">0.91954</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.61</td>
+<td style="color:#00ff00;text-align:center">0.993789</td>
+<td style="text-align:center">1.55</td>
+<td style="color:#00ff00;text-align:center">1.03226</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.75</td>
+<td style="text-align:center">0.914286</td>
+<td style="text-align:center">1.75</td>
+<td style="text-align:center">0.914286</td>
+<td style="text-align:center">1.89</td>
+<td style="color:#ff0000;text-align:center">0.846561</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Add<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">6.16</td>
+<td style="text-align:center">6.13</td>
+<td style="color:#00ff00;text-align:center">1.00489</td>
+<td style="text-align:center">6.15</td>
+<td style="color:#00ff00;text-align:center">1.00163</td>
+<td style="text-align:center">6.62</td>
+<td style="text-align:center">0.930514</td>
+<td style="text-align:center">6.23</td>
+<td style="color:#00ff00;text-align:center">0.988764</td>
+<td style="text-align:center">6.26</td>
+<td style="color:#00ff00;text-align:center">0.984026</td>
+<td style="text-align:center">6.28</td>
+<td style="color:#00ff00;text-align:center">0.980892</td>
+<td style="text-align:center">6.36</td>
+<td style="color:#00ff00;text-align:center">0.968553</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.61</td>
+<td style="text-align:center">0.931921</td>
+<td style="text-align:center">6.59</td>
+<td style="text-align:center">0.93475</td>
+<td style="text-align:center">7.14</td>
+<td style="color:#ff0000;text-align:center">0.862745</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Add<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">12.3</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1.0082</td>
+<td style="text-align:center">12.3</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">0.931818</td>
+<td style="text-align:center">12.7</td>
+<td style="color:#00ff00;text-align:center">0.968504</td>
+<td style="text-align:center">12.3</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">12.4</td>
+<td style="color:#00ff00;text-align:center">0.991935</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1.0082</td>
+<td style="text-align:center">12.2</td>
+<td style="color:#00ff00;text-align:center">1.0082</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">0.946154</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">0.946154</td>
+<td style="text-align:center">14.2</td>
+<td style="color:#ff0000;text-align:center">0.866197</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_AddEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.128</td>
+<td style="text-align:center">0.117</td>
+<td style="color:#00ff00;text-align:center">1.09402</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.129</td>
+<td style="text-align:center">0.992248</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.129</td>
+<td style="text-align:center">0.992248</td>
+<td style="text-align:center">0.114</td>
+<td style="color:#00ff00;text-align:center">1.12281</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.128</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.206</td>
+<td style="color:#ffff00;text-align:center">0.621359</td>
+<td style="text-align:center">0.18</td>
+<td style="color:#ffff00;text-align:center">0.711111</td>
+<td style="text-align:center">0.261</td>
+<td style="color:#ff0000;text-align:center">0.490421</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_AddEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">0.643</td>
+<td style="text-align:center">0.595</td>
+<td style="color:#00ff00;text-align:center">1.08067</td>
+<td style="text-align:center">0.639</td>
+<td style="text-align:center">1.00626</td>
+<td style="text-align:center">0.642</td>
+<td style="text-align:center">1.00156</td>
+<td style="text-align:center">0.643</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.643</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.578</td>
+<td style="color:#00ff00;text-align:center">1.11246</td>
+<td style="text-align:center">0.639</td>
+<td style="text-align:center">1.00626</td>
+<td style="text-align:center">0.644</td>
+<td style="text-align:center">0.998447</td>
+<td style="text-align:center">0.878</td>
+<td style="color:#ffff00;text-align:center">0.732346</td>
+<td style="text-align:center">0.777</td>
+<td style="color:#ffff00;text-align:center">0.827542</td>
+<td style="text-align:center">1.01</td>
+<td style="color:#ff0000;text-align:center">0.636634</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_AddEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">3.03</td>
+<td style="text-align:center">3.01</td>
+<td style="color:#00ff00;text-align:center">1.00665</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.1</td>
+<td style="color:#00ff00;text-align:center">0.977419</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.48</td>
+<td style="color:#ffff00;text-align:center">0.87069</td>
+<td style="text-align:center">3.09</td>
+<td style="color:#00ff00;text-align:center">0.980583</td>
+<td style="text-align:center">3.99</td>
+<td style="color:#ff0000;text-align:center">0.759398</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_AddEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">6.03</td>
+<td style="text-align:center">6</td>
+<td style="color:#00ff00;text-align:center">1.005</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.04</td>
+<td style="color:#00ff00;text-align:center">0.998344</td>
+<td style="text-align:center">6.04</td>
+<td style="color:#00ff00;text-align:center">0.998344</td>
+<td style="text-align:center">6.04</td>
+<td style="color:#00ff00;text-align:center">0.998344</td>
+<td style="text-align:center">6.21</td>
+<td style="color:#00ff00;text-align:center">0.971014</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.03</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.91</td>
+<td style="color:#ffff00;text-align:center">0.872648</td>
+<td style="text-align:center">6.16</td>
+<td style="color:#00ff00;text-align:center">0.978896</td>
+<td style="text-align:center">7.98</td>
+<td style="color:#ff0000;text-align:center">0.755639</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Mul<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">1.15</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.2</td>
+<td style="text-align:center">0.958333</td>
+<td style="text-align:center">1.2</td>
+<td style="text-align:center">0.958333</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.09</td>
+<td style="text-align:center">1.05505</td>
+<td style="text-align:center">1.1</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">1.1</td>
+<td style="text-align:center">1.04546</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Mul<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">4.21</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.2</td>
+<td style="text-align:center">1.00238</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.44</td>
+<td style="text-align:center">0.948198</td>
+<td style="text-align:center">4.44</td>
+<td style="text-align:center">0.948198</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.21</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.14</td>
+<td style="text-align:center">1.01691</td>
+<td style="text-align:center">4.15</td>
+<td style="text-align:center">1.01446</td>
+<td style="text-align:center">4.17</td>
+<td style="text-align:center">1.00959</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Mul<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">17.3</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.5</td>
+<td style="text-align:center">0.988571</td>
+<td style="text-align:center">18.7</td>
+<td style="text-align:center">0.925134</td>
+<td style="text-align:center">18.5</td>
+<td style="text-align:center">0.935135</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">17.1</td>
+<td style="text-align:center">1.0117</td>
+<td style="text-align:center">17.2</td>
+<td style="text-align:center">1.00581</td>
+<td style="text-align:center">17.2</td>
+<td style="text-align:center">1.00581</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_Mul<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">35.5</td>
+<td style="text-align:center">34.7</td>
+<td style="text-align:center">1.02306</td>
+<td style="text-align:center">34.7</td>
+<td style="text-align:center">1.02306</td>
+<td style="text-align:center">34.9</td>
+<td style="text-align:center">1.01719</td>
+<td style="text-align:center">37.2</td>
+<td style="text-align:center">0.954301</td>
+<td style="text-align:center">36.9</td>
+<td style="text-align:center">0.96206</td>
+<td style="text-align:center">35.3</td>
+<td style="text-align:center">1.00567</td>
+<td style="text-align:center">34.8</td>
+<td style="text-align:center">1.02012</td>
+<td style="text-align:center">34.6</td>
+<td style="text-align:center">1.02601</td>
+<td style="text-align:center">34.2</td>
+<td style="text-align:center">1.03801</td>
+<td style="text-align:center">34.3</td>
+<td style="text-align:center">1.03499</td>
+<td style="text-align:center">34.5</td>
+<td style="text-align:center">1.02899</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_MulEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">1.04</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.09</td>
+<td style="color:#ff0000;text-align:center">0.954128</td>
+<td style="text-align:center">1.09</td>
+<td style="color:#ff0000;text-align:center">0.954128</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">1.04</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">0.948</td>
+<td style="color:#00ff00;text-align:center">1.09705</td>
+<td style="text-align:center">0.952</td>
+<td style="color:#00ff00;text-align:center">1.09244</td>
+<td style="text-align:center">0.957</td>
+<td style="color:#00ff00;text-align:center">1.08673</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_MulEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">3.87</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">4.18</td>
+<td style="color:#ff0000;text-align:center">0.925837</td>
+<td style="text-align:center">4.19</td>
+<td style="color:#ff0000;text-align:center">0.923628</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.87</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3.66</td>
+<td style="color:#00ff00;text-align:center">1.05738</td>
+<td style="text-align:center">3.68</td>
+<td style="color:#00ff00;text-align:center">1.05163</td>
+<td style="text-align:center">3.7</td>
+<td style="color:#00ff00;text-align:center">1.04595</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_MulEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">16.8</td>
+<td style="text-align:center">15.5</td>
+<td style="text-align:center">1.08387</td>
+<td style="text-align:center">15.5</td>
+<td style="text-align:center">1.08387</td>
+<td style="text-align:center">15.5</td>
+<td style="text-align:center">1.08387</td>
+<td style="text-align:center">16.5</td>
+<td style="text-align:center">1.01818</td>
+<td style="text-align:center">16.5</td>
+<td style="text-align:center">1.01818</td>
+<td style="text-align:center">15.5</td>
+<td style="text-align:center">1.08387</td>
+<td style="text-align:center">15.5</td>
+<td style="text-align:center">1.08387</td>
+<td style="text-align:center">15.5</td>
+<td style="text-align:center">1.08387</td>
+<td style="text-align:center">15.1</td>
+<td style="text-align:center">1.11258</td>
+<td style="text-align:center">15.2</td>
+<td style="text-align:center">1.10526</td>
+<td style="text-align:center">15.7</td>
+<td style="text-align:center">1.07006</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecVec_MulEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">30.9</td>
+<td style="text-align:center">32.6</td>
+<td style="text-align:center">0.947853</td>
+<td style="text-align:center">30.9</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">30.9</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">34.4</td>
+<td style="color:#ff0000;text-align:center">0.898256</td>
+<td style="text-align:center">33</td>
+<td style="color:#ff0000;text-align:center">0.936364</td>
+<td style="text-align:center">30.9</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">30.9</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">30.9</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">30.2</td>
+<td style="color:#00ff00;text-align:center">1.02318</td>
+<td style="text-align:center">30.8</td>
+<td style="color:#00ff00;text-align:center">1.00325</td>
+<td style="text-align:center">30.6</td>
+<td style="color:#00ff00;text-align:center">1.0098</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Add<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.249</td>
+<td style="text-align:center">0.233</td>
+<td style="color:#00ff00;text-align:center">1.06867</td>
+<td style="text-align:center">0.248</td>
+<td style="text-align:center">1.00403</td>
+<td style="text-align:center">0.274</td>
+<td style="text-align:center">0.908759</td>
+<td style="text-align:center">0.252</td>
+<td style="text-align:center">0.988095</td>
+<td style="text-align:center">0.254</td>
+<td style="text-align:center">0.980315</td>
+<td style="text-align:center">0.227</td>
+<td style="color:#00ff00;text-align:center">1.09692</td>
+<td style="text-align:center">0.246</td>
+<td style="text-align:center">1.01219</td>
+<td style="text-align:center">0.25</td>
+<td style="text-align:center">0.996</td>
+<td style="text-align:center">0.347</td>
+<td style="color:#ffff00;text-align:center">0.717579</td>
+<td style="text-align:center">0.342</td>
+<td style="color:#ffff00;text-align:center">0.72807</td>
+<td style="text-align:center">0.949</td>
+<td style="color:#ff0000;text-align:center">0.262381</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Add<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.36</td>
+<td style="text-align:center">1.32</td>
+<td style="text-align:center">1.0303</td>
+<td style="text-align:center">1.35</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">1.48</td>
+<td style="text-align:center">0.918919</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.16</td>
+<td style="color:#00ff00;text-align:center">1.17241</td>
+<td style="text-align:center">1.35</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.61</td>
+<td style="color:#ffff00;text-align:center">0.84472</td>
+<td style="text-align:center">1.57</td>
+<td style="color:#ffff00;text-align:center">0.866242</td>
+<td style="text-align:center">3.67</td>
+<td style="color:#ff0000;text-align:center">0.370572</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Add<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">5.4</td>
+<td style="text-align:center">5.29</td>
+<td style="color:#00ff00;text-align:center">1.02079</td>
+<td style="text-align:center">5.38</td>
+<td style="color:#00ff00;text-align:center">1.00372</td>
+<td style="text-align:center">6.06</td>
+<td style="color:#ffff00;text-align:center">0.891089</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">5.53</td>
+<td style="color:#00ff00;text-align:center">0.976492</td>
+<td style="text-align:center">5.38</td>
+<td style="color:#00ff00;text-align:center">1.00372</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.05</td>
+<td style="color:#ffff00;text-align:center">0.892562</td>
+<td style="text-align:center">6.07</td>
+<td style="color:#ffff00;text-align:center">0.889621</td>
+<td style="text-align:center">14.2</td>
+<td style="color:#ff0000;text-align:center">0.380282</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Add<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">10.5</td>
+<td style="text-align:center">10.4</td>
+<td style="color:#00ff00;text-align:center">1.00961</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11.8</td>
+<td style="color:#ffff00;text-align:center">0.889831</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11</td>
+<td style="color:#00ff00;text-align:center">0.954545</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">10.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">11.8</td>
+<td style="color:#ffff00;text-align:center">0.889831</td>
+<td style="text-align:center">11.9</td>
+<td style="color:#ffff00;text-align:center">0.882353</td>
+<td style="text-align:center">28</td>
+<td style="color:#ff0000;text-align:center">0.375</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_AddEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.121</td>
+<td style="text-align:center">0.106</td>
+<td style="color:#0000ff;text-align:center">1.14151</td>
+<td style="text-align:center">0.117</td>
+<td style="text-align:center">1.03419</td>
+<td style="text-align:center">0.141</td>
+<td style="color:#ffff00;text-align:center">0.858156</td>
+<td style="text-align:center">0.121</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.121</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.084</td>
+<td style="color:#00ff00;text-align:center">1.44048</td>
+<td style="text-align:center">0.117</td>
+<td style="text-align:center">1.03419</td>
+<td style="text-align:center">0.121</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.198</td>
+<td style="color:#ffff00;text-align:center">0.611111</td>
+<td style="text-align:center">0.188</td>
+<td style="color:#ffff00;text-align:center">0.643617</td>
+<td style="text-align:center">0.738</td>
+<td style="color:#ff0000;text-align:center">0.163957</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_AddEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">0.485</td>
+<td style="text-align:center">0.424</td>
+<td style="color:#0000ff;text-align:center">1.14387</td>
+<td style="text-align:center">0.469</td>
+<td style="text-align:center">1.03411</td>
+<td style="text-align:center">0.558</td>
+<td style="color:#ffff00;text-align:center">0.869176</td>
+<td style="text-align:center">0.487</td>
+<td style="text-align:center">0.995893</td>
+<td style="text-align:center">0.486</td>
+<td style="text-align:center">0.997942</td>
+<td style="text-align:center">0.333</td>
+<td style="color:#00ff00;text-align:center">1.45646</td>
+<td style="text-align:center">0.468</td>
+<td style="text-align:center">1.03632</td>
+<td style="text-align:center">0.485</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.737</td>
+<td style="color:#ffff00;text-align:center">0.658073</td>
+<td style="text-align:center">0.744</td>
+<td style="color:#ffff00;text-align:center">0.651882</td>
+<td style="text-align:center">2.93</td>
+<td style="color:#ff0000;text-align:center">0.165529</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_AddEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">2.25</td>
+<td style="text-align:center">2.27</td>
+<td style="color:#00ff00;text-align:center">0.991189</td>
+<td style="text-align:center">2.26</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">2.87</td>
+<td style="color:#ffff00;text-align:center">0.783972</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">2.3</td>
+<td style="color:#00ff00;text-align:center">0.978261</td>
+<td style="text-align:center">2.26</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">2.25</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">3.09</td>
+<td style="color:#ffff00;text-align:center">0.728155</td>
+<td style="text-align:center">3.09</td>
+<td style="color:#ffff00;text-align:center">0.728155</td>
+<td style="text-align:center">11.7</td>
+<td style="color:#ff0000;text-align:center">0.192308</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_AddEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">4.5</td>
+<td style="text-align:center">4.55</td>
+<td style="color:#00ff00;text-align:center">0.989011</td>
+<td style="text-align:center">4.52</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">5.75</td>
+<td style="color:#ffff00;text-align:center">0.782609</td>
+<td style="text-align:center">4.51</td>
+<td style="color:#00ff00;text-align:center">0.997783</td>
+<td style="text-align:center">4.51</td>
+<td style="color:#00ff00;text-align:center">0.997783</td>
+<td style="text-align:center">4.6</td>
+<td style="color:#00ff00;text-align:center">0.978261</td>
+<td style="text-align:center">4.52</td>
+<td style="color:#00ff00;text-align:center">0.995575</td>
+<td style="text-align:center">4.5</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">6.17</td>
+<td style="color:#ffff00;text-align:center">0.729335</td>
+<td style="text-align:center">6.17</td>
+<td style="color:#ffff00;text-align:center">0.729335</td>
+<td style="text-align:center">23.5</td>
+<td style="color:#ff0000;text-align:center">0.191489</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mul<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.317</td>
+<td style="text-align:center">0.313</td>
+<td style="text-align:center">1.01278</td>
+<td style="text-align:center">0.315</td>
+<td style="text-align:center">1.00635</td>
+<td style="text-align:center">0.314</td>
+<td style="text-align:center">1.00955</td>
+<td style="text-align:center">0.286</td>
+<td style="color:#00ff00;text-align:center">1.10839</td>
+<td style="text-align:center">0.299</td>
+<td style="color:#00ff00;text-align:center">1.0602</td>
+<td style="text-align:center">0.322</td>
+<td style="color:#ff0000;text-align:center">0.984472</td>
+<td style="text-align:center">0.313</td>
+<td style="text-align:center">1.01278</td>
+<td style="text-align:center">0.313</td>
+<td style="text-align:center">1.01278</td>
+<td style="text-align:center">0.337</td>
+<td style="color:#ff0000;text-align:center">0.940653</td>
+<td style="text-align:center">0.335</td>
+<td style="color:#ff0000;text-align:center">0.946269</td>
+<td style="text-align:center">0.335</td>
+<td style="color:#ff0000;text-align:center">0.946269</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mul<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">1.41</td>
+<td style="text-align:center">1.41</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.41</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.43</td>
+<td style="text-align:center">0.986014</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">1.00714</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">1.00714</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.43</td>
+<td style="text-align:center">0.986014</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">0.992958</td>
+<td style="text-align:center">1.43</td>
+<td style="text-align:center">0.986014</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mul<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">7.11</td>
+<td style="text-align:center">6.71</td>
+<td style="text-align:center">1.05961</td>
+<td style="text-align:center">6.7</td>
+<td style="text-align:center">1.06119</td>
+<td style="text-align:center">7.08</td>
+<td style="text-align:center">1.00424</td>
+<td style="text-align:center">6.42</td>
+<td style="text-align:center">1.10748</td>
+<td style="text-align:center">6.46</td>
+<td style="text-align:center">1.10062</td>
+<td style="text-align:center">6.7</td>
+<td style="text-align:center">1.06119</td>
+<td style="text-align:center">6.69</td>
+<td style="text-align:center">1.06278</td>
+<td style="text-align:center">6.69</td>
+<td style="text-align:center">1.06278</td>
+<td style="text-align:center">6.8</td>
+<td style="text-align:center">1.04559</td>
+<td style="text-align:center">6.65</td>
+<td style="text-align:center">1.06917</td>
+<td style="text-align:center">6.66</td>
+<td style="text-align:center">1.06757</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_Mul<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">13.2</td>
+<td style="text-align:center">13.6</td>
+<td style="text-align:center">0.970588</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">13.5</td>
+<td style="text-align:center">0.977778</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.04762</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.04762</td>
+<td style="text-align:center">13.1</td>
+<td style="text-align:center">1.00763</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">1.01538</td>
+<td style="text-align:center">13.3</td>
+<td style="text-align:center">0.992481</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_MulEq<NativeVector>/RingDm:1024</b></td>	<td style="text-align:center">0.157</td>
+<td style="text-align:center">0.155</td>
+<td style="color:#00ff00;text-align:center">1.0129</td>
+<td style="text-align:center">0.156</td>
+<td style="color:#00ff00;text-align:center">1.00641</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.15</td>
+<td style="color:#00ff00;text-align:center">1.04667</td>
+<td style="text-align:center">0.152</td>
+<td style="color:#00ff00;text-align:center">1.03289</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.154</td>
+<td style="color:#00ff00;text-align:center">1.01948</td>
+<td style="text-align:center">0.165</td>
+<td style="color:#ff0000;text-align:center">0.951515</td>
+<td style="text-align:center">0.164</td>
+<td style="color:#ff0000;text-align:center">0.957317</td>
+<td style="text-align:center">0.167</td>
+<td style="color:#ff0000;text-align:center">0.94012</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_MulEq<NativeVector>/RingDm:4096</b></td>	<td style="text-align:center">0.608</td>
+<td style="text-align:center">0.608</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.601</td>
+<td style="text-align:center">1.01165</td>
+<td style="text-align:center">0.599</td>
+<td style="text-align:center">1.01503</td>
+<td style="text-align:center">0.592</td>
+<td style="text-align:center">1.02703</td>
+<td style="text-align:center">0.593</td>
+<td style="text-align:center">1.0253</td>
+<td style="text-align:center">0.607</td>
+<td style="text-align:center">1.00165</td>
+<td style="text-align:center">0.607</td>
+<td style="text-align:center">1.00165</td>
+<td style="text-align:center">0.599</td>
+<td style="text-align:center">1.01503</td>
+<td style="text-align:center">0.649</td>
+<td style="text-align:center">0.936826</td>
+<td style="text-align:center">0.64</td>
+<td style="text-align:center">0.95</td>
+<td style="text-align:center">0.65</td>
+<td style="text-align:center">0.935385</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_MulEq<NativeVector>/RingDm:16384</b></td>	<td style="text-align:center">2.71</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.34</td>
+<td style="color:#00ff00;text-align:center">1.15812</td>
+<td style="text-align:center">2.34</td>
+<td style="color:#00ff00;text-align:center">1.15812</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.71</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">2.7</td>
+<td style="color:#ff0000;text-align:center">1.0037</td>
+<td style="text-align:center">2.7</td>
+<td style="color:#ff0000;text-align:center">1.0037</td>
+<td style="text-align:center">2.7</td>
+<td style="color:#ff0000;text-align:center">1.0037</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BM_VecInt_MulEq<NativeVector>/RingDm:32768</b></td>	<td style="text-align:center">5.41</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">4.67</td>
+<td style="color:#00ff00;text-align:center">1.15846</td>
+<td style="text-align:center">4.67</td>
+<td style="color:#00ff00;text-align:center">1.15846</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.41</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#ff0000;text-align:center">1.00185</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#ff0000;text-align:center">1.00185</td>
+<td style="text-align:center">5.4</td>
+<td style="color:#ff0000;text-align:center">1.00185</td>
+</tr>
+</body></html>
