@@ -20,6 +20,5 @@ fi
 cp CMakeLists.txt $OPENFHE_DEST_REPO
 cp OpenFHEConfig.cmake.in $OPENFHE_DEST_REPO
 cp -r benchmark $OPENFHE_DEST_REPO
-cp -r configure $OPENFHE_DEST_REPO
 cp -r src $OPENFHE_DEST_REPO
 cp -r third-party $OPENFHE_DEST_REPO
