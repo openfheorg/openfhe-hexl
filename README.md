@@ -4,7 +4,10 @@ This repository contains code that can be staged into OpenFHE to enable Intel HE
 
 # How To Use
 
-This repository is typically used in conjunction with openfhe-configurator.
+This repository is typically used in conjunction with [openfhe-configurator](https://github.com/openfheorg/openfhe-configurator).
+
+Before following the steps below, we recommend following the guidelines outlined in the `Notes specific to the Intel HEXL backend` section of 
+[Building OpenFHE for Best Performance](https://github.com/openfheorg/openfhe-development/blob/main/docs/static_docs/Best_Performance.md).
 
 ```
 % git clone https://github.com/openfheorg/openfhe-configurator.git
