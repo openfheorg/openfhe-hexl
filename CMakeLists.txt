@@ -79,7 +79,7 @@ option( WITH_COVTEST "Turn on to enable coverage testing"                       
 option( WITH_NOISE_DEBUG "Use only when running lattice estimator; not for production" OFF )
 option( USE_MACPORTS "Use MacPorts installed packages"                                 OFF )
 option( WITH_INTEL_HEXL "Use Intel HEXL library"                                       ON  )
-option( INTEL_HEXL_PREBUILT "Specify if Intel HEXL library was prebuilt"               ON  )
+option( INTEL_HEXL_PREBUILT "Specify if Intel HEXL library was prebuilt"               OFF )
 
 # Set required number of bits for native integer in build by setting NATIVE_SIZE to 64 or 128
 if( NOT NATIVE_SIZE )
@@ -89,6 +89,11 @@ endif()
 if( NOT CKKS_M_FACTOR )
     set( CKKS_M_FACTOR 1 )
 endif()
+
+if( NOT INTEL_HEXL_HINT_DIR )
+    set(INTEL_HEXL_HINT_DIR "${CMAKE_INSTALL_PREFIX}")
+endif()
+
 
 ### Print options
 message( STATUS "BUILD_UNITTESTS:     ${BUILD_UNITTESTS}")
@@ -110,7 +115,8 @@ message( STATUS "WITH_COVTEST:        ${WITH_COVTEST}")
 message( STATUS "WITH_NOISE_DEBUG:    ${WITH_NOISE_DEBUG}")
 message( STATUS "USE_MACPORTS:        ${USE_MACPORTS}")
 message( STATUS "WITH_INTEL_HEXL:     ${WITH_INTEL_HEXL}")
-message( STATUS "INTEL_HEXL_PREBUILT: ${WITH_INTEL_HEXL}")
+message( STATUS "INTEL_HEXL_PREBUILT: ${INTEL_HEXL_PREBUILT}")
+message( STATUS "INTEL_HEXL_HINT_DIR: ${INTEL_HEXL_HINT_DIR}")
 
 #--------------------------------------------------------------------
 # Compiler logic
@@ -650,7 +656,8 @@ if(WITH_NTL)
 endif()
 
 if (WITH_INTEL_HEXL)
-    list(APPEND THIRDPARTYLIBS HEXL::hexl)
+    list(APPEND THIRDPARTYLIBS "HEXL::hexl")
+    list(APPEND THIRDPARTYSTATICLIBS "HEXL::hexl")
 endif()
 
 set(DEMODATAPATH ${CMAKE_CURRENT_SOURCE_DIR}/demoData)

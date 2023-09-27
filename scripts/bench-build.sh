@@ -91,9 +91,8 @@ for variant in $VARIANTS; do
   cd $variant_dir || abort "clone of variant $variant_orig failed."
   git checkout $OPENFHE_CONFIGURATOR_BRANCH
 
-  CC=$cc CXX=$cxx ./scripts/stage-openfhe-development-hexl.sh
+  ./scripts/stage-openfhe-development-hexl.sh
 
-  cmake_flags=$cmake_flags" -DINTEL_HEXL_HINT_DIR="$ROOT/$variant_dir"/openfhe-staging/install"
   echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
 
   CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags ./scripts/build-openfhe-development.sh || abort "build of variant $variant_orig failed."
