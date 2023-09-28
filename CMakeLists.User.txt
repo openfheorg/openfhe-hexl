@@ -20,9 +20,11 @@ project(demo CXX)
 set(CMAKE_CXX_STANDARD 17)
 option( BUILD_STATIC "Set to ON to include static versions of the library" OFF)
 
-# pass a value for OPENFHE_INSTALL_DIR if there is an issue locatig the correct package
+### pass a value for OPENFHE_INSTALL_DIR if there is an issue locatig the correct package
+### EXAMPLE:
+### cmake -DOPENFHE_INSTALL_DIR=[PATH TO OpennFHE] ..
 
-find_package(OpenFHE CONFIG HINTS OPENFHE_INSTALL_DIR REQUIRED)
+find_package(OpenFHE CONFIG HINTS ${OPENFHE_INSTALL_DIR} REQUIRED)
 if (OpenFHE_FOUND)
     message(STATUS "FOUND PACKAGE OpenFHE")
     message(STATUS "OpenFHE Version: ${BASE_OPENFHE_VERSION}")
@@ -42,23 +44,26 @@ include_directories( ${OPENMP_INCLUDES} )
 include_directories( ${OpenFHE_INCLUDE} )
 include_directories( ${OpenFHE_INCLUDE}/third-party/include )
 include_directories( ${OpenFHE_INCLUDE}/core )
+include_directories( ${OpenFHE_INCLUDE}/core/include )
 include_directories( ${OpenFHE_INCLUDE}/pke )
 include_directories( ${OpenFHE_INCLUDE}/binfhe )
-### add directories for other OpenFHE modules as needed for your project
+
 if (OpenFHE_WITH_INTEL_HEXL)
     find_package(HEXL 1.2.5 HINTS ${OpenFHE_INTEL_HEXL_HINT_DIR} REQUIRED)
     if (NOT TARGET HEXL::hexl)
         message(FATAL_ERROR, "Intel HEXL not found")
     endif()
 
-    get_target_property(INTEL_HEXL_INCLUDE_DIR HEXL::hexl INTERFACE_INCLUDE_DIRECTORIES)
-    message(STATUS "INTEL_HEXL_INCLUDE_DIR: ${INTEL_HEXL_INCLUDE_DIR}")
-
     get_target_property(INTEL_HEXL_LOCATION HEXL::hexl LOCATION)
     message(STATUS "INTEL_HEXL_LOCATION: ${INTEL_HEXL_LOCATION}")
 
+    get_target_property(INTEL_HEXL_INCLUDE_DIR HEXL::hexl INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "INTEL_HEXL_INCLUDE_DIR: ${INTEL_HEXL_INCLUDE_DIR}")
+
     include_directories(${INTEL_HEXL_INCLUDE_DIR})
 endif()
+
+### add directories for other OpenFHE modules as needed for your project
 
 link_directories( ${OpenFHE_LIBDIR} )
 link_directories( ${OPENMP_LIBRARIES} )
