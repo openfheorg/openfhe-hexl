@@ -35,4 +35,5 @@ date              > finish
 
 separator
 echo "bench-run.sh: done."
+
 separator

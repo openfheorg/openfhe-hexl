@@ -82,16 +82,17 @@ for variant in $VARIANTS; do
 
   # no commas in directory names
   variant_dir=`echo $variant_orig | sed 's/,/-/g'`
+
   separator
   echo "Cloning openfhe-configurator for variant $variant_orig"
+
   separator
   git clone https://github.com/openfheorg/openfhe-configurator $variant_dir
   cd $variant_dir || abort "clone of variant $variant_orig failed."
   git checkout $OPENFHE_CONFIGURATOR_BRANCH
 
-  CC=$cc CXX=$cxx ./scripts/stage-openfhe-development-hexl.sh
+  ./scripts/stage-openfhe-development-hexl.sh
 
-  cmake_flags=$cmake_flags" -DINTEL_HEXL_HINT_DIR="$ROOT/$variant_dir"/openfhe-staging"
   echo "Preparing to build variant $variant_orig with CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags"
 
   CC=$cc CXX=$cxx CMAKE_FLAGS=$cmake_flags ./scripts/build-openfhe-development.sh || abort "build of variant $variant_orig failed."
