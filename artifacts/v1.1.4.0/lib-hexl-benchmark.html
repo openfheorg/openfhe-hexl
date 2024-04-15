@@ -1,0 +1,2167 @@
+<!DOCTYPE html><html><head><!-- --></head><body style="background-color:#000000;color:#808080">
+<tr>
+<b>lib-hexl-benchmark</b><br>
+<tr>
+<b></b><br>
+<tr>
+<b>CPU Model Intel(R) Xeon(R) Platinum 8360Y CPU @ 2.40GHz</b><br>
+<tr>
+<b>g++ version (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0</b><br>
+<tr>
+<b>clang version version 10.0.0-4ubuntu1 </b><br>
+<tr>
+<b></b><br>
+<table>
+<tr>
+<td style="text-align:center"><b>BENCHMARK</b></td>	<td style="text-align:center"><b>CLANG13-OPENMP-OFF</b></td>	<td style="text-align:center"><b>CLANG17-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG16-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG12-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG11-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG10-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG9-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG15-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG14-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC11-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC10-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC9-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	</tr>
+<tr>
+<td style="text-align:center"><b>NativeNTT/ringdm:1024</b></td>	<td style="text-align:center">1.55</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#00ff00;text-align:center">1.00649</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#00ff00;text-align:center">1.00649</td>
+<td style="text-align:center">1.57</td>
+<td style="color:#00ff00;text-align:center">0.987261</td>
+<td style="text-align:center">1.73</td>
+<td style="color:#ff0000;text-align:center">0.895954</td>
+<td style="text-align:center">1.73</td>
+<td style="color:#ff0000;text-align:center">0.895954</td>
+<td style="text-align:center">1.6</td>
+<td style="color:#00ff00;text-align:center">0.96875</td>
+<td style="text-align:center">1.56</td>
+<td style="color:#00ff00;text-align:center">0.99359</td>
+<td style="text-align:center">1.57</td>
+<td style="color:#00ff00;text-align:center">0.987261</td>
+<td style="text-align:center">1.61</td>
+<td style="color:#00ff00;text-align:center">0.962733</td>
+<td style="text-align:center">1.62</td>
+<td style="text-align:center">0.95679</td>
+<td style="text-align:center">1.64</td>
+<td style="text-align:center">0.945122</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeNTT/ringdm:4096</b></td>	<td style="text-align:center">6.32</td>
+<td style="text-align:center">6.3</td>
+<td style="color:#00ff00;text-align:center">1.00317</td>
+<td style="text-align:center">6.38</td>
+<td style="color:#00ff00;text-align:center">0.990596</td>
+<td style="text-align:center">6.3</td>
+<td style="color:#00ff00;text-align:center">1.00317</td>
+<td style="text-align:center">6.89</td>
+<td style="text-align:center">0.917271</td>
+<td style="text-align:center">6.96</td>
+<td style="color:#ff0000;text-align:center">0.908046</td>
+<td style="text-align:center">6.38</td>
+<td style="color:#00ff00;text-align:center">0.990596</td>
+<td style="text-align:center">6.36</td>
+<td style="color:#00ff00;text-align:center">0.993711</td>
+<td style="text-align:center">6.33</td>
+<td style="color:#00ff00;text-align:center">0.99842</td>
+<td style="text-align:center">7.29</td>
+<td style="color:#ff0000;text-align:center">0.866941</td>
+<td style="text-align:center">6.92</td>
+<td style="text-align:center">0.913295</td>
+<td style="text-align:center">6.58</td>
+<td style="color:#00ff00;text-align:center">0.960486</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeNTT/ringdm:8192</b></td>	<td style="text-align:center">13.3</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">1.00758</td>
+<td style="text-align:center">13.2</td>
+<td style="text-align:center">1.00758</td>
+<td style="text-align:center">13.3</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.6</td>
+<td style="text-align:center">0.910959</td>
+<td style="text-align:center">14.6</td>
+<td style="text-align:center">0.910959</td>
+<td style="text-align:center">13.5</td>
+<td style="text-align:center">0.985185</td>
+<td style="text-align:center">13.4</td>
+<td style="text-align:center">0.992537</td>
+<td style="text-align:center">13.4</td>
+<td style="text-align:center">0.992537</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">0.95</td>
+<td style="text-align:center">13.7</td>
+<td style="text-align:center">0.970803</td>
+<td style="text-align:center">13.9</td>
+<td style="text-align:center">0.956835</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeINTT/ringdm:1024</b></td>	<td style="text-align:center">1.52</td>
+<td style="text-align:center">1.53</td>
+<td style="color:#00ff00;text-align:center">0.993464</td>
+<td style="text-align:center">1.52</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.52</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">1.57</td>
+<td style="color:#00ff00;text-align:center">0.968153</td>
+<td style="text-align:center">1.55</td>
+<td style="color:#00ff00;text-align:center">0.980645</td>
+<td style="text-align:center">1.62</td>
+<td style="color:#ff0000;text-align:center">0.938272</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#00ff00;text-align:center">0.987013</td>
+<td style="text-align:center">1.54</td>
+<td style="color:#00ff00;text-align:center">0.987013</td>
+<td style="text-align:center">1.68</td>
+<td style="color:#ff0000;text-align:center">0.904762</td>
+<td style="text-align:center">1.68</td>
+<td style="color:#ff0000;text-align:center">0.904762</td>
+<td style="text-align:center">1.7</td>
+<td style="color:#ff0000;text-align:center">0.894118</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeINTT/ringdm:4096</b></td>	<td style="text-align:center">7.95</td>
+<td style="text-align:center">7.7</td>
+<td style="text-align:center">1.03247</td>
+<td style="text-align:center">7.68</td>
+<td style="text-align:center">1.03516</td>
+<td style="text-align:center">7.66</td>
+<td style="text-align:center">1.03786</td>
+<td style="text-align:center">7.84</td>
+<td style="text-align:center">1.01403</td>
+<td style="text-align:center">7.84</td>
+<td style="text-align:center">1.01403</td>
+<td style="text-align:center">7.74</td>
+<td style="text-align:center">1.02713</td>
+<td style="text-align:center">7.68</td>
+<td style="text-align:center">1.03516</td>
+<td style="text-align:center">7.66</td>
+<td style="text-align:center">1.03786</td>
+<td style="text-align:center">8.25</td>
+<td style="text-align:center">0.963636</td>
+<td style="text-align:center">8.25</td>
+<td style="text-align:center">0.963636</td>
+<td style="text-align:center">8.22</td>
+<td style="text-align:center">0.967153</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeINTT/ringdm:8192</b></td>	<td style="text-align:center">16.6</td>
+<td style="text-align:center">16.6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">16.6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">16.7</td>
+<td style="text-align:center">0.994012</td>
+<td style="text-align:center">16.9</td>
+<td style="text-align:center">0.982249</td>
+<td style="text-align:center">17</td>
+<td style="text-align:center">0.976471</td>
+<td style="text-align:center">16.7</td>
+<td style="text-align:center">0.994012</td>
+<td style="text-align:center">16.7</td>
+<td style="text-align:center">0.994012</td>
+<td style="text-align:center">16.8</td>
+<td style="text-align:center">0.988095</td>
+<td style="text-align:center">18</td>
+<td style="text-align:center">0.922222</td>
+<td style="text-align:center">18</td>
+<td style="text-align:center">0.922222</td>
+<td style="text-align:center">18</td>
+<td style="text-align:center">0.922222</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeNTTInPlace/ringdm:1024</b></td>	<td style="text-align:center">1.51</td>
+<td style="text-align:center">1.46</td>
+<td style="text-align:center">1.03425</td>
+<td style="text-align:center">1.46</td>
+<td style="text-align:center">1.03425</td>
+<td style="text-align:center">1.47</td>
+<td style="text-align:center">1.02721</td>
+<td style="text-align:center">1.62</td>
+<td style="color:#ff0000;text-align:center">0.932099</td>
+<td style="text-align:center">1.64</td>
+<td style="color:#ff0000;text-align:center">0.920732</td>
+<td style="text-align:center">1.51</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.47</td>
+<td style="text-align:center">1.02721</td>
+<td style="text-align:center">1.48</td>
+<td style="text-align:center">1.02027</td>
+<td style="text-align:center">1.38</td>
+<td style="color:#00ff00;text-align:center">1.0942</td>
+<td style="text-align:center">1.39</td>
+<td style="color:#00ff00;text-align:center">1.08633</td>
+<td style="text-align:center">1.34</td>
+<td style="color:#00ff00;text-align:center">1.12687</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeNTTInPlace/ringdm:4096</b></td>	<td style="text-align:center">5.92</td>
+<td style="text-align:center">5.81</td>
+<td style="color:#00ff00;text-align:center">1.01893</td>
+<td style="text-align:center">5.79</td>
+<td style="color:#00ff00;text-align:center">1.02245</td>
+<td style="text-align:center">5.86</td>
+<td style="color:#00ff00;text-align:center">1.01024</td>
+<td style="text-align:center">6.43</td>
+<td style="color:#ff0000;text-align:center">0.920684</td>
+<td style="text-align:center">6.45</td>
+<td style="color:#ff0000;text-align:center">0.917829</td>
+<td style="text-align:center">5.98</td>
+<td style="color:#00ff00;text-align:center">0.989967</td>
+<td style="text-align:center">5.87</td>
+<td style="color:#00ff00;text-align:center">1.00852</td>
+<td style="text-align:center">5.9</td>
+<td style="color:#00ff00;text-align:center">1.00339</td>
+<td style="text-align:center">5.97</td>
+<td style="color:#00ff00;text-align:center">0.991625</td>
+<td style="text-align:center">6.01</td>
+<td style="color:#00ff00;text-align:center">0.985025</td>
+<td style="text-align:center">6.17</td>
+<td style="color:#ff0000;text-align:center">0.959481</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeNTTInPlace/ringdm:8192</b></td>	<td style="text-align:center">12.7</td>
+<td style="text-align:center">12.5</td>
+<td style="text-align:center">1.016</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.00794</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.00794</td>
+<td style="text-align:center">13.9</td>
+<td style="text-align:center">0.913669</td>
+<td style="text-align:center">13.9</td>
+<td style="text-align:center">0.913669</td>
+<td style="text-align:center">12.7</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.00794</td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">1.00794</td>
+<td style="text-align:center">12.8</td>
+<td style="text-align:center">0.992187</td>
+<td style="text-align:center">12.9</td>
+<td style="text-align:center">0.984496</td>
+<td style="text-align:center">13.1</td>
+<td style="text-align:center">0.969466</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeINTTInPlace/ringdm:1024</b></td>	<td style="text-align:center">1.33</td>
+<td style="text-align:center">1.32</td>
+<td style="text-align:center">1.00758</td>
+<td style="text-align:center">1.33</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.32</td>
+<td style="text-align:center">1.00758</td>
+<td style="text-align:center">1.36</td>
+<td style="text-align:center">0.977941</td>
+<td style="text-align:center">1.37</td>
+<td style="text-align:center">0.970803</td>
+<td style="text-align:center">1.37</td>
+<td style="text-align:center">0.970803</td>
+<td style="text-align:center">1.33</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1.35</td>
+<td style="text-align:center">0.985185</td>
+<td style="text-align:center">1.45</td>
+<td style="text-align:center">0.917241</td>
+<td style="text-align:center">1.45</td>
+<td style="text-align:center">0.917241</td>
+<td style="text-align:center">1.46</td>
+<td style="text-align:center">0.910959</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeINTTInPlace/ringdm:4096</b></td>	<td style="text-align:center">6.25</td>
+<td style="text-align:center">6.25</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">6.24</td>
+<td style="text-align:center">1.0016</td>
+<td style="text-align:center">6.21</td>
+<td style="text-align:center">1.00644</td>
+<td style="text-align:center">6.39</td>
+<td style="text-align:center">0.978091</td>
+<td style="text-align:center">6.35</td>
+<td style="text-align:center">0.984252</td>
+<td style="text-align:center">6.4</td>
+<td style="text-align:center">0.976562</td>
+<td style="text-align:center">6.25</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">6.28</td>
+<td style="text-align:center">0.995223</td>
+<td style="text-align:center">6.85</td>
+<td style="text-align:center">0.912409</td>
+<td style="text-align:center">6.85</td>
+<td style="text-align:center">0.912409</td>
+<td style="text-align:center">6.84</td>
+<td style="text-align:center">0.913743</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>NativeINTTInPlace/ringdm:8192</b></td>	<td style="text-align:center">13.6</td>
+<td style="text-align:center">13.9</td>
+<td style="text-align:center">0.978417</td>
+<td style="text-align:center">13.5</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">13.5</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">13.8</td>
+<td style="text-align:center">0.985507</td>
+<td style="text-align:center">13.9</td>
+<td style="text-align:center">0.978417</td>
+<td style="text-align:center">13.8</td>
+<td style="text-align:center">0.985507</td>
+<td style="text-align:center">13.5</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">13.5</td>
+<td style="text-align:center">1.00741</td>
+<td style="text-align:center">14.8</td>
+<td style="text-align:center">0.918919</td>
+<td style="text-align:center">14.9</td>
+<td style="text-align:center">0.912752</td>
+<td style="text-align:center">14.8</td>
+<td style="text-align:center">0.918919</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_KeyGen</b></td>	<td style="text-align:center">1113</td>
+<td style="text-align:center">1176</td>
+<td style="text-align:center">0.946429</td>
+<td style="text-align:center">1216</td>
+<td style="text-align:center">0.915296</td>
+<td style="text-align:center">1107</td>
+<td style="text-align:center">1.00542</td>
+<td style="text-align:center">1207</td>
+<td style="text-align:center">0.922121</td>
+<td style="text-align:center">1322</td>
+<td style="color:#ff0000;text-align:center">0.841906</td>
+<td style="text-align:center">1366</td>
+<td style="color:#ff0000;text-align:center">0.814788</td>
+<td style="text-align:center">1203</td>
+<td style="text-align:center">0.925187</td>
+<td style="text-align:center">1101</td>
+<td style="text-align:center">1.0109</td>
+<td style="text-align:center">897</td>
+<td style="color:#0000ff;text-align:center">1.2408</td>
+<td style="text-align:center">850</td>
+<td style="color:#00ff00;text-align:center">1.30941</td>
+<td style="text-align:center">845</td>
+<td style="color:#00ff00;text-align:center">1.31716</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultKeyGen</b></td>	<td style="text-align:center">0.052</td>
+<td style="text-align:center">0.059</td>
+<td style="color:#ff0000;text-align:center">0.881356</td>
+<td style="text-align:center">0.057</td>
+<td style="color:#ff0000;text-align:center">0.912281</td>
+<td style="text-align:center">0.048</td>
+<td style="color:#00ff00;text-align:center">1.08333</td>
+<td style="text-align:center">0.046</td>
+<td style="color:#00ff00;text-align:center">1.13044</td>
+<td style="text-align:center">0.047</td>
+<td style="color:#00ff00;text-align:center">1.10638</td>
+<td style="text-align:center">0.048</td>
+<td style="color:#00ff00;text-align:center">1.08333</td>
+<td style="text-align:center">0.058</td>
+<td style="color:#ff0000;text-align:center">0.896552</td>
+<td style="text-align:center">0.06</td>
+<td style="color:#ff0000;text-align:center">0.866667</td>
+<td style="text-align:center">0.053</td>
+<td style="text-align:center">0.981132</td>
+<td style="text-align:center">0.053</td>
+<td style="text-align:center">0.981132</td>
+<td style="text-align:center">0.052</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_EvalAtIndexKeyGen</b></td>	<td style="text-align:center">0.545</td>
+<td style="text-align:center">0.524</td>
+<td style="color:#00ff00;text-align:center">1.04008</td>
+<td style="text-align:center">0.538</td>
+<td style="color:#00ff00;text-align:center">1.01301</td>
+<td style="text-align:center">0.541</td>
+<td style="color:#00ff00;text-align:center">1.00739</td>
+<td style="text-align:center">0.552</td>
+<td style="color:#00ff00;text-align:center">0.987319</td>
+<td style="text-align:center">0.554</td>
+<td style="color:#00ff00;text-align:center">0.983755</td>
+<td style="text-align:center">0.558</td>
+<td style="text-align:center">0.976703</td>
+<td style="text-align:center">0.531</td>
+<td style="color:#00ff00;text-align:center">1.02636</td>
+<td style="text-align:center">0.563</td>
+<td style="text-align:center">0.968028</td>
+<td style="text-align:center">0.559</td>
+<td style="text-align:center">0.974955</td>
+<td style="text-align:center">0.58</td>
+<td style="text-align:center">0.939655</td>
+<td style="text-align:center">0.657</td>
+<td style="color:#ff0000;text-align:center">0.829528</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_Encryption</b></td>	<td style="text-align:center">1532</td>
+<td style="text-align:center">1595</td>
+<td style="color:#ff0000;text-align:center">0.960502</td>
+<td style="text-align:center">1554</td>
+<td style="color:#ff0000;text-align:center">0.985843</td>
+<td style="text-align:center">1490</td>
+<td style="text-align:center">1.02819</td>
+<td style="text-align:center">1569</td>
+<td style="color:#ff0000;text-align:center">0.976418</td>
+<td style="text-align:center">1586</td>
+<td style="color:#ff0000;text-align:center">0.965952</td>
+<td style="text-align:center">1546</td>
+<td style="color:#ff0000;text-align:center">0.990944</td>
+<td style="text-align:center">1537</td>
+<td style="color:#ff0000;text-align:center">0.996747</td>
+<td style="text-align:center">1512</td>
+<td style="text-align:center">1.01323</td>
+<td style="text-align:center">918</td>
+<td style="color:#00ff00;text-align:center">1.66884</td>
+<td style="text-align:center">897</td>
+<td style="color:#00ff00;text-align:center">1.70792</td>
+<td style="text-align:center">903</td>
+<td style="color:#00ff00;text-align:center">1.69657</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_Decryption</b></td>	<td style="text-align:center">113</td>
+<td style="text-align:center">104</td>
+<td style="color:#00ff00;text-align:center">1.08654</td>
+<td style="text-align:center">103</td>
+<td style="color:#00ff00;text-align:center">1.09709</td>
+<td style="text-align:center">114</td>
+<td style="text-align:center">0.991228</td>
+<td style="text-align:center">114</td>
+<td style="text-align:center">0.991228</td>
+<td style="text-align:center">114</td>
+<td style="text-align:center">0.991228</td>
+<td style="text-align:center">112</td>
+<td style="text-align:center">1.00893</td>
+<td style="text-align:center">104</td>
+<td style="color:#00ff00;text-align:center">1.08654</td>
+<td style="text-align:center">104</td>
+<td style="color:#00ff00;text-align:center">1.08654</td>
+<td style="text-align:center">119</td>
+<td style="text-align:center">0.94958</td>
+<td style="text-align:center">119</td>
+<td style="text-align:center">0.94958</td>
+<td style="text-align:center">152</td>
+<td style="color:#ff0000;text-align:center">0.743421</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_Add</b></td>	<td style="text-align:center">7.33</td>
+<td style="text-align:center">7.35</td>
+<td style="color:#00ff00;text-align:center">0.997279</td>
+<td style="text-align:center">7.29</td>
+<td style="color:#00ff00;text-align:center">1.00549</td>
+<td style="text-align:center">7.59</td>
+<td style="color:#00ff00;text-align:center">0.965744</td>
+<td style="text-align:center">7.42</td>
+<td style="color:#00ff00;text-align:center">0.987871</td>
+<td style="text-align:center">7.56</td>
+<td style="color:#00ff00;text-align:center">0.969577</td>
+<td style="text-align:center">7.25</td>
+<td style="color:#00ff00;text-align:center">1.01103</td>
+<td style="text-align:center">7.35</td>
+<td style="color:#00ff00;text-align:center">0.997279</td>
+<td style="text-align:center">7.26</td>
+<td style="color:#00ff00;text-align:center">1.00964</td>
+<td style="text-align:center">7.97</td>
+<td style="color:#ff0000;text-align:center">0.919699</td>
+<td style="text-align:center">7.71</td>
+<td style="color:#ff0000;text-align:center">0.950713</td>
+<td style="text-align:center">8.09</td>
+<td style="color:#ff0000;text-align:center">0.906057</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_AddInPlace</b></td>	<td style="text-align:center">3.38</td>
+<td style="text-align:center">3.51</td>
+<td style="color:#00ff00;text-align:center">0.962963</td>
+<td style="text-align:center">3.42</td>
+<td style="color:#00ff00;text-align:center">0.988304</td>
+<td style="text-align:center">3.74</td>
+<td style="text-align:center">0.903743</td>
+<td style="text-align:center">3.69</td>
+<td style="text-align:center">0.915989</td>
+<td style="text-align:center">3.71</td>
+<td style="text-align:center">0.911051</td>
+<td style="text-align:center">3.47</td>
+<td style="color:#00ff00;text-align:center">0.974063</td>
+<td style="text-align:center">3.37</td>
+<td style="color:#00ff00;text-align:center">1.00297</td>
+<td style="text-align:center">3.37</td>
+<td style="color:#00ff00;text-align:center">1.00297</td>
+<td style="text-align:center">3.82</td>
+<td style="color:#ffff00;text-align:center">0.884817</td>
+<td style="text-align:center">3.43</td>
+<td style="color:#00ff00;text-align:center">0.985423</td>
+<td style="text-align:center">4.35</td>
+<td style="color:#ff0000;text-align:center">0.777011</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultNoRelin/depth:1</b></td>	<td style="text-align:center">1555</td>
+<td style="text-align:center">1378</td>
+<td style="color:#0000ff;text-align:center">1.12845</td>
+<td style="text-align:center">1249</td>
+<td style="color:#00ff00;text-align:center">1.245</td>
+<td style="text-align:center">1526</td>
+<td style="color:#ff0000;text-align:center">1.019</td>
+<td style="text-align:center">1543</td>
+<td style="color:#ff0000;text-align:center">1.00778</td>
+<td style="text-align:center">1575</td>
+<td style="color:#ff0000;text-align:center">0.987302</td>
+<td style="text-align:center">1560</td>
+<td style="color:#ff0000;text-align:center">0.996795</td>
+<td style="text-align:center">1458</td>
+<td style="text-align:center">1.06653</td>
+<td style="text-align:center">1470</td>
+<td style="text-align:center">1.05782</td>
+<td style="text-align:center">1379</td>
+<td style="color:#0000ff;text-align:center">1.12763</td>
+<td style="text-align:center">1211</td>
+<td style="color:#00ff00;text-align:center">1.28406</td>
+<td style="text-align:center">1529</td>
+<td style="color:#ff0000;text-align:center">1.017</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultNoRelin/depth:2</b></td>	<td style="text-align:center">4549</td>
+<td style="text-align:center">4265</td>
+<td style="color:#00ff00;text-align:center">1.06659</td>
+<td style="text-align:center">4201</td>
+<td style="color:#00ff00;text-align:center">1.08284</td>
+<td style="text-align:center">4422</td>
+<td style="text-align:center">1.02872</td>
+<td style="text-align:center">4569</td>
+<td style="text-align:center">0.995623</td>
+<td style="text-align:center">4897</td>
+<td style="color:#ff0000;text-align:center">0.928936</td>
+<td style="text-align:center">4709</td>
+<td style="color:#ff0000;text-align:center">0.966023</td>
+<td style="text-align:center">4206</td>
+<td style="color:#00ff00;text-align:center">1.08155</td>
+<td style="text-align:center">4198</td>
+<td style="color:#00ff00;text-align:center">1.08361</td>
+<td style="text-align:center">4578</td>
+<td style="text-align:center">0.993665</td>
+<td style="text-align:center">4602</td>
+<td style="text-align:center">0.988483</td>
+<td style="text-align:center">4596</td>
+<td style="text-align:center">0.989774</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultNoRelin/depth:4</b></td>	<td style="text-align:center">7339</td>
+<td style="text-align:center">6647</td>
+<td style="text-align:center">1.10411</td>
+<td style="text-align:center">6625</td>
+<td style="text-align:center">1.10777</td>
+<td style="text-align:center">7064</td>
+<td style="text-align:center">1.03893</td>
+<td style="text-align:center">6977</td>
+<td style="text-align:center">1.05188</td>
+<td style="text-align:center">7075</td>
+<td style="text-align:center">1.03731</td>
+<td style="text-align:center">6868</td>
+<td style="text-align:center">1.06858</td>
+<td style="text-align:center">6661</td>
+<td style="text-align:center">1.10179</td>
+<td style="text-align:center">6782</td>
+<td style="text-align:center">1.08213</td>
+<td style="text-align:center">6983</td>
+<td style="text-align:center">1.05098</td>
+<td style="text-align:center">7088</td>
+<td style="text-align:center">1.03541</td>
+<td style="text-align:center">7099</td>
+<td style="text-align:center">1.03381</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultNoRelin/depth:6</b></td>	<td style="text-align:center">18592</td>
+<td style="text-align:center">16957</td>
+<td style="text-align:center">1.09642</td>
+<td style="text-align:center">17166</td>
+<td style="text-align:center">1.08307</td>
+<td style="text-align:center">18142</td>
+<td style="text-align:center">1.0248</td>
+<td style="text-align:center">17591</td>
+<td style="text-align:center">1.0569</td>
+<td style="text-align:center">17815</td>
+<td style="text-align:center">1.04361</td>
+<td style="text-align:center">17609</td>
+<td style="text-align:center">1.05582</td>
+<td style="text-align:center">17056</td>
+<td style="text-align:center">1.09006</td>
+<td style="text-align:center">17449</td>
+<td style="text-align:center">1.0655</td>
+<td style="text-align:center">18076</td>
+<td style="text-align:center">1.02855</td>
+<td style="text-align:center">18158</td>
+<td style="text-align:center">1.0239</td>
+<td style="text-align:center">18251</td>
+<td style="text-align:center">1.01868</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultNoRelin/depth:8</b></td>	<td style="text-align:center">28785</td>
+<td style="text-align:center">25833</td>
+<td style="text-align:center">1.11427</td>
+<td style="text-align:center">26030</td>
+<td style="text-align:center">1.10584</td>
+<td style="text-align:center">27763</td>
+<td style="text-align:center">1.03681</td>
+<td style="text-align:center">26875</td>
+<td style="text-align:center">1.07107</td>
+<td style="text-align:center">27170</td>
+<td style="text-align:center">1.05944</td>
+<td style="text-align:center">27320</td>
+<td style="text-align:center">1.05362</td>
+<td style="text-align:center">26449</td>
+<td style="text-align:center">1.08832</td>
+<td style="text-align:center">27035</td>
+<td style="text-align:center">1.06473</td>
+<td style="text-align:center">27883</td>
+<td style="text-align:center">1.03235</td>
+<td style="text-align:center">27957</td>
+<td style="text-align:center">1.02962</td>
+<td style="text-align:center">28129</td>
+<td style="text-align:center">1.02332</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultNoRelin/depth:10</b></td>	<td style="text-align:center">33950</td>
+<td style="text-align:center">30009</td>
+<td style="color:#00ff00;text-align:center">1.13133</td>
+<td style="text-align:center">30274</td>
+<td style="color:#00ff00;text-align:center">1.12142</td>
+<td style="text-align:center">33105</td>
+<td style="color:#ff0000;text-align:center">1.02553</td>
+<td style="text-align:center">30791</td>
+<td style="color:#00ff00;text-align:center">1.10259</td>
+<td style="text-align:center">32027</td>
+<td style="color:#00ff00;text-align:center">1.06004</td>
+<td style="text-align:center">32298</td>
+<td style="text-align:center">1.05115</td>
+<td style="text-align:center">30579</td>
+<td style="color:#00ff00;text-align:center">1.11024</td>
+<td style="text-align:center">31739</td>
+<td style="color:#00ff00;text-align:center">1.06966</td>
+<td style="text-align:center">33186</td>
+<td style="color:#ff0000;text-align:center">1.02302</td>
+<td style="text-align:center">33361</td>
+<td style="color:#ff0000;text-align:center">1.01765</td>
+<td style="text-align:center">34220</td>
+<td style="color:#ff0000;text-align:center">0.99211</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultNoRelin/depth:12</b></td>	<td style="text-align:center">95532</td>
+<td style="text-align:center">85797</td>
+<td style="color:#00ff00;text-align:center">1.11347</td>
+<td style="text-align:center">85724</td>
+<td style="color:#00ff00;text-align:center">1.11441</td>
+<td style="text-align:center">93209</td>
+<td style="text-align:center">1.02492</td>
+<td style="text-align:center">86848</td>
+<td style="color:#00ff00;text-align:center">1.09999</td>
+<td style="text-align:center">91365</td>
+<td style="text-align:center">1.04561</td>
+<td style="text-align:center">91640</td>
+<td style="text-align:center">1.04247</td>
+<td style="text-align:center">87359</td>
+<td style="color:#00ff00;text-align:center">1.09356</td>
+<td style="text-align:center">91379</td>
+<td style="text-align:center">1.04545</td>
+<td style="text-align:center">94283</td>
+<td style="text-align:center">1.01325</td>
+<td style="text-align:center">94858</td>
+<td style="text-align:center">1.0071</td>
+<td style="text-align:center">99867</td>
+<td style="color:#ff0000;text-align:center">0.956592</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultRelin/depth:1</b></td>	<td style="text-align:center">1635</td>
+<td style="text-align:center">1546</td>
+<td style="text-align:center">1.05757</td>
+<td style="text-align:center">1547</td>
+<td style="text-align:center">1.05688</td>
+<td style="text-align:center">1597</td>
+<td style="text-align:center">1.0238</td>
+<td style="text-align:center">1629</td>
+<td style="text-align:center">1.00368</td>
+<td style="text-align:center">1512</td>
+<td style="text-align:center">1.08135</td>
+<td style="text-align:center">1653</td>
+<td style="text-align:center">0.989111</td>
+<td style="text-align:center">1566</td>
+<td style="text-align:center">1.04406</td>
+<td style="text-align:center">1569</td>
+<td style="text-align:center">1.04207</td>
+<td style="text-align:center">1538</td>
+<td style="text-align:center">1.06307</td>
+<td style="text-align:center">1555</td>
+<td style="text-align:center">1.05145</td>
+<td style="text-align:center">1558</td>
+<td style="text-align:center">1.04942</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultRelin/depth:2</b></td>	<td style="text-align:center">5095</td>
+<td style="text-align:center">4764</td>
+<td style="color:#00ff00;text-align:center">1.06948</td>
+<td style="text-align:center">4768</td>
+<td style="color:#00ff00;text-align:center">1.06858</td>
+<td style="text-align:center">4931</td>
+<td style="color:#00ff00;text-align:center">1.03326</td>
+<td style="text-align:center">5069</td>
+<td style="text-align:center">1.00513</td>
+<td style="text-align:center">5234</td>
+<td style="text-align:center">0.973443</td>
+<td style="text-align:center">5075</td>
+<td style="text-align:center">1.00394</td>
+<td style="text-align:center">4789</td>
+<td style="color:#00ff00;text-align:center">1.0639</td>
+<td style="text-align:center">4782</td>
+<td style="color:#00ff00;text-align:center">1.06545</td>
+<td style="text-align:center">5595</td>
+<td style="color:#ff0000;text-align:center">0.910634</td>
+<td style="text-align:center">5533</td>
+<td style="color:#ff0000;text-align:center">0.920839</td>
+<td style="text-align:center">5607</td>
+<td style="color:#ff0000;text-align:center">0.908686</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultRelin/depth:4</b></td>	<td style="text-align:center">8294</td>
+<td style="text-align:center">7791</td>
+<td style="text-align:center">1.06456</td>
+<td style="text-align:center">7786</td>
+<td style="text-align:center">1.06524</td>
+<td style="text-align:center">8110</td>
+<td style="text-align:center">1.02269</td>
+<td style="text-align:center">8006</td>
+<td style="text-align:center">1.03597</td>
+<td style="text-align:center">8109</td>
+<td style="text-align:center">1.02281</td>
+<td style="text-align:center">8073</td>
+<td style="text-align:center">1.02737</td>
+<td style="text-align:center">7878</td>
+<td style="text-align:center">1.0528</td>
+<td style="text-align:center">7974</td>
+<td style="text-align:center">1.04013</td>
+<td style="text-align:center">8261</td>
+<td style="text-align:center">1.00399</td>
+<td style="text-align:center">8392</td>
+<td style="text-align:center">0.988322</td>
+<td style="text-align:center">8379</td>
+<td style="text-align:center">0.989856</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultRelin/depth:6</b></td>	<td style="text-align:center">24189</td>
+<td style="text-align:center">22519</td>
+<td style="text-align:center">1.07416</td>
+<td style="text-align:center">22859</td>
+<td style="text-align:center">1.05818</td>
+<td style="text-align:center">23603</td>
+<td style="text-align:center">1.02483</td>
+<td style="text-align:center">22975</td>
+<td style="text-align:center">1.05284</td>
+<td style="text-align:center">23393</td>
+<td style="text-align:center">1.03403</td>
+<td style="text-align:center">22754</td>
+<td style="text-align:center">1.06307</td>
+<td style="text-align:center">22917</td>
+<td style="text-align:center">1.0555</td>
+<td style="text-align:center">23466</td>
+<td style="text-align:center">1.03081</td>
+<td style="text-align:center">23520</td>
+<td style="text-align:center">1.02844</td>
+<td style="text-align:center">23733</td>
+<td style="text-align:center">1.01921</td>
+<td style="text-align:center">23888</td>
+<td style="text-align:center">1.0126</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultRelin/depth:8</b></td>	<td style="text-align:center">43315</td>
+<td style="text-align:center">39978</td>
+<td style="text-align:center">1.08347</td>
+<td style="text-align:center">40318</td>
+<td style="text-align:center">1.07433</td>
+<td style="text-align:center">41802</td>
+<td style="text-align:center">1.03619</td>
+<td style="text-align:center">41231</td>
+<td style="text-align:center">1.05054</td>
+<td style="text-align:center">41876</td>
+<td style="text-align:center">1.03436</td>
+<td style="text-align:center">41381</td>
+<td style="text-align:center">1.04674</td>
+<td style="text-align:center">40480</td>
+<td style="text-align:center">1.07004</td>
+<td style="text-align:center">41203</td>
+<td style="text-align:center">1.05126</td>
+<td style="text-align:center">41775</td>
+<td style="text-align:center">1.03686</td>
+<td style="text-align:center">42466</td>
+<td style="text-align:center">1.01999</td>
+<td style="text-align:center">42654</td>
+<td style="text-align:center">1.0155</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultRelin/depth:10</b></td>	<td style="text-align:center">53105</td>
+<td style="text-align:center">48401</td>
+<td style="text-align:center">1.09719</td>
+<td style="text-align:center">48846</td>
+<td style="text-align:center">1.08719</td>
+<td style="text-align:center">51543</td>
+<td style="text-align:center">1.03031</td>
+<td style="text-align:center">49438</td>
+<td style="text-align:center">1.07417</td>
+<td style="text-align:center">50943</td>
+<td style="text-align:center">1.04244</td>
+<td style="text-align:center">50754</td>
+<td style="text-align:center">1.04632</td>
+<td style="text-align:center">49057</td>
+<td style="text-align:center">1.08252</td>
+<td style="text-align:center">50395</td>
+<td style="text-align:center">1.05377</td>
+<td style="text-align:center">51595</td>
+<td style="text-align:center">1.02927</td>
+<td style="text-align:center">52510</td>
+<td style="text-align:center">1.01133</td>
+<td style="text-align:center">52808</td>
+<td style="text-align:center">1.00562</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_MultRelin/depth:12</b></td>	<td style="text-align:center">156610</td>
+<td style="text-align:center">145978</td>
+<td style="text-align:center">1.07283</td>
+<td style="text-align:center">145950</td>
+<td style="text-align:center">1.07304</td>
+<td style="text-align:center">153270</td>
+<td style="text-align:center">1.02179</td>
+<td style="text-align:center">147596</td>
+<td style="text-align:center">1.06107</td>
+<td style="text-align:center">152167</td>
+<td style="text-align:center">1.0292</td>
+<td style="text-align:center">151628</td>
+<td style="text-align:center">1.03286</td>
+<td style="text-align:center">147627</td>
+<td style="text-align:center">1.06085</td>
+<td style="text-align:center">151438</td>
+<td style="text-align:center">1.03415</td>
+<td style="text-align:center">154826</td>
+<td style="text-align:center">1.01152</td>
+<td style="text-align:center">157268</td>
+<td style="text-align:center">0.995816</td>
+<td style="text-align:center">159874</td>
+<td style="text-align:center">0.979584</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BFVrns_EvalAtIndex</b></td>	<td style="text-align:center">249</td>
+<td style="text-align:center">234</td>
+<td style="color:#00ff00;text-align:center">1.0641</td>
+<td style="text-align:center">235</td>
+<td style="color:#00ff00;text-align:center">1.05957</td>
+<td style="text-align:center">235</td>
+<td style="color:#00ff00;text-align:center">1.05957</td>
+<td style="text-align:center">238</td>
+<td style="color:#00ff00;text-align:center">1.04622</td>
+<td style="text-align:center">247</td>
+<td style="text-align:center">1.0081</td>
+<td style="text-align:center">250</td>
+<td style="text-align:center">0.996</td>
+<td style="text-align:center">239</td>
+<td style="color:#00ff00;text-align:center">1.04184</td>
+<td style="text-align:center">240</td>
+<td style="color:#00ff00;text-align:center">1.0375</td>
+<td style="text-align:center">266</td>
+<td style="color:#ff0000;text-align:center">0.93609</td>
+<td style="text-align:center">273</td>
+<td style="color:#ff0000;text-align:center">0.912088</td>
+<td style="text-align:center">274</td>
+<td style="color:#ff0000;text-align:center">0.908759</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_KeyGen</b></td>	<td style="text-align:center">2768</td>
+<td style="text-align:center">2753</td>
+<td style="text-align:center">1.00545</td>
+<td style="text-align:center">2873</td>
+<td style="color:#ff0000;text-align:center">0.963453</td>
+<td style="text-align:center">2771</td>
+<td style="text-align:center">0.998917</td>
+<td style="text-align:center">2939</td>
+<td style="color:#ff0000;text-align:center">0.941817</td>
+<td style="text-align:center">3015</td>
+<td style="color:#ff0000;text-align:center">0.918076</td>
+<td style="text-align:center">3007</td>
+<td style="color:#ff0000;text-align:center">0.920519</td>
+<td style="text-align:center">2971</td>
+<td style="color:#ff0000;text-align:center">0.931673</td>
+<td style="text-align:center">2740</td>
+<td style="text-align:center">1.01022</td>
+<td style="text-align:center">2311</td>
+<td style="color:#00ff00;text-align:center">1.19775</td>
+<td style="text-align:center">2240</td>
+<td style="color:#00ff00;text-align:center">1.23571</td>
+<td style="text-align:center">2230</td>
+<td style="color:#00ff00;text-align:center">1.24126</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultKeyGen</b></td>	<td style="text-align:center">0.07</td>
+<td style="text-align:center">0.077</td>
+<td style="text-align:center">0.909091</td>
+<td style="text-align:center">0.09</td>
+<td style="color:#ff0000;text-align:center">0.777778</td>
+<td style="text-align:center">0.053</td>
+<td style="color:#00ff00;text-align:center">1.32075</td>
+<td style="text-align:center">0.054</td>
+<td style="color:#00ff00;text-align:center">1.2963</td>
+<td style="text-align:center">0.052</td>
+<td style="color:#00ff00;text-align:center">1.34615</td>
+<td style="text-align:center">0.054</td>
+<td style="color:#00ff00;text-align:center">1.2963</td>
+<td style="text-align:center">0.081</td>
+<td style="color:#ffff00;text-align:center">0.864198</td>
+<td style="text-align:center">0.086</td>
+<td style="color:#ff0000;text-align:center">0.813953</td>
+<td style="text-align:center">0.057</td>
+<td style="color:#0000ff;text-align:center">1.22807</td>
+<td style="text-align:center">0.057</td>
+<td style="color:#0000ff;text-align:center">1.22807</td>
+<td style="text-align:center">0.062</td>
+<td style="color:#0000ff;text-align:center">1.12903</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_EvalAtIndexKeyGen</b></td>	<td style="text-align:center">0.345</td>
+<td style="text-align:center">0.319</td>
+<td style="color:#00ff00;text-align:center">1.0815</td>
+<td style="text-align:center">0.34</td>
+<td style="text-align:center">1.01471</td>
+<td style="text-align:center">0.32</td>
+<td style="color:#00ff00;text-align:center">1.07812</td>
+<td style="text-align:center">0.327</td>
+<td style="color:#00ff00;text-align:center">1.05505</td>
+<td style="text-align:center">0.316</td>
+<td style="color:#00ff00;text-align:center">1.09177</td>
+<td style="text-align:center">0.329</td>
+<td style="color:#00ff00;text-align:center">1.04863</td>
+<td style="text-align:center">0.345</td>
+<td style="color:#ff0000;text-align:center">1</td>
+<td style="text-align:center">0.339</td>
+<td style="text-align:center">1.0177</td>
+<td style="text-align:center">0.344</td>
+<td style="color:#ff0000;text-align:center">1.00291</td>
+<td style="text-align:center">0.344</td>
+<td style="color:#ff0000;text-align:center">1.00291</td>
+<td style="text-align:center">0.361</td>
+<td style="color:#ff0000;text-align:center">0.955679</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_Encryption</b></td>	<td style="text-align:center">2849</td>
+<td style="text-align:center">2978</td>
+<td style="text-align:center">0.956682</td>
+<td style="text-align:center">2931</td>
+<td style="text-align:center">0.972023</td>
+<td style="text-align:center">2818</td>
+<td style="text-align:center">1.011</td>
+<td style="text-align:center">2969</td>
+<td style="text-align:center">0.959582</td>
+<td style="text-align:center">3280</td>
+<td style="color:#ff0000;text-align:center">0.868598</td>
+<td style="text-align:center">2787</td>
+<td style="text-align:center">1.02225</td>
+<td style="text-align:center">3061</td>
+<td style="text-align:center">0.930742</td>
+<td style="text-align:center">2813</td>
+<td style="text-align:center">1.0128</td>
+<td style="text-align:center">1722</td>
+<td style="color:#00ff00;text-align:center">1.65447</td>
+<td style="text-align:center">1695</td>
+<td style="color:#00ff00;text-align:center">1.68083</td>
+<td style="text-align:center">1709</td>
+<td style="color:#00ff00;text-align:center">1.66706</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_Decryption</b></td>	<td style="text-align:center">76.7</td>
+<td style="text-align:center">75.5</td>
+<td style="text-align:center">1.01589</td>
+<td style="text-align:center">75.1</td>
+<td style="text-align:center">1.0213</td>
+<td style="text-align:center">78.2</td>
+<td style="text-align:center">0.980818</td>
+<td style="text-align:center">80.1</td>
+<td style="text-align:center">0.957553</td>
+<td style="text-align:center">81</td>
+<td style="text-align:center">0.946914</td>
+<td style="text-align:center">76.8</td>
+<td style="text-align:center">0.998698</td>
+<td style="text-align:center">75.5</td>
+<td style="text-align:center">1.01589</td>
+<td style="text-align:center">74.9</td>
+<td style="text-align:center">1.02403</td>
+<td style="text-align:center">74.9</td>
+<td style="text-align:center">1.02403</td>
+<td style="text-align:center">75</td>
+<td style="text-align:center">1.02267</td>
+<td style="text-align:center">75.4</td>
+<td style="text-align:center">1.01724</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_Add</b></td>	<td style="text-align:center">20.5</td>
+<td style="text-align:center">21.4</td>
+<td style="text-align:center">0.957944</td>
+<td style="text-align:center">22.3</td>
+<td style="text-align:center">0.919283</td>
+<td style="text-align:center">22.1</td>
+<td style="text-align:center">0.927602</td>
+<td style="text-align:center">20</td>
+<td style="color:#00ff00;text-align:center">1.025</td>
+<td style="text-align:center">21.2</td>
+<td style="text-align:center">0.966981</td>
+<td style="text-align:center">21.3</td>
+<td style="text-align:center">0.962441</td>
+<td style="text-align:center">21.4</td>
+<td style="text-align:center">0.957944</td>
+<td style="text-align:center">23.7</td>
+<td style="color:#ff0000;text-align:center">0.864979</td>
+<td style="text-align:center">22.2</td>
+<td style="text-align:center">0.923423</td>
+<td style="text-align:center">22.9</td>
+<td style="color:#ff0000;text-align:center">0.895197</td>
+<td style="text-align:center">21.9</td>
+<td style="text-align:center">0.936073</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_AddInPlace</b></td>	<td style="text-align:center">13.8</td>
+<td style="text-align:center">13</td>
+<td style="color:#00ff00;text-align:center">1.06154</td>
+<td style="text-align:center">13.9</td>
+<td style="text-align:center">0.992806</td>
+<td style="text-align:center">13.3</td>
+<td style="color:#00ff00;text-align:center">1.03759</td>
+<td style="text-align:center">14.8</td>
+<td style="text-align:center">0.932432</td>
+<td style="text-align:center">14.1</td>
+<td style="text-align:center">0.978723</td>
+<td style="text-align:center">13.8</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">13.5</td>
+<td style="color:#00ff00;text-align:center">1.02222</td>
+<td style="text-align:center">13.2</td>
+<td style="color:#00ff00;text-align:center">1.04546</td>
+<td style="text-align:center">14.2</td>
+<td style="text-align:center">0.971831</td>
+<td style="text-align:center">13.7</td>
+<td style="color:#00ff00;text-align:center">1.0073</td>
+<td style="text-align:center">16</td>
+<td style="color:#ff0000;text-align:center">0.8625</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultNoRelin/depth:1</b></td>	<td style="text-align:center">110</td>
+<td style="text-align:center">105</td>
+<td style="text-align:center">1.04762</td>
+<td style="text-align:center">108</td>
+<td style="text-align:center">1.01852</td>
+<td style="text-align:center">105</td>
+<td style="text-align:center">1.04762</td>
+<td style="text-align:center">109</td>
+<td style="text-align:center">1.00917</td>
+<td style="text-align:center">107</td>
+<td style="text-align:center">1.02804</td>
+<td style="text-align:center">103</td>
+<td style="text-align:center">1.06796</td>
+<td style="text-align:center">105</td>
+<td style="text-align:center">1.04762</td>
+<td style="text-align:center">105</td>
+<td style="text-align:center">1.04762</td>
+<td style="text-align:center">104</td>
+<td style="text-align:center">1.05769</td>
+<td style="text-align:center">107</td>
+<td style="text-align:center">1.02804</td>
+<td style="text-align:center">105</td>
+<td style="text-align:center">1.04762</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultNoRelin/depth:2</b></td>	<td style="text-align:center">1344</td>
+<td style="text-align:center">1322</td>
+<td style="text-align:center">1.01664</td>
+<td style="text-align:center">1327</td>
+<td style="text-align:center">1.01281</td>
+<td style="text-align:center">1319</td>
+<td style="text-align:center">1.01895</td>
+<td style="text-align:center">1340</td>
+<td style="text-align:center">1.00299</td>
+<td style="text-align:center">1338</td>
+<td style="text-align:center">1.00448</td>
+<td style="text-align:center">1265</td>
+<td style="text-align:center">1.06245</td>
+<td style="text-align:center">1322</td>
+<td style="text-align:center">1.01664</td>
+<td style="text-align:center">1325</td>
+<td style="text-align:center">1.01434</td>
+<td style="text-align:center">1325</td>
+<td style="text-align:center">1.01434</td>
+<td style="text-align:center">1356</td>
+<td style="text-align:center">0.99115</td>
+<td style="text-align:center">1328</td>
+<td style="text-align:center">1.01205</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultNoRelin/depth:4</b></td>	<td style="text-align:center">2040</td>
+<td style="text-align:center">1994</td>
+<td style="text-align:center">1.02307</td>
+<td style="text-align:center">2006</td>
+<td style="text-align:center">1.01695</td>
+<td style="text-align:center">1986</td>
+<td style="text-align:center">1.02719</td>
+<td style="text-align:center">2010</td>
+<td style="text-align:center">1.01493</td>
+<td style="text-align:center">2000</td>
+<td style="text-align:center">1.02</td>
+<td style="text-align:center">1923</td>
+<td style="text-align:center">1.06084</td>
+<td style="text-align:center">1997</td>
+<td style="text-align:center">1.02153</td>
+<td style="text-align:center">1995</td>
+<td style="text-align:center">1.02256</td>
+<td style="text-align:center">2008</td>
+<td style="text-align:center">1.01594</td>
+<td style="text-align:center">2067</td>
+<td style="text-align:center">0.986938</td>
+<td style="text-align:center">2024</td>
+<td style="text-align:center">1.00791</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultNoRelin/depth:6</b></td>	<td style="text-align:center">5766</td>
+<td style="text-align:center">5637</td>
+<td style="text-align:center">1.02289</td>
+<td style="text-align:center">5663</td>
+<td style="text-align:center">1.01819</td>
+<td style="text-align:center">5620</td>
+<td style="text-align:center">1.02598</td>
+<td style="text-align:center">5673</td>
+<td style="text-align:center">1.01639</td>
+<td style="text-align:center">5641</td>
+<td style="text-align:center">1.02216</td>
+<td style="text-align:center">5471</td>
+<td style="text-align:center">1.05392</td>
+<td style="text-align:center">5619</td>
+<td style="text-align:center">1.02616</td>
+<td style="text-align:center">5599</td>
+<td style="text-align:center">1.02983</td>
+<td style="text-align:center">5631</td>
+<td style="text-align:center">1.02397</td>
+<td style="text-align:center">5795</td>
+<td style="text-align:center">0.994996</td>
+<td style="text-align:center">5666</td>
+<td style="text-align:center">1.01765</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultNoRelin/depth:8</b></td>	<td style="text-align:center">7648</td>
+<td style="text-align:center">7534</td>
+<td style="text-align:center">1.01513</td>
+<td style="text-align:center">7518</td>
+<td style="text-align:center">1.01729</td>
+<td style="text-align:center">7465</td>
+<td style="text-align:center">1.02451</td>
+<td style="text-align:center">7551</td>
+<td style="text-align:center">1.01285</td>
+<td style="text-align:center">7523</td>
+<td style="text-align:center">1.01662</td>
+<td style="text-align:center">7465</td>
+<td style="text-align:center">1.02451</td>
+<td style="text-align:center">7504</td>
+<td style="text-align:center">1.01919</td>
+<td style="text-align:center">7486</td>
+<td style="text-align:center">1.02164</td>
+<td style="text-align:center">7503</td>
+<td style="text-align:center">1.01933</td>
+<td style="text-align:center">7696</td>
+<td style="text-align:center">0.993763</td>
+<td style="text-align:center">7528</td>
+<td style="text-align:center">1.01594</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultNoRelin/depth:10</b></td>	<td style="text-align:center">9859</td>
+<td style="text-align:center">9720</td>
+<td style="text-align:center">1.0143</td>
+<td style="text-align:center">9718</td>
+<td style="text-align:center">1.01451</td>
+<td style="text-align:center">9714</td>
+<td style="text-align:center">1.01493</td>
+<td style="text-align:center">9836</td>
+<td style="text-align:center">1.00234</td>
+<td style="text-align:center">9687</td>
+<td style="text-align:center">1.01776</td>
+<td style="text-align:center">9588</td>
+<td style="text-align:center">1.02826</td>
+<td style="text-align:center">9690</td>
+<td style="text-align:center">1.01744</td>
+<td style="text-align:center">9710</td>
+<td style="text-align:center">1.01534</td>
+<td style="text-align:center">9703</td>
+<td style="text-align:center">1.01608</td>
+<td style="text-align:center">9999</td>
+<td style="text-align:center">0.985999</td>
+<td style="text-align:center">9767</td>
+<td style="text-align:center">1.00942</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultNoRelin/depth:12</b></td>	<td style="text-align:center">12168</td>
+<td style="text-align:center">11936</td>
+<td style="text-align:center">1.01944</td>
+<td style="text-align:center">11975</td>
+<td style="text-align:center">1.01612</td>
+<td style="text-align:center">11955</td>
+<td style="text-align:center">1.01782</td>
+<td style="text-align:center">12075</td>
+<td style="text-align:center">1.0077</td>
+<td style="text-align:center">11989</td>
+<td style="text-align:center">1.01493</td>
+<td style="text-align:center">11827</td>
+<td style="text-align:center">1.02883</td>
+<td style="text-align:center">11967</td>
+<td style="text-align:center">1.0168</td>
+<td style="text-align:center">11993</td>
+<td style="text-align:center">1.01459</td>
+<td style="text-align:center">11970</td>
+<td style="text-align:center">1.01654</td>
+<td style="text-align:center">12179</td>
+<td style="text-align:center">0.999097</td>
+<td style="text-align:center">12050</td>
+<td style="text-align:center">1.00979</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultRelin/depth:1</b></td>	<td style="text-align:center">1400</td>
+<td style="text-align:center">1310</td>
+<td style="color:#00ff00;text-align:center">1.0687</td>
+<td style="text-align:center">1321</td>
+<td style="color:#00ff00;text-align:center">1.0598</td>
+<td style="text-align:center">1362</td>
+<td style="color:#00ff00;text-align:center">1.0279</td>
+<td style="text-align:center">1470</td>
+<td style="text-align:center">0.952381</td>
+<td style="text-align:center">1590</td>
+<td style="color:#ff0000;text-align:center">0.880503</td>
+<td style="text-align:center">1422</td>
+<td style="color:#00ff00;text-align:center">0.984529</td>
+<td style="text-align:center">1376</td>
+<td style="color:#00ff00;text-align:center">1.01744</td>
+<td style="text-align:center">1372</td>
+<td style="color:#00ff00;text-align:center">1.02041</td>
+<td style="text-align:center">1424</td>
+<td style="color:#00ff00;text-align:center">0.983146</td>
+<td style="text-align:center">1452</td>
+<td style="text-align:center">0.964187</td>
+<td style="text-align:center">1479</td>
+<td style="text-align:center">0.946586</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultRelin/depth:2</b></td>	<td style="text-align:center">6593</td>
+<td style="text-align:center">6462</td>
+<td style="text-align:center">1.02027</td>
+<td style="text-align:center">6511</td>
+<td style="text-align:center">1.01259</td>
+<td style="text-align:center">6541</td>
+<td style="text-align:center">1.00795</td>
+<td style="text-align:center">6312</td>
+<td style="text-align:center">1.04452</td>
+<td style="text-align:center">6580</td>
+<td style="text-align:center">1.00198</td>
+<td style="text-align:center">6619</td>
+<td style="text-align:center">0.996072</td>
+<td style="text-align:center">6544</td>
+<td style="text-align:center">1.00749</td>
+<td style="text-align:center">6488</td>
+<td style="text-align:center">1.01618</td>
+<td style="text-align:center">6675</td>
+<td style="text-align:center">0.987715</td>
+<td style="text-align:center">6770</td>
+<td style="text-align:center">0.973855</td>
+<td style="text-align:center">6743</td>
+<td style="text-align:center">0.977755</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultRelin/depth:4</b></td>	<td style="text-align:center">10758</td>
+<td style="text-align:center">10480</td>
+<td style="text-align:center">1.02653</td>
+<td style="text-align:center">10610</td>
+<td style="text-align:center">1.01395</td>
+<td style="text-align:center">10542</td>
+<td style="text-align:center">1.02049</td>
+<td style="text-align:center">10822</td>
+<td style="text-align:center">0.994086</td>
+<td style="text-align:center">11021</td>
+<td style="text-align:center">0.976136</td>
+<td style="text-align:center">10592</td>
+<td style="text-align:center">1.01567</td>
+<td style="text-align:center">10681</td>
+<td style="text-align:center">1.00721</td>
+<td style="text-align:center">10565</td>
+<td style="text-align:center">1.01827</td>
+<td style="text-align:center">11251</td>
+<td style="text-align:center">0.956182</td>
+<td style="text-align:center">11024</td>
+<td style="text-align:center">0.975871</td>
+<td style="text-align:center">11288</td>
+<td style="text-align:center">0.953047</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultRelin/depth:6</b></td>	<td style="text-align:center">33433</td>
+<td style="text-align:center">32050</td>
+<td style="text-align:center">1.04315</td>
+<td style="text-align:center">31964</td>
+<td style="text-align:center">1.04596</td>
+<td style="text-align:center">32409</td>
+<td style="text-align:center">1.0316</td>
+<td style="text-align:center">32669</td>
+<td style="text-align:center">1.02339</td>
+<td style="text-align:center">33390</td>
+<td style="text-align:center">1.00129</td>
+<td style="text-align:center">32850</td>
+<td style="text-align:center">1.01775</td>
+<td style="text-align:center">32307</td>
+<td style="text-align:center">1.03485</td>
+<td style="text-align:center">32401</td>
+<td style="text-align:center">1.03185</td>
+<td style="text-align:center">33037</td>
+<td style="text-align:center">1.01199</td>
+<td style="text-align:center">33468</td>
+<td style="text-align:center">0.998954</td>
+<td style="text-align:center">34006</td>
+<td style="text-align:center">0.98315</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultRelin/depth:8</b></td>	<td style="text-align:center">42439</td>
+<td style="text-align:center">40084</td>
+<td style="text-align:center">1.05875</td>
+<td style="text-align:center">39901</td>
+<td style="text-align:center">1.06361</td>
+<td style="text-align:center">42059</td>
+<td style="text-align:center">1.00903</td>
+<td style="text-align:center">40875</td>
+<td style="text-align:center">1.03826</td>
+<td style="text-align:center">41988</td>
+<td style="text-align:center">1.01074</td>
+<td style="text-align:center">41164</td>
+<td style="text-align:center">1.03097</td>
+<td style="text-align:center">40535</td>
+<td style="text-align:center">1.04697</td>
+<td style="text-align:center">41287</td>
+<td style="text-align:center">1.0279</td>
+<td style="text-align:center">41288</td>
+<td style="text-align:center">1.02788</td>
+<td style="text-align:center">41609</td>
+<td style="text-align:center">1.01995</td>
+<td style="text-align:center">43830</td>
+<td style="text-align:center">0.968264</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultRelin/depth:10</b></td>	<td style="text-align:center">55434</td>
+<td style="text-align:center">52445</td>
+<td style="text-align:center">1.05699</td>
+<td style="text-align:center">52589</td>
+<td style="text-align:center">1.0541</td>
+<td style="text-align:center">54733</td>
+<td style="text-align:center">1.01281</td>
+<td style="text-align:center">53304</td>
+<td style="text-align:center">1.03996</td>
+<td style="text-align:center">54271</td>
+<td style="text-align:center">1.02143</td>
+<td style="text-align:center">54319</td>
+<td style="text-align:center">1.02053</td>
+<td style="text-align:center">53240</td>
+<td style="text-align:center">1.04121</td>
+<td style="text-align:center">53989</td>
+<td style="text-align:center">1.02676</td>
+<td style="text-align:center">53712</td>
+<td style="text-align:center">1.03206</td>
+<td style="text-align:center">54239</td>
+<td style="text-align:center">1.02203</td>
+<td style="text-align:center">57429</td>
+<td style="text-align:center">0.965261</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_MultRelin/depth:12</b></td>	<td style="text-align:center">68497</td>
+<td style="text-align:center">65923</td>
+<td style="text-align:center">1.03905</td>
+<td style="text-align:center">65592</td>
+<td style="text-align:center">1.04429</td>
+<td style="text-align:center">70626</td>
+<td style="text-align:center">0.969855</td>
+<td style="text-align:center">67668</td>
+<td style="text-align:center">1.01225</td>
+<td style="text-align:center">68271</td>
+<td style="text-align:center">1.00331</td>
+<td style="text-align:center">68081</td>
+<td style="text-align:center">1.00611</td>
+<td style="text-align:center">66463</td>
+<td style="text-align:center">1.0306</td>
+<td style="text-align:center">67697</td>
+<td style="text-align:center">1.01182</td>
+<td style="text-align:center">67088</td>
+<td style="text-align:center">1.021</td>
+<td style="text-align:center">68134</td>
+<td style="text-align:center">1.00533</td>
+<td style="text-align:center">71370</td>
+<td style="text-align:center">0.959745</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_Relin</b></td>	<td style="text-align:center">1331</td>
+<td style="text-align:center">1246</td>
+<td style="color:#00ff00;text-align:center">1.06822</td>
+<td style="text-align:center">1235</td>
+<td style="color:#00ff00;text-align:center">1.07773</td>
+<td style="text-align:center">1303</td>
+<td style="text-align:center">1.02149</td>
+<td style="text-align:center">1374</td>
+<td style="text-align:center">0.968705</td>
+<td style="text-align:center">1500</td>
+<td style="color:#ff0000;text-align:center">0.887333</td>
+<td style="text-align:center">1350</td>
+<td style="text-align:center">0.985926</td>
+<td style="text-align:center">1296</td>
+<td style="color:#00ff00;text-align:center">1.02701</td>
+<td style="text-align:center">1314</td>
+<td style="text-align:center">1.01294</td>
+<td style="text-align:center">1373</td>
+<td style="text-align:center">0.96941</td>
+<td style="text-align:center">1371</td>
+<td style="text-align:center">0.970824</td>
+<td style="text-align:center">1365</td>
+<td style="text-align:center">0.975092</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_RelinInPlace</b></td>	<td style="text-align:center">1309</td>
+<td style="text-align:center">1238</td>
+<td style="color:#00ff00;text-align:center">1.05735</td>
+<td style="text-align:center">1222</td>
+<td style="color:#00ff00;text-align:center">1.07119</td>
+<td style="text-align:center">1284</td>
+<td style="text-align:center">1.01947</td>
+<td style="text-align:center">1344</td>
+<td style="text-align:center">0.973958</td>
+<td style="text-align:center">1477</td>
+<td style="color:#ff0000;text-align:center">0.886256</td>
+<td style="text-align:center">1328</td>
+<td style="text-align:center">0.985693</td>
+<td style="text-align:center">1271</td>
+<td style="color:#00ff00;text-align:center">1.0299</td>
+<td style="text-align:center">1275</td>
+<td style="color:#00ff00;text-align:center">1.02667</td>
+<td style="text-align:center">1356</td>
+<td style="text-align:center">0.965339</td>
+<td style="text-align:center">1352</td>
+<td style="text-align:center">0.968195</td>
+<td style="text-align:center">1369</td>
+<td style="text-align:center">0.956172</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_Rescale</b></td>	<td style="text-align:center">124</td>
+<td style="text-align:center">123</td>
+<td style="text-align:center">1.00813</td>
+<td style="text-align:center">135</td>
+<td style="text-align:center">0.918519</td>
+<td style="text-align:center">123</td>
+<td style="text-align:center">1.00813</td>
+<td style="text-align:center">128</td>
+<td style="text-align:center">0.96875</td>
+<td style="text-align:center">129</td>
+<td style="text-align:center">0.96124</td>
+<td style="text-align:center">123</td>
+<td style="text-align:center">1.00813</td>
+<td style="text-align:center">123</td>
+<td style="text-align:center">1.00813</td>
+<td style="text-align:center">126</td>
+<td style="text-align:center">0.984127</td>
+<td style="text-align:center">125</td>
+<td style="text-align:center">0.992</td>
+<td style="text-align:center">127</td>
+<td style="text-align:center">0.976378</td>
+<td style="text-align:center">127</td>
+<td style="text-align:center">0.976378</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_RescaleInPlace</b></td>	<td style="text-align:center">118</td>
+<td style="text-align:center">116</td>
+<td style="text-align:center">1.01724</td>
+<td style="text-align:center">118</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">116</td>
+<td style="text-align:center">1.01724</td>
+<td style="text-align:center">124</td>
+<td style="text-align:center">0.951613</td>
+<td style="text-align:center">124</td>
+<td style="text-align:center">0.951613</td>
+<td style="text-align:center">116</td>
+<td style="text-align:center">1.01724</td>
+<td style="text-align:center">117</td>
+<td style="text-align:center">1.00855</td>
+<td style="text-align:center">117</td>
+<td style="text-align:center">1.00855</td>
+<td style="text-align:center">117</td>
+<td style="text-align:center">1.00855</td>
+<td style="text-align:center">120</td>
+<td style="text-align:center">0.983333</td>
+<td style="text-align:center">118</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>CKKSrns_EvalAtIndex</b></td>	<td style="text-align:center">1371</td>
+<td style="text-align:center">1265</td>
+<td style="text-align:center">1.08379</td>
+<td style="text-align:center">1269</td>
+<td style="color:#00ff00;text-align:center">1.08038</td>
+<td style="text-align:center">1340</td>
+<td style="color:#00ff00;text-align:center">1.02313</td>
+<td style="text-align:center">1567</td>
+<td style="color:#ff0000;text-align:center">0.87492</td>
+<td style="text-align:center">1548</td>
+<td style="color:#ff0000;text-align:center">0.885659</td>
+<td style="text-align:center">1381</td>
+<td style="color:#00ff00;text-align:center">0.992759</td>
+<td style="text-align:center">1334</td>
+<td style="color:#00ff00;text-align:center">1.02774</td>
+<td style="text-align:center">1346</td>
+<td style="color:#00ff00;text-align:center">1.01857</td>
+<td style="text-align:center">1541</td>
+<td style="color:#ff0000;text-align:center">0.889682</td>
+<td style="text-align:center">1618</td>
+<td style="color:#ff0000;text-align:center">0.847342</td>
+<td style="text-align:center">1410</td>
+<td style="text-align:center">0.97234</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_KeyGen</b></td>	<td style="text-align:center">2730</td>
+<td style="text-align:center">2720</td>
+<td style="text-align:center">1.00368</td>
+<td style="text-align:center">2752</td>
+<td style="text-align:center">0.992006</td>
+<td style="text-align:center">2714</td>
+<td style="text-align:center">1.00589</td>
+<td style="text-align:center">2903</td>
+<td style="color:#ff0000;text-align:center">0.940406</td>
+<td style="text-align:center">3049</td>
+<td style="color:#ff0000;text-align:center">0.895376</td>
+<td style="text-align:center">3032</td>
+<td style="color:#ff0000;text-align:center">0.900396</td>
+<td style="text-align:center">2910</td>
+<td style="color:#ff0000;text-align:center">0.938144</td>
+<td style="text-align:center">2707</td>
+<td style="text-align:center">1.0085</td>
+<td style="text-align:center">2285</td>
+<td style="color:#0000ff;text-align:center">1.19475</td>
+<td style="text-align:center">2163</td>
+<td style="color:#00ff00;text-align:center">1.26214</td>
+<td style="text-align:center">2161</td>
+<td style="color:#00ff00;text-align:center">1.2633</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultKeyGen</b></td>	<td style="text-align:center">0.091</td>
+<td style="text-align:center">0.098</td>
+<td style="color:#ff0000;text-align:center">0.928571</td>
+<td style="text-align:center">0.102</td>
+<td style="color:#ff0000;text-align:center">0.892157</td>
+<td style="text-align:center">0.059</td>
+<td style="color:#00ff00;text-align:center">1.54237</td>
+<td style="text-align:center">0.062</td>
+<td style="color:#0000ff;text-align:center">1.46774</td>
+<td style="text-align:center">0.059</td>
+<td style="color:#00ff00;text-align:center">1.54237</td>
+<td style="text-align:center">0.057</td>
+<td style="color:#00ff00;text-align:center">1.59649</td>
+<td style="text-align:center">0.103</td>
+<td style="color:#ff0000;text-align:center">0.883495</td>
+<td style="text-align:center">0.089</td>
+<td style="text-align:center">1.02247</td>
+<td style="text-align:center">0.06</td>
+<td style="color:#0000ff;text-align:center">1.51667</td>
+<td style="text-align:center">0.067</td>
+<td style="color:#0000ff;text-align:center">1.35821</td>
+<td style="text-align:center">0.058</td>
+<td style="color:#00ff00;text-align:center">1.56897</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_EvalAtIndexKeyGen</b></td>	<td style="text-align:center">0.612</td>
+<td style="text-align:center">0.599</td>
+<td style="color:#00ff00;text-align:center">1.0217</td>
+<td style="text-align:center">0.602</td>
+<td style="color:#00ff00;text-align:center">1.01661</td>
+<td style="text-align:center">0.596</td>
+<td style="color:#00ff00;text-align:center">1.02685</td>
+<td style="text-align:center">0.607</td>
+<td style="color:#00ff00;text-align:center">1.00824</td>
+<td style="text-align:center">0.619</td>
+<td style="text-align:center">0.988691</td>
+<td style="text-align:center">0.616</td>
+<td style="text-align:center">0.993506</td>
+<td style="text-align:center">0.609</td>
+<td style="color:#00ff00;text-align:center">1.00493</td>
+<td style="text-align:center">0.614</td>
+<td style="text-align:center">0.996743</td>
+<td style="text-align:center">0.584</td>
+<td style="color:#00ff00;text-align:center">1.04794</td>
+<td style="text-align:center">0.655</td>
+<td style="text-align:center">0.934351</td>
+<td style="text-align:center">0.702</td>
+<td style="color:#ff0000;text-align:center">0.871795</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_Encryption</b></td>	<td style="text-align:center">2794</td>
+<td style="text-align:center">2977</td>
+<td style="color:#ff0000;text-align:center">0.938529</td>
+<td style="text-align:center">2999</td>
+<td style="color:#ff0000;text-align:center">0.931644</td>
+<td style="text-align:center">2729</td>
+<td style="text-align:center">1.02382</td>
+<td style="text-align:center">2879</td>
+<td style="text-align:center">0.970476</td>
+<td style="text-align:center">3081</td>
+<td style="color:#ff0000;text-align:center">0.906848</td>
+<td style="text-align:center">2771</td>
+<td style="text-align:center">1.0083</td>
+<td style="text-align:center">2865</td>
+<td style="text-align:center">0.975218</td>
+<td style="text-align:center">2779</td>
+<td style="text-align:center">1.0054</td>
+<td style="text-align:center">1709</td>
+<td style="color:#00ff00;text-align:center">1.63487</td>
+<td style="text-align:center">1653</td>
+<td style="color:#00ff00;text-align:center">1.69026</td>
+<td style="text-align:center">1653</td>
+<td style="color:#00ff00;text-align:center">1.69026</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_Decryption</b></td>	<td style="text-align:center">133</td>
+<td style="text-align:center">138</td>
+<td style="color:#00ff00;text-align:center">0.963768</td>
+<td style="text-align:center">136</td>
+<td style="color:#00ff00;text-align:center">0.977941</td>
+<td style="text-align:center">144</td>
+<td style="color:#ff0000;text-align:center">0.923611</td>
+<td style="text-align:center">146</td>
+<td style="color:#ff0000;text-align:center">0.910959</td>
+<td style="text-align:center">147</td>
+<td style="color:#ff0000;text-align:center">0.904762</td>
+<td style="text-align:center">143</td>
+<td style="color:#ff0000;text-align:center">0.93007</td>
+<td style="text-align:center">133</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">133</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">148</td>
+<td style="color:#ff0000;text-align:center">0.898649</td>
+<td style="text-align:center">149</td>
+<td style="color:#ff0000;text-align:center">0.892617</td>
+<td style="text-align:center">146</td>
+<td style="color:#ff0000;text-align:center">0.910959</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_Add</b></td>	<td style="text-align:center">24.9</td>
+<td style="text-align:center">20</td>
+<td style="color:#00ff00;text-align:center">1.245</td>
+<td style="text-align:center">21.5</td>
+<td style="color:#0000ff;text-align:center">1.15814</td>
+<td style="text-align:center">22.5</td>
+<td style="color:#0000ff;text-align:center">1.10667</td>
+<td style="text-align:center">21.1</td>
+<td style="color:#0000ff;text-align:center">1.18009</td>
+<td style="text-align:center">20.5</td>
+<td style="color:#00ff00;text-align:center">1.21463</td>
+<td style="text-align:center">21.1</td>
+<td style="color:#0000ff;text-align:center">1.18009</td>
+<td style="text-align:center">20.5</td>
+<td style="color:#00ff00;text-align:center">1.21463</td>
+<td style="text-align:center">19.6</td>
+<td style="color:#00ff00;text-align:center">1.27041</td>
+<td style="text-align:center">21.1</td>
+<td style="color:#0000ff;text-align:center">1.18009</td>
+<td style="text-align:center">22.3</td>
+<td style="color:#0000ff;text-align:center">1.11659</td>
+<td style="text-align:center">24</td>
+<td style="color:#ff0000;text-align:center">1.0375</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_AddInPlace</b></td>	<td style="text-align:center">14</td>
+<td style="text-align:center">14.4</td>
+<td style="text-align:center">0.972222</td>
+<td style="text-align:center">13.6</td>
+<td style="color:#00ff00;text-align:center">1.02941</td>
+<td style="text-align:center">13.7</td>
+<td style="text-align:center">1.0219</td>
+<td style="text-align:center">13</td>
+<td style="color:#00ff00;text-align:center">1.07692</td>
+<td style="text-align:center">13.7</td>
+<td style="text-align:center">1.0219</td>
+<td style="text-align:center">13.7</td>
+<td style="text-align:center">1.0219</td>
+<td style="text-align:center">13.2</td>
+<td style="color:#00ff00;text-align:center">1.06061</td>
+<td style="text-align:center">13.1</td>
+<td style="color:#00ff00;text-align:center">1.0687</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">14.5</td>
+<td style="text-align:center">0.965517</td>
+<td style="text-align:center">16.8</td>
+<td style="color:#ff0000;text-align:center">0.833333</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultNoRelin/depth:1</b></td>	<td style="text-align:center">86.2</td>
+<td style="text-align:center">84</td>
+<td style="text-align:center">1.02619</td>
+<td style="text-align:center">84.4</td>
+<td style="text-align:center">1.02133</td>
+<td style="text-align:center">86.7</td>
+<td style="text-align:center">0.994233</td>
+<td style="text-align:center">85.7</td>
+<td style="text-align:center">1.00583</td>
+<td style="text-align:center">85.3</td>
+<td style="text-align:center">1.01055</td>
+<td style="text-align:center">82.2</td>
+<td style="text-align:center">1.04866</td>
+<td style="text-align:center">83.9</td>
+<td style="text-align:center">1.02741</td>
+<td style="text-align:center">84.2</td>
+<td style="text-align:center">1.02375</td>
+<td style="text-align:center">85.7</td>
+<td style="text-align:center">1.00583</td>
+<td style="text-align:center">87.4</td>
+<td style="text-align:center">0.98627</td>
+<td style="text-align:center">85.3</td>
+<td style="text-align:center">1.01055</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultNoRelin/depth:2</b></td>	<td style="text-align:center">1219</td>
+<td style="text-align:center">1211</td>
+<td style="text-align:center">1.00661</td>
+<td style="text-align:center">1216</td>
+<td style="text-align:center">1.00247</td>
+<td style="text-align:center">1243</td>
+<td style="text-align:center">0.980692</td>
+<td style="text-align:center">1185</td>
+<td style="text-align:center">1.02869</td>
+<td style="text-align:center">1157</td>
+<td style="text-align:center">1.05359</td>
+<td style="text-align:center">1194</td>
+<td style="text-align:center">1.02094</td>
+<td style="text-align:center">1215</td>
+<td style="text-align:center">1.00329</td>
+<td style="text-align:center">1153</td>
+<td style="text-align:center">1.05724</td>
+<td style="text-align:center">1166</td>
+<td style="text-align:center">1.04546</td>
+<td style="text-align:center">1230</td>
+<td style="text-align:center">0.991057</td>
+<td style="text-align:center">1197</td>
+<td style="text-align:center">1.01838</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultNoRelin/depth:4</b></td>	<td style="text-align:center">1996</td>
+<td style="text-align:center">1958</td>
+<td style="text-align:center">1.01941</td>
+<td style="text-align:center">1957</td>
+<td style="text-align:center">1.01993</td>
+<td style="text-align:center">2004</td>
+<td style="text-align:center">0.996008</td>
+<td style="text-align:center">1959</td>
+<td style="text-align:center">1.01889</td>
+<td style="text-align:center">1957</td>
+<td style="text-align:center">1.01993</td>
+<td style="text-align:center">1897</td>
+<td style="text-align:center">1.05219</td>
+<td style="text-align:center">1955</td>
+<td style="text-align:center">1.02097</td>
+<td style="text-align:center">1955</td>
+<td style="text-align:center">1.02097</td>
+<td style="text-align:center">1963</td>
+<td style="text-align:center">1.01681</td>
+<td style="text-align:center">2010</td>
+<td style="text-align:center">0.993035</td>
+<td style="text-align:center">1985</td>
+<td style="text-align:center">1.00554</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultNoRelin/depth:6</b></td>	<td style="text-align:center">2782</td>
+<td style="text-align:center">2725</td>
+<td style="text-align:center">1.02092</td>
+<td style="text-align:center">2719</td>
+<td style="text-align:center">1.02317</td>
+<td style="text-align:center">2795</td>
+<td style="text-align:center">0.995349</td>
+<td style="text-align:center">2708</td>
+<td style="text-align:center">1.02733</td>
+<td style="text-align:center">2718</td>
+<td style="text-align:center">1.02355</td>
+<td style="text-align:center">2654</td>
+<td style="text-align:center">1.04823</td>
+<td style="text-align:center">2716</td>
+<td style="text-align:center">1.0243</td>
+<td style="text-align:center">2701</td>
+<td style="text-align:center">1.02999</td>
+<td style="text-align:center">2732</td>
+<td style="text-align:center">1.0183</td>
+<td style="text-align:center">2817</td>
+<td style="text-align:center">0.987575</td>
+<td style="text-align:center">2753</td>
+<td style="text-align:center">1.01053</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultNoRelin/depth:8</b></td>	<td style="text-align:center">7494</td>
+<td style="text-align:center">7592</td>
+<td style="color:#00ff00;text-align:center">0.987092</td>
+<td style="text-align:center">7693</td>
+<td style="color:#00ff00;text-align:center">0.974132</td>
+<td style="text-align:center">7734</td>
+<td style="color:#00ff00;text-align:center">0.968968</td>
+<td style="text-align:center">8445</td>
+<td style="color:#ffff00;text-align:center">0.887389</td>
+<td style="text-align:center">7840</td>
+<td style="color:#00ff00;text-align:center">0.955867</td>
+<td style="text-align:center">7881</td>
+<td style="color:#00ff00;text-align:center">0.950895</td>
+<td style="text-align:center">9049</td>
+<td style="color:#ff0000;text-align:center">0.828158</td>
+<td style="text-align:center">8133</td>
+<td style="color:#00ff00;text-align:center">0.921431</td>
+<td style="text-align:center">8216</td>
+<td style="color:#00ff00;text-align:center">0.912123</td>
+<td style="text-align:center">8705</td>
+<td style="color:#ff0000;text-align:center">0.860885</td>
+<td style="text-align:center">8660</td>
+<td style="color:#ff0000;text-align:center">0.865358</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultNoRelin/depth:10</b></td>	<td style="text-align:center">9974</td>
+<td style="text-align:center">10953</td>
+<td style="text-align:center">0.910618</td>
+<td style="text-align:center">11051</td>
+<td style="text-align:center">0.902543</td>
+<td style="text-align:center">10165</td>
+<td style="text-align:center">0.98121</td>
+<td style="text-align:center">11170</td>
+<td style="text-align:center">0.892927</td>
+<td style="text-align:center">11127</td>
+<td style="text-align:center">0.896378</td>
+<td style="text-align:center">10991</td>
+<td style="text-align:center">0.90747</td>
+<td style="text-align:center">11046</td>
+<td style="text-align:center">0.902951</td>
+<td style="text-align:center">11050</td>
+<td style="text-align:center">0.902624</td>
+<td style="text-align:center">11080</td>
+<td style="text-align:center">0.900181</td>
+<td style="text-align:center">11270</td>
+<td style="text-align:center">0.885004</td>
+<td style="text-align:center">11083</td>
+<td style="text-align:center">0.899937</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultNoRelin/depth:12</b></td>	<td style="text-align:center">13071</td>
+<td style="text-align:center">13092</td>
+<td style="text-align:center">0.998396</td>
+<td style="text-align:center">13173</td>
+<td style="text-align:center">0.992257</td>
+<td style="text-align:center">12811</td>
+<td style="text-align:center">1.02029</td>
+<td style="text-align:center">13269</td>
+<td style="text-align:center">0.985078</td>
+<td style="text-align:center">13116</td>
+<td style="text-align:center">0.996569</td>
+<td style="text-align:center">13046</td>
+<td style="text-align:center">1.00192</td>
+<td style="text-align:center">13199</td>
+<td style="text-align:center">0.990302</td>
+<td style="text-align:center">13209</td>
+<td style="text-align:center">0.989553</td>
+<td style="text-align:center">13063</td>
+<td style="text-align:center">1.00061</td>
+<td style="text-align:center">13356</td>
+<td style="text-align:center">0.978661</td>
+<td style="text-align:center">13157</td>
+<td style="text-align:center">0.993464</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultRelin/depth:1</b></td>	<td style="text-align:center">1288</td>
+<td style="text-align:center">1211</td>
+<td style="color:#00ff00;text-align:center">1.06358</td>
+<td style="text-align:center">1205</td>
+<td style="color:#00ff00;text-align:center">1.06888</td>
+<td style="text-align:center">1273</td>
+<td style="text-align:center">1.01178</td>
+<td style="text-align:center">1317</td>
+<td style="color:#ff0000;text-align:center">0.97798</td>
+<td style="text-align:center">1385</td>
+<td style="color:#ff0000;text-align:center">0.929964</td>
+<td style="text-align:center">1322</td>
+<td style="color:#ff0000;text-align:center">0.974281</td>
+<td style="text-align:center">1270</td>
+<td style="text-align:center">1.01417</td>
+<td style="text-align:center">1242</td>
+<td style="color:#00ff00;text-align:center">1.03704</td>
+<td style="text-align:center">1331</td>
+<td style="color:#ff0000;text-align:center">0.967693</td>
+<td style="text-align:center">1370</td>
+<td style="color:#ff0000;text-align:center">0.940146</td>
+<td style="text-align:center">1337</td>
+<td style="color:#ff0000;text-align:center">0.963351</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultRelin/depth:2</b></td>	<td style="text-align:center">6094</td>
+<td style="text-align:center">5868</td>
+<td style="color:#00ff00;text-align:center">1.03851</td>
+<td style="text-align:center">5872</td>
+<td style="color:#00ff00;text-align:center">1.03781</td>
+<td style="text-align:center">6205</td>
+<td style="color:#00ff00;text-align:center">0.982111</td>
+<td style="text-align:center">6177</td>
+<td style="color:#00ff00;text-align:center">0.986563</td>
+<td style="text-align:center">6331</td>
+<td style="color:#ff0000;text-align:center">0.962565</td>
+<td style="text-align:center">6154</td>
+<td style="color:#00ff00;text-align:center">0.99025</td>
+<td style="text-align:center">6068</td>
+<td style="color:#00ff00;text-align:center">1.00429</td>
+<td style="text-align:center">5960</td>
+<td style="color:#00ff00;text-align:center">1.02248</td>
+<td style="text-align:center">6175</td>
+<td style="color:#00ff00;text-align:center">0.986883</td>
+<td style="text-align:center">6629</td>
+<td style="color:#ff0000;text-align:center">0.919294</td>
+<td style="text-align:center">6486</td>
+<td style="color:#ff0000;text-align:center">0.939562</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultRelin/depth:4</b></td>	<td style="text-align:center">10851</td>
+<td style="text-align:center">10780</td>
+<td style="color:#00ff00;text-align:center">1.00659</td>
+<td style="text-align:center">11147</td>
+<td style="color:#00ff00;text-align:center">0.973446</td>
+<td style="text-align:center">10665</td>
+<td style="color:#00ff00;text-align:center">1.01744</td>
+<td style="text-align:center">10859</td>
+<td style="color:#00ff00;text-align:center">0.999263</td>
+<td style="text-align:center">11132</td>
+<td style="color:#00ff00;text-align:center">0.974757</td>
+<td style="text-align:center">10793</td>
+<td style="color:#00ff00;text-align:center">1.00537</td>
+<td style="text-align:center">11246</td>
+<td style="text-align:center">0.964876</td>
+<td style="text-align:center">10649</td>
+<td style="color:#00ff00;text-align:center">1.01897</td>
+<td style="text-align:center">11450</td>
+<td style="color:#ff0000;text-align:center">0.947686</td>
+<td style="text-align:center">11589</td>
+<td style="color:#ff0000;text-align:center">0.936319</td>
+<td style="text-align:center">11902</td>
+<td style="color:#ff0000;text-align:center">0.911696</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultRelin/depth:6</b></td>	<td style="text-align:center">16384</td>
+<td style="text-align:center">15882</td>
+<td style="text-align:center">1.03161</td>
+<td style="text-align:center">15956</td>
+<td style="text-align:center">1.02682</td>
+<td style="text-align:center">16438</td>
+<td style="text-align:center">0.996715</td>
+<td style="text-align:center">16177</td>
+<td style="text-align:center">1.0128</td>
+<td style="text-align:center">16582</td>
+<td style="text-align:center">0.988059</td>
+<td style="text-align:center">16043</td>
+<td style="text-align:center">1.02126</td>
+<td style="text-align:center">16124</td>
+<td style="text-align:center">1.01612</td>
+<td style="text-align:center">16199</td>
+<td style="text-align:center">1.01142</td>
+<td style="text-align:center">16501</td>
+<td style="text-align:center">0.99291</td>
+<td style="text-align:center">16674</td>
+<td style="text-align:center">0.982608</td>
+<td style="text-align:center">16988</td>
+<td style="text-align:center">0.964445</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultRelin/depth:8</b></td>	<td style="text-align:center">41990</td>
+<td style="text-align:center">39641</td>
+<td style="text-align:center">1.05926</td>
+<td style="text-align:center">39940</td>
+<td style="text-align:center">1.05133</td>
+<td style="text-align:center">42111</td>
+<td style="text-align:center">0.997127</td>
+<td style="text-align:center">41162</td>
+<td style="text-align:center">1.02012</td>
+<td style="text-align:center">41406</td>
+<td style="text-align:center">1.0141</td>
+<td style="text-align:center">41037</td>
+<td style="text-align:center">1.02322</td>
+<td style="text-align:center">40393</td>
+<td style="text-align:center">1.03954</td>
+<td style="text-align:center">41150</td>
+<td style="text-align:center">1.02041</td>
+<td style="text-align:center">41215</td>
+<td style="text-align:center">1.0188</td>
+<td style="text-align:center">42006</td>
+<td style="text-align:center">0.999619</td>
+<td style="text-align:center">43743</td>
+<td style="text-align:center">0.959925</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultRelin/depth:10</b></td>	<td style="text-align:center">51288</td>
+<td style="text-align:center">49177</td>
+<td style="color:#00ff00;text-align:center">1.04293</td>
+<td style="text-align:center">48007</td>
+<td style="color:#00ff00;text-align:center">1.06834</td>
+<td style="text-align:center">50965</td>
+<td style="color:#ff0000;text-align:center">1.00634</td>
+<td style="text-align:center">49854</td>
+<td style="color:#00ff00;text-align:center">1.02876</td>
+<td style="text-align:center">50533</td>
+<td style="text-align:center">1.01494</td>
+<td style="text-align:center">50188</td>
+<td style="color:#00ff00;text-align:center">1.02192</td>
+<td style="text-align:center">48596</td>
+<td style="color:#00ff00;text-align:center">1.0554</td>
+<td style="text-align:center">49777</td>
+<td style="color:#00ff00;text-align:center">1.03035</td>
+<td style="text-align:center">49638</td>
+<td style="color:#00ff00;text-align:center">1.03324</td>
+<td style="text-align:center">50366</td>
+<td style="color:#00ff00;text-align:center">1.01831</td>
+<td style="text-align:center">53501</td>
+<td style="color:#ff0000;text-align:center">0.958636</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_MultRelin/depth:12</b></td>	<td style="text-align:center">65675</td>
+<td style="text-align:center">61771</td>
+<td style="text-align:center">1.0632</td>
+<td style="text-align:center">61995</td>
+<td style="text-align:center">1.05936</td>
+<td style="text-align:center">64645</td>
+<td style="text-align:center">1.01593</td>
+<td style="text-align:center">64025</td>
+<td style="text-align:center">1.02577</td>
+<td style="text-align:center">64601</td>
+<td style="text-align:center">1.01662</td>
+<td style="text-align:center">63604</td>
+<td style="text-align:center">1.03256</td>
+<td style="text-align:center">62018</td>
+<td style="text-align:center">1.05897</td>
+<td style="text-align:center">63477</td>
+<td style="text-align:center">1.03463</td>
+<td style="text-align:center">62878</td>
+<td style="text-align:center">1.04448</td>
+<td style="text-align:center">63601</td>
+<td style="text-align:center">1.03261</td>
+<td style="text-align:center">67644</td>
+<td style="text-align:center">0.970892</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_Relin</b></td>	<td style="text-align:center">1243</td>
+<td style="text-align:center">1161</td>
+<td style="color:#00ff00;text-align:center">1.07063</td>
+<td style="text-align:center">1144</td>
+<td style="color:#00ff00;text-align:center">1.08654</td>
+<td style="text-align:center">1203</td>
+<td style="text-align:center">1.03325</td>
+<td style="text-align:center">1380</td>
+<td style="color:#ff0000;text-align:center">0.900725</td>
+<td style="text-align:center">1349</td>
+<td style="color:#ff0000;text-align:center">0.921423</td>
+<td style="text-align:center">1259</td>
+<td style="text-align:center">0.987292</td>
+<td style="text-align:center">1207</td>
+<td style="text-align:center">1.02983</td>
+<td style="text-align:center">1204</td>
+<td style="text-align:center">1.03239</td>
+<td style="text-align:center">1275</td>
+<td style="text-align:center">0.974902</td>
+<td style="text-align:center">1279</td>
+<td style="text-align:center">0.971853</td>
+<td style="text-align:center">1319</td>
+<td style="color:#ff0000;text-align:center">0.942381</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_RelinInPlace</b></td>	<td style="text-align:center">1199</td>
+<td style="text-align:center">1127</td>
+<td style="color:#00ff00;text-align:center">1.06389</td>
+<td style="text-align:center">1131</td>
+<td style="color:#00ff00;text-align:center">1.06012</td>
+<td style="text-align:center">1178</td>
+<td style="color:#00ff00;text-align:center">1.01783</td>
+<td style="text-align:center">1339</td>
+<td style="color:#ff0000;text-align:center">0.895444</td>
+<td style="text-align:center">1364</td>
+<td style="color:#ff0000;text-align:center">0.879032</td>
+<td style="text-align:center">1236</td>
+<td style="text-align:center">0.970065</td>
+<td style="text-align:center">1187</td>
+<td style="color:#00ff00;text-align:center">1.01011</td>
+<td style="text-align:center">1168</td>
+<td style="color:#00ff00;text-align:center">1.02654</td>
+<td style="text-align:center">1263</td>
+<td style="text-align:center">0.949327</td>
+<td style="text-align:center">1271</td>
+<td style="text-align:center">0.943352</td>
+<td style="text-align:center">1301</td>
+<td style="color:#ff0000;text-align:center">0.921599</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_ModSwitch</b></td>	<td style="text-align:center">97.2</td>
+<td style="text-align:center">97.6</td>
+<td style="text-align:center">0.995902</td>
+<td style="text-align:center">96.1</td>
+<td style="text-align:center">1.01145</td>
+<td style="text-align:center">96.5</td>
+<td style="text-align:center">1.00725</td>
+<td style="text-align:center">83.7</td>
+<td style="color:#00ff00;text-align:center">1.16129</td>
+<td style="text-align:center">84.3</td>
+<td style="color:#00ff00;text-align:center">1.15302</td>
+<td style="text-align:center">97.2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">96.7</td>
+<td style="text-align:center">1.00517</td>
+<td style="text-align:center">97.3</td>
+<td style="text-align:center">0.998972</td>
+<td style="text-align:center">100</td>
+<td style="color:#ff0000;text-align:center">0.972</td>
+<td style="text-align:center">103</td>
+<td style="color:#ff0000;text-align:center">0.943689</td>
+<td style="text-align:center">102</td>
+<td style="color:#ff0000;text-align:center">0.952941</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_ModSwitchInPlace</b></td>	<td style="text-align:center">89.6</td>
+<td style="text-align:center">87.8</td>
+<td style="text-align:center">1.0205</td>
+<td style="text-align:center">87.6</td>
+<td style="text-align:center">1.02283</td>
+<td style="text-align:center">86.6</td>
+<td style="text-align:center">1.03464</td>
+<td style="text-align:center">78.1</td>
+<td style="color:#00ff00;text-align:center">1.14725</td>
+<td style="text-align:center">78.7</td>
+<td style="color:#00ff00;text-align:center">1.1385</td>
+<td style="text-align:center">88.5</td>
+<td style="text-align:center">1.01243</td>
+<td style="text-align:center">87.9</td>
+<td style="text-align:center">1.01934</td>
+<td style="text-align:center">87.9</td>
+<td style="text-align:center">1.01934</td>
+<td style="text-align:center">91.6</td>
+<td style="color:#ff0000;text-align:center">0.978166</td>
+<td style="text-align:center">95</td>
+<td style="color:#ff0000;text-align:center">0.943158</td>
+<td style="text-align:center">94.1</td>
+<td style="color:#ff0000;text-align:center">0.952179</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>BGVrns_EvalAtIndex</b></td>	<td style="text-align:center">1274</td>
+<td style="text-align:center">1167</td>
+<td style="color:#00ff00;text-align:center">1.09169</td>
+<td style="text-align:center">1181</td>
+<td style="color:#00ff00;text-align:center">1.07875</td>
+<td style="text-align:center">1234</td>
+<td style="color:#00ff00;text-align:center">1.03242</td>
+<td style="text-align:center">1313</td>
+<td style="text-align:center">0.970297</td>
+<td style="text-align:center">1446</td>
+<td style="color:#ff0000;text-align:center">0.881051</td>
+<td style="text-align:center">1358</td>
+<td style="text-align:center">0.938144</td>
+<td style="text-align:center">1245</td>
+<td style="color:#00ff00;text-align:center">1.02329</td>
+<td style="text-align:center">1208</td>
+<td style="color:#00ff00;text-align:center">1.05464</td>
+<td style="text-align:center">1348</td>
+<td style="text-align:center">0.945104</td>
+<td style="text-align:center">1388</td>
+<td style="color:#ff0000;text-align:center">0.917867</td>
+<td style="text-align:center">1318</td>
+<td style="text-align:center">0.966616</td>
+</tr>
+</body></html>
