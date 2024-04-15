@@ -38,8 +38,8 @@
 #include "hexl/hexl.hpp"
 
 #include "lattice/hal/poly-interface.h"
-#include "lattice/ildcrtparams.h"
-#include "lattice/ilparams.h"
+#include "lattice/hal/default/ildcrtparams.h"
+#include "lattice/hal/default/ilparams.h"
 
 #include "math/distrgen.h"
 #include "math/math-hal.h"
@@ -81,7 +81,11 @@ public:
             HexlPolyImpl::SetValuesToZero();
     }
     HexlPolyImpl(const std::shared_ptr<ILDCRTParams<Integer>>& params, Format format = Format::EVALUATION,
-                 bool initializeElementToZero = false);
+                 bool initializeElementToZero = false)
+        : m_format(format), m_params(std::make_shared<Params>(params->GetCyclotomicOrder(), params->GetModulus(), 1)) {
+        if (initializeElementToZero)
+            this->SetValuesToZero();
+    }
 
     HexlPolyImpl(bool initializeElementToMax, const std::shared_ptr<Params>& params, Format format = Format::EVALUATION)
         : m_format{format}, m_params{params} {
@@ -183,7 +187,7 @@ public:
 
     inline const VecType& GetValues() const final {
         if (m_values == nullptr)
-            OPENFHE_THROW(not_available_error, "No values in HexlPolyImpl");
+            OPENFHE_THROW("No values in HexlPolyImpl");
         return *m_values;
     }
 
@@ -193,13 +197,13 @@ public:
 
     inline Integer& at(usint i) final {
         if (m_values == nullptr)
-            OPENFHE_THROW(not_available_error, "No values in HexlPolyImpl");
+            OPENFHE_THROW("No values in HexlPolyImpl");
         return m_values->at(i);
     }
 
     inline const Integer& at(usint i) const final {
         if (m_values == nullptr)
-            OPENFHE_THROW(not_available_error, "No values in HexlPolyImpl");
+            OPENFHE_THROW("No values in HexlPolyImpl");
         return m_values->at(i);
     }
 
@@ -213,11 +217,11 @@ public:
 
     HexlPolyImpl Plus(const HexlPolyImpl& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW(math_error, "RingDimension missmatch");
+            OPENFHE_THROW("RingDimension missmatch");
         if (m_params->GetModulus() != rhs.m_params->GetModulus())
-            OPENFHE_THROW(math_error, "Modulus missmatch");
+            OPENFHE_THROW("Modulus missmatch");
         if (m_format != rhs.m_format)
-            OPENFHE_THROW(not_implemented_error, "Format missmatch");
+            OPENFHE_THROW("Format missmatch");
         auto tmp(*this);
         if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
             uint64_t* op1       = reinterpret_cast<uint64_t*>(&tmp[0]);
@@ -261,11 +265,11 @@ public:
 
     HexlPolyImpl Times(const HexlPolyImpl& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW(math_error, "RingDimension missmatch");
+            OPENFHE_THROW("RingDimension missmatch");
         if (m_params->GetModulus() != rhs.m_params->GetModulus())
-            OPENFHE_THROW(math_error, "Modulus missmatch");
+            OPENFHE_THROW("Modulus missmatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
-            OPENFHE_THROW(not_implemented_error, "operator* for HexlPolyImpl supported only in Format::EVALUATION");
+            OPENFHE_THROW("operator* for HexlPolyImpl supported only in Format::EVALUATION");
         if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
             HexlPolyImpl tmp(m_params, m_format, true);
             uint64_t* res       = reinterpret_cast<uint64_t*>(&tmp[0]);
@@ -296,11 +300,11 @@ public:
     }
     HexlPolyImpl& operator*=(const HexlPolyImpl& rhs) override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW(math_error, "RingDimension missmatch");
+            OPENFHE_THROW("RingDimension missmatch");
         if (m_params->GetModulus() != rhs.m_params->GetModulus())
-            OPENFHE_THROW(math_error, "Modulus missmatch");
+            OPENFHE_THROW("Modulus missmatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
-            OPENFHE_THROW(not_implemented_error, "operator* for HexlPolyImpl supported only in Format::EVALUATION");
+            OPENFHE_THROW("operator* for HexlPolyImpl supported only in Format::EVALUATION");
         if (m_values) {
             if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
                 uint64_t* op1       = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
@@ -395,18 +399,6 @@ protected:
     std::unique_ptr<VecType> m_values{nullptr};
     void ArbitrarySwitchFormat();
 };
-
-// TODO: fix issue with pke build system so this can be moved back to implementation file
-template <>
-inline HexlPolyImpl<BigVector>::HexlPolyImpl(const std::shared_ptr<ILDCRTParams<BigInteger>>& params, Format format,
-                                             bool initializeElementToZero)
-    : m_format(format), m_params(nullptr), m_values(nullptr) {
-    const auto c = params->GetCyclotomicOrder();
-    const auto m = params->GetModulus();
-    m_params     = std::make_shared<ILParams>(c, m, 1);
-    if (initializeElementToZero)
-        this->SetValuesToZero();
-}
 
 }  // namespace lbcrypto
 
