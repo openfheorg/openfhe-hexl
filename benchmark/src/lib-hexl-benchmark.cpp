@@ -30,126 +30,186 @@
 //==================================================================================
 
 /*
- * This file benchmarks a small number of operations in order to exercise large
- * pieces of the library using varying parameters. To view or edit the
- * parameter sets, see lib-hexl-util.h
+ * Main OpenFHE library benchmark that contains performance tests for standard operations in the following schemes:
+ * BFVrns, CKKSrns, BGVrns. It also contains several performance tests for NTT and INTT transformations.
  */
 
-#define PROFILE
 #define _USE_MATH_DEFINES
-#include "benchmark/benchmark.h"
+#define MAX_MODULUS_SIZE_HEXL 50
 
-#include "openfhe.h"
-#include "utils/debug.h"
-#include "lib-hexl-util.h"
+#include "benchmark/benchmark.h"
+#include "math/hal/basicint.h"
+#include "scheme/ckksrns/gen-cryptocontext-ckksrns.h"
+#include "scheme/bfvrns/gen-cryptocontext-bfvrns.h"
+#include "scheme/bgvrns/gen-cryptocontext-bgvrns.h"
+#include "gen-cryptocontext.h"
+
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <random>
 
 using namespace lbcrypto;
 
-void NTTTransform(benchmark::State& state) {
-    usint phim = state.range(0);
-    usint m    = phim * 2;
+/*
+ * Context setup utility methods
+ */
 
-    NativeInteger modulusQ("137438822401");
+[[maybe_unused]] static void DepthArgs(benchmark::internal::Benchmark* b) {
+    for (uint32_t d : {1, 2, 4, 6, 8, 10, 12})
+        b->ArgName("depth")->Arg(d);
+}
+
+[[maybe_unused]] static CryptoContext<DCRTPoly> GenerateBFVrnsContext(uint32_t mdepth = 1) {
+    CCParams<CryptoContextBFVRNS> parameters;
+    parameters.SetPlaintextModulus(65537);
+    parameters.SetScalingModSize(MAX_MODULUS_SIZE_HEXL);
+    parameters.SetMultiplicativeDepth(mdepth);
+    CryptoContext<DCRTPoly> cc = GenCryptoContext(parameters);
+    cc->Enable(PKE);
+    cc->Enable(KEYSWITCH);
+    cc->Enable(LEVELEDSHE);
+    return cc;
+}
+
+[[maybe_unused]] static CryptoContext<DCRTPoly> GenerateCKKSContext(uint32_t mdepth = 1) {
+    CCParams<CryptoContextCKKSRNS> parameters;
+    parameters.SetScalingModSize(48);
+    parameters.SetBatchSize(8);
+    parameters.SetScalingTechnique(FIXEDMANUAL);
+    parameters.SetMultiplicativeDepth(mdepth);
+    auto cc = GenCryptoContext(parameters);
+    cc->Enable(PKE);
+    cc->Enable(KEYSWITCH);
+    cc->Enable(LEVELEDSHE);
+    return cc;
+}
+
+[[maybe_unused]] static CryptoContext<DCRTPoly> GenerateBGVrnsContext(uint32_t mdepth = 1) {
+    CCParams<CryptoContextBGVRNS> parameters;
+    parameters.SetPlaintextModulus(65537);
+    parameters.SetMaxRelinSkDeg(1);
+    parameters.SetScalingTechnique(FIXEDMANUAL);
+    parameters.SetMultiplicativeDepth(mdepth);
+    CryptoContext<DCRTPoly> cc = GenCryptoContext(parameters);
+    cc->Enable(PKE);
+    cc->Enable(KEYSWITCH);
+    cc->Enable(LEVELEDSHE);
+    return cc;
+}
+
+/*
+ * Native NTT benchmarks
+ */
+
+[[maybe_unused]] static void RingArgs(benchmark::internal::Benchmark* b) {
+    for (uint32_t r : {1024, 4096, 8192})
+        b->ArgName("ringdm")->Arg(r);
+}
+
+[[maybe_unused]] static void NativeNTT(benchmark::State& state) {
+    uint32_t n = state.range(0);
+    uint32_t m = n << 1;
+
+    NativeInteger modulusQ(LastPrime<NativeInteger>(MAX_MODULUS_SIZE_HEXL, m));
     NativeInteger rootOfUnity = RootOfUnity(m, modulusQ);
 
     DiscreteUniformGeneratorImpl<NativeVector> dug;
-    dug.SetModulus(modulusQ);
-    NativeVector x = dug.GenerateVector(phim);
-    NativeVector X(phim);
+    NativeVector x = dug.GenerateVector(n, modulusQ);
+    NativeVector X(n);
 
     ChineseRemainderTransformFTT<NativeVector> crtFTT;
-
     crtFTT.PreCompute(rootOfUnity, m, modulusQ);
 
-    while (state.KeepRunning()) {
+    for (auto _ : state)
         crtFTT.ForwardTransformToBitReverse(x, rootOfUnity, m, &X);
-    }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_NTT_BENCHMARK(NTTTransform);
+[[maybe_unused]] static void NativeINTT(benchmark::State& state) {
+    uint32_t n = state.range(0);
+    uint32_t m = n << 1;
 
-void INTTTransform(benchmark::State& state) {
-    usint phim = state.range(0);
-    usint m    = phim * 2;
-
-    NativeInteger modulusQ("137438822401");
+    NativeInteger modulusQ(LastPrime<NativeInteger>(MAX_MODULUS_SIZE_HEXL, m));
     NativeInteger rootOfUnity = RootOfUnity(m, modulusQ);
 
     DiscreteUniformGeneratorImpl<NativeVector> dug;
-    dug.SetModulus(modulusQ);
-    NativeVector x = dug.GenerateVector(phim);
-    NativeVector X(phim);
+    NativeVector x = dug.GenerateVector(n, modulusQ);
+    NativeVector X(n);
 
     ChineseRemainderTransformFTT<NativeVector> crtFTT;
     crtFTT.PreCompute(rootOfUnity, m, modulusQ);
 
-    while (state.KeepRunning()) {
+    for (auto _ : state)
         crtFTT.InverseTransformFromBitReverse(x, rootOfUnity, m, &X);
-    }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_NTT_BENCHMARK(INTTTransform);
+[[maybe_unused]] static void NativeNTTInPlace(benchmark::State& state) {
+    uint32_t n = state.range(0);
+    uint32_t m = n << 1;
 
-void NTTTransformInPlace(benchmark::State& state) {
-    usint phim = state.range(0);
-    usint m    = phim * 2;
-
-    NativeInteger modulusQ("137438822401");
+    NativeInteger modulusQ(LastPrime<NativeInteger>(MAX_MODULUS_SIZE_HEXL, m));
     NativeInteger rootOfUnity = RootOfUnity(m, modulusQ);
 
     DiscreteUniformGeneratorImpl<NativeVector> dug;
-    dug.SetModulus(modulusQ);
-    NativeVector x = dug.GenerateVector(phim);
+    NativeVector x = dug.GenerateVector(n, modulusQ);
 
     ChineseRemainderTransformFTT<NativeVector> crtFTT;
     crtFTT.PreCompute(rootOfUnity, m, modulusQ);
 
-    while (state.KeepRunning()) {
+    for (auto _ : state)
         crtFTT.ForwardTransformToBitReverseInPlace(rootOfUnity, m, &x);
-    }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_NTT_BENCHMARK(NTTTransformInPlace);
+[[maybe_unused]] static void NativeINTTInPlace(benchmark::State& state) {
+    uint32_t n = state.range(0);
+    uint32_t m = n << 1;
 
-void INTTTransformInPlace(benchmark::State& state) {
-    usint phim = state.range(0);
-    usint m    = phim * 2;
-
-    NativeInteger modulusQ("137438822401");
+    NativeInteger modulusQ(LastPrime<NativeInteger>(MAX_MODULUS_SIZE_HEXL, m));
     NativeInteger rootOfUnity = RootOfUnity(m, modulusQ);
 
     DiscreteUniformGeneratorImpl<NativeVector> dug;
-    dug.SetModulus(modulusQ);
-    NativeVector x = dug.GenerateVector(phim);
-    NativeVector X(phim);
+    NativeVector x = dug.GenerateVector(n, modulusQ);
+
     ChineseRemainderTransformFTT<NativeVector> crtFTT;
     crtFTT.PreCompute(rootOfUnity, m, modulusQ);
 
-    while (state.KeepRunning()) {
+    for (auto _ : state)
         crtFTT.InverseTransformFromBitReverseInPlace(rootOfUnity, m, &x);
-    }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_NTT_BENCHMARK(INTTTransformInPlace);
+// BENCHMARK(NativeNTT)->Unit(benchmark::kMicrosecond)->RangeMultiplier(2)->Range(1<<10, 1<<16)->Complexity(benchmark::oAuto);
+BENCHMARK(NativeNTT)->Unit(benchmark::kMicrosecond)->Apply(RingArgs);          // ->Complexity(benchmark::oAuto);
+BENCHMARK(NativeINTT)->Unit(benchmark::kMicrosecond)->Apply(RingArgs);         // ->Complexity(benchmark::oAuto);
+BENCHMARK(NativeNTTInPlace)->Unit(benchmark::kMicrosecond)->Apply(RingArgs);   // ->Complexity(benchmark::oAuto);
+BENCHMARK(NativeINTTInPlace)->Unit(benchmark::kMicrosecond)->Apply(RingArgs);  // ->Complexity(benchmark::oAuto);
 
 /*
  * BFVrns benchmarks
  */
 
 void BFVrns_KeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cryptoContext = GenerateBFVrnsContext();
 
     KeyPair<DCRTPoly> keyPair;
 
     while (state.KeepRunning()) {
-        keyPair = cc->KeyGen();
+        keyPair = cryptoContext->KeyGen();
     }
 }
 
-HEXL_BENCHMARK(BFVrns_KeyGen);
+BENCHMARK(BFVrns_KeyGen)->Unit(benchmark::kMicrosecond);
 
 void BFVrns_MultKeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext();
 
     KeyPair<DCRTPoly> keyPair;
     keyPair = cc->KeyGen();
@@ -159,10 +219,11 @@ void BFVrns_MultKeyGen(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BFVrns_MultKeyGen);
+BENCHMARK(BFVrns_MultKeyGen)->Unit(benchmark::kMicrosecond);
 
+// TODO: revisit this?
 void BFVrns_EvalAtIndexKeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext();
 
     KeyPair<DCRTPoly> keyPair;
     keyPair = cc->KeyGen();
@@ -177,43 +238,43 @@ void BFVrns_EvalAtIndexKeyGen(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BFVrns_EvalAtIndexKeyGen);
+BENCHMARK(BFVrns_EvalAtIndexKeyGen)->Unit(benchmark::kMicrosecond);
 
 void BFVrns_Encryption(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cryptoContext = GenerateBFVrnsContext();
 
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
+    KeyPair<DCRTPoly> keyPair = cryptoContext->KeyGen();
 
     std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakePackedPlaintext(vectorOfInts1);
+    Plaintext plaintext1               = cryptoContext->MakePackedPlaintext(vectorOfInts1);
 
     while (state.KeepRunning()) {
-        auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
+        auto ciphertext1 = cryptoContext->Encrypt(keyPair.publicKey, plaintext1);
     }
 }
 
-HEXL_BENCHMARK(BFVrns_Encryption);
+BENCHMARK(BFVrns_Encryption)->Unit(benchmark::kMicrosecond);
 
 void BFVrns_Decryption(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cryptoContext = GenerateBFVrnsContext();
 
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
+    KeyPair<DCRTPoly> keyPair = cryptoContext->KeyGen();
 
     std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakePackedPlaintext(vectorOfInts1);
+    Plaintext plaintext1               = cryptoContext->MakePackedPlaintext(vectorOfInts1);
 
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
+    auto ciphertext1 = cryptoContext->Encrypt(keyPair.publicKey, plaintext1);
     Plaintext plaintextDec1;
 
     while (state.KeepRunning()) {
-        cc->Decrypt(keyPair.secretKey, ciphertext1, &plaintextDec1);
+        cryptoContext->Decrypt(keyPair.secretKey, ciphertext1, &plaintextDec1);
     }
 }
 
-HEXL_BENCHMARK(BFVrns_Decryption);
+BENCHMARK(BFVrns_Decryption)->Unit(benchmark::kMicrosecond);
 
 void BFVrns_Add(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -231,10 +292,10 @@ void BFVrns_Add(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BFVrns_Add);
+BENCHMARK(BFVrns_Add)->Unit(benchmark::kMicrosecond);
 
 void BFVrns_AddInPlace(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -252,152 +313,57 @@ void BFVrns_AddInPlace(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BFVrns_AddInPlace);
-
-void BFVrns_AddPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-
-    std::vector<int64_t> vectorOfInts2 = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext2               = cc->MakeCoefPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextAdd = cc->EvalAdd(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(BFVrns_AddPlain);
-
-void BFVrns_Negate(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextNeg = cc->EvalNegate(ciphertext1);
-    }
-}
-
-HEXL_BENCHMARK(BFVrns_Negate);
-
-void BFVrns_Sub(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    std::vector<int64_t> vectorOfInts2 = {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
-
-    auto plaintext1 = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCoefPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-    auto ciphertext2 = cc->Encrypt(keyPair.publicKey, plaintext2);
-
-    while (state.KeepRunning()) {
-        auto ciphertextSub = cc->EvalSub(ciphertext1, ciphertext2);
-    }
-}
-
-HEXL_BENCHMARK(BFVrns_Sub);
-
-void BFVrns_SubPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-
-    std::vector<int64_t> vectorOfInts2 = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext2               = cc->MakeCoefPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextSub = cc->EvalSub(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(BFVrns_SubPlain);
+BENCHMARK(BFVrns_AddInPlace)->Unit(benchmark::kMicrosecond);
 
 void BFVrns_MultNoRelin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cryptoContext = GenerateBFVrnsContext(state.range(0));
 
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
+    KeyPair<DCRTPoly> keyPair = cryptoContext->KeyGen();
 
     std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakePackedPlaintext(vectorOfInts1);
+    Plaintext plaintext1               = cryptoContext->MakePackedPlaintext(vectorOfInts1);
 
     std::vector<int64_t> vectorOfInts2 = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext2               = cc->MakePackedPlaintext(vectorOfInts2);
+    Plaintext plaintext2               = cryptoContext->MakePackedPlaintext(vectorOfInts2);
 
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-    auto ciphertext2 = cc->Encrypt(keyPair.publicKey, plaintext2);
+    auto ciphertext1 = cryptoContext->Encrypt(keyPair.publicKey, plaintext1);
+    auto ciphertext2 = cryptoContext->Encrypt(keyPair.publicKey, plaintext2);
 
     while (state.KeepRunning()) {
-        auto ciphertextMul = cc->EvalMultNoRelin(ciphertext1, ciphertext2);
+        auto ciphertextMul = cryptoContext->EvalMultNoRelin(ciphertext1, ciphertext2);
     }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_BENCHMARK(BFVrns_MultNoRelin);
+BENCHMARK(BFVrns_MultNoRelin)->Unit(benchmark::kMicrosecond)->Apply(DepthArgs);  // ->Complexity(benchmark::oAuto);
 
 void BFVrns_MultRelin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cryptoContext = GenerateBFVrnsContext(state.range(0));
 
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-    cc->EvalMultKeyGen(keyPair.secretKey);
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakePackedPlaintext(vectorOfInts1);
-
-    std::vector<int64_t> vectorOfInts2 = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext2               = cc->MakePackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-    auto ciphertext2 = cc->Encrypt(keyPair.publicKey, plaintext2);
-
-    while (state.KeepRunning()) {
-        auto ciphertextMul = cc->EvalMult(ciphertext1, ciphertext2);
-    }
-}
-
-HEXL_BENCHMARK(BFVrns_MultRelin);
-
-void BFVrns_MultPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-    cc->EvalMultKeyGen(keyPair.secretKey);
+    KeyPair<DCRTPoly> keyPair = cryptoContext->KeyGen();
+    cryptoContext->EvalMultKeyGen(keyPair.secretKey);
 
     std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext1               = cc->MakeCoefPackedPlaintext(vectorOfInts1);
+    Plaintext plaintext1               = cryptoContext->MakePackedPlaintext(vectorOfInts1);
 
     std::vector<int64_t> vectorOfInts2 = {1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext2               = cc->MakeCoefPackedPlaintext(vectorOfInts2);
+    Plaintext plaintext2               = cryptoContext->MakePackedPlaintext(vectorOfInts2);
 
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
+    auto ciphertext1 = cryptoContext->Encrypt(keyPair.publicKey, plaintext1);
+    auto ciphertext2 = cryptoContext->Encrypt(keyPair.publicKey, plaintext2);
 
     while (state.KeepRunning()) {
-        auto ciphertextMul = cc->EvalMult(ciphertext1, plaintext2);
+        auto ciphertextMul = cryptoContext->EvalMult(ciphertext1, ciphertext2);
     }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_BENCHMARK(BFVrns_MultPlain);
+BENCHMARK(BFVrns_MultRelin)->Unit(benchmark::kMicrosecond)->Apply(DepthArgs);  // ->Complexity(benchmark::oAuto);
 
 void BFVrns_EvalAtIndex(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBFVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -425,26 +391,26 @@ void BFVrns_EvalAtIndex(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BFVrns_EvalAtIndex);
+BENCHMARK(BFVrns_EvalAtIndex)->Unit(benchmark::kMicrosecond);
 
 /*
  * CKKS benchmarks
  * */
 
-void CKKS_KeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_KeyGen(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cryptoContext = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair;
 
     while (state.KeepRunning()) {
-        keyPair = cc->KeyGen();
+        keyPair = cryptoContext->KeyGen();
     }
 }
 
-HEXL_BENCHMARK(CKKS_KeyGen);
+BENCHMARK(CKKSrns_KeyGen)->Unit(benchmark::kMicrosecond);
 
-void CKKS_MultKeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_MultKeyGen(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair;
     keyPair = cc->KeyGen();
@@ -454,10 +420,10 @@ void CKKS_MultKeyGen(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_MultKeyGen);
+BENCHMARK(CKKSrns_MultKeyGen)->Unit(benchmark::kMicrosecond);
 
-void CKKS_EvalAtIndexKeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_EvalAtIndexKeyGen(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair;
     keyPair = cc->KeyGen();
@@ -472,10 +438,10 @@ void CKKS_EvalAtIndexKeyGen(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_EvalAtIndexKeyGen);
+BENCHMARK(CKKSrns_EvalAtIndexKeyGen)->Unit(benchmark::kMicrosecond);
 
-void CKKS_Encryption(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_Encryption(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -492,10 +458,10 @@ void CKKS_Encryption(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_Encryption);
+BENCHMARK(CKKSrns_Encryption)->Unit(benchmark::kMicrosecond);
 
-void CKKS_Decryption(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_Decryption(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -516,10 +482,10 @@ void CKKS_Decryption(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_Decryption);
+BENCHMARK(CKKSrns_Decryption)->Unit(benchmark::kMicrosecond);
 
-void CKKS_Add(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_Add(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -528,10 +494,7 @@ void CKKS_Add(benchmark::State& state) {
     for (usint i = 0; i < slots; i++) {
         vectorOfInts1[i] = 1.001 * i;
     }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
 
     auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
     auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
@@ -544,10 +507,10 @@ void CKKS_Add(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_Add);
+BENCHMARK(CKKSrns_Add)->Unit(benchmark::kMicrosecond);
 
-void CKKS_AddInPlace(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_AddInPlace(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -556,10 +519,7 @@ void CKKS_AddInPlace(benchmark::State& state) {
     for (usint i = 0; i < slots; i++) {
         vectorOfInts1[i] = 1.001 * i;
     }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
 
     auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
     auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
@@ -572,37 +532,10 @@ void CKKS_AddInPlace(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_AddInPlace);
+BENCHMARK(CKKSrns_AddInPlace)->Unit(benchmark::kMicrosecond);
 
-void CKKS_AddPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    usint slots = cc->GetEncodingParams()->GetBatchSize();
-    std::vector<std::complex<double>> vectorOfInts1(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts1[i] = 1.001 * i;
-    }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
-
-    auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextAdd = cc->EvalAdd(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(CKKS_AddPlain);
-
-void CKKS_Negate(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_MultNoRelin(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0));
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -611,86 +544,7 @@ void CKKS_Negate(benchmark::State& state) {
     for (usint i = 0; i < slots; i++) {
         vectorOfInts1[i] = 1.001 * i;
     }
-
-    auto plaintext1  = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextNeg = cc->EvalNegate(ciphertext1);
-    }
-}
-
-HEXL_BENCHMARK(CKKS_Negate);
-
-void CKKS_Sub(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    usint slots = cc->GetEncodingParams()->GetBatchSize();
-    std::vector<std::complex<double>> vectorOfInts1(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts1[i] = 1.001 * i;
-    }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
-
-    auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-    auto ciphertext2 = cc->Encrypt(keyPair.publicKey, plaintext2);
-
-    while (state.KeepRunning()) {
-        auto ciphertextSub = cc->EvalSub(ciphertext1, ciphertext2);
-    }
-}
-
-HEXL_BENCHMARK(CKKS_Sub);
-
-void CKKS_SubPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    usint slots = cc->GetEncodingParams()->GetBatchSize();
-    std::vector<std::complex<double>> vectorOfInts1(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts1[i] = 1.001 * i;
-    }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
-
-    auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextSub = cc->EvalSub(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(CKKS_SubPlain);
-
-void CKKS_MultNoRelin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    usint slots = cc->GetEncodingParams()->GetBatchSize();
-    std::vector<std::complex<double>> vectorOfInts1(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts1[i] = 1.001 * i;
-    }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
 
     auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
     auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
@@ -701,12 +555,14 @@ void CKKS_MultNoRelin(benchmark::State& state) {
     while (state.KeepRunning()) {
         auto ciphertextMul = cc->EvalMultNoRelin(ciphertext1, ciphertext2);
     }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_BENCHMARK(CKKS_MultNoRelin);
+BENCHMARK(CKKSrns_MultNoRelin)->Unit(benchmark::kMicrosecond)->Apply(DepthArgs);  // ->Complexity(benchmark::oAuto);
 
-void CKKS_MultRelin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_MultRelin(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0));
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -716,10 +572,7 @@ void CKKS_MultRelin(benchmark::State& state) {
     for (usint i = 0; i < slots; i++) {
         vectorOfInts1[i] = 1.001 * i;
     }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
 
     auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
     auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
@@ -730,12 +583,14 @@ void CKKS_MultRelin(benchmark::State& state) {
     while (state.KeepRunning()) {
         auto ciphertextMul = cc->EvalMult(ciphertext1, ciphertext2);
     }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_BENCHMARK(CKKS_MultRelin);
+BENCHMARK(CKKSrns_MultRelin)->Unit(benchmark::kMicrosecond)->Apply(DepthArgs);  // ->Complexity(benchmark::oAuto);
 
-void CKKS_MultPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_Relin(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -745,38 +600,7 @@ void CKKS_MultPlain(benchmark::State& state) {
     for (usint i = 0; i < slots; i++) {
         vectorOfInts1[i] = 1.001 * i;
     }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
-
-    auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextMul = cc->EvalMult(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(CKKS_MultPlain);
-
-void CKKS_Relin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-    cc->EvalMultKeyGen(keyPair.secretKey);
-
-    usint slots = cc->GetEncodingParams()->GetBatchSize();
-    std::vector<std::complex<double>> vectorOfInts1(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts1[i] = 1.001 * i;
-    }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
 
     auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
     auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
@@ -791,10 +615,10 @@ void CKKS_Relin(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_Relin);
+BENCHMARK(CKKSrns_Relin)->Unit(benchmark::kMicrosecond);
 
-void CKKS_Rescale(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_RelinInPlace(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -804,10 +628,39 @@ void CKKS_Rescale(benchmark::State& state) {
     for (usint i = 0; i < slots; i++) {
         vectorOfInts1[i] = 1.001 * i;
     }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
+
+    auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
+    auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
+
+    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
+    auto ciphertext2 = cc->Encrypt(keyPair.publicKey, plaintext2);
+
+    auto ciphertextMul      = cc->EvalMultNoRelin(ciphertext1, ciphertext2);
+    auto ciphertextMulClone = ciphertextMul->Clone();
+
+    while (state.KeepRunning()) {
+        cc->RelinearizeInPlace(ciphertextMul);
+        state.PauseTiming();
+        ciphertextMul = ciphertextMulClone->Clone();
+        state.ResumeTiming();
     }
+}
+
+BENCHMARK(CKKSrns_RelinInPlace)->Unit(benchmark::kMicrosecond);
+
+void CKKSrns_Rescale(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
+
+    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
+    cc->EvalMultKeyGen(keyPair.secretKey);
+
+    usint slots = cc->GetEncodingParams()->GetBatchSize();
+    std::vector<std::complex<double>> vectorOfInts1(slots);
+    for (usint i = 0; i < slots; i++) {
+        vectorOfInts1[i] = 1.001 * i;
+    }
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
 
     auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
     auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
@@ -822,10 +675,10 @@ void CKKS_Rescale(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_Rescale);
+BENCHMARK(CKKSrns_Rescale)->Unit(benchmark::kMicrosecond);
 
-void CKKS_RescaleInPlace(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_RescaleInPlace(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -849,10 +702,10 @@ void CKKS_RescaleInPlace(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_RescaleInPlace);
+BENCHMARK(CKKSrns_RescaleInPlace)->Unit(benchmark::kMicrosecond);
 
-void CKKS_EvalAtIndex(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateCKKSContext(state.range(0), state.range(1));
+void CKKSrns_EvalAtIndex(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateCKKSContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -869,10 +722,7 @@ void CKKS_EvalAtIndex(benchmark::State& state) {
     for (usint i = 0; i < slots; i++) {
         vectorOfInts1[i] = 1.001 * i;
     }
-    std::vector<std::complex<double>> vectorOfInts2(slots);
-    for (usint i = 0; i < slots; i++) {
-        vectorOfInts2[i] = 1.001 * i;
-    }
+    std::vector<std::complex<double>> vectorOfInts2(vectorOfInts1);
 
     auto plaintext1 = cc->MakeCKKSPackedPlaintext(vectorOfInts1);
     auto plaintext2 = cc->MakeCKKSPackedPlaintext(vectorOfInts2);
@@ -887,26 +737,26 @@ void CKKS_EvalAtIndex(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(CKKS_EvalAtIndex);
+BENCHMARK(CKKSrns_EvalAtIndex)->Unit(benchmark::kMicrosecond);
 
 /*
  * BGVrns benchmarks
  * */
 
 void BGVrns_KeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cryptoContext = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair;
 
     while (state.KeepRunning()) {
-        keyPair = cc->KeyGen();
+        keyPair = cryptoContext->KeyGen();
     }
 }
 
-HEXL_BENCHMARK(BGVrns_KeyGen);
+BENCHMARK(BGVrns_KeyGen)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_MultKeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair;
     keyPair = cc->KeyGen();
@@ -916,10 +766,10 @@ void BGVrns_MultKeyGen(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_MultKeyGen);
+BENCHMARK(BGVrns_MultKeyGen)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_EvalAtIndexKeyGen(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair;
     keyPair = cc->KeyGen();
@@ -934,25 +784,25 @@ void BGVrns_EvalAtIndexKeyGen(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_EvalAtIndexKeyGen);
+BENCHMARK(BGVrns_EvalAtIndexKeyGen)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_Encryption(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cryptoContext = GenerateBGVrnsContext();
 
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
+    KeyPair<DCRTPoly> keyPair = cryptoContext->KeyGen();
 
     std::vector<int64_t> vectorOfInts = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    Plaintext plaintext               = cc->MakePackedPlaintext(vectorOfInts);
+    Plaintext plaintext               = cryptoContext->MakePackedPlaintext(vectorOfInts);
 
     while (state.KeepRunning()) {
-        auto ciphertext = cc->Encrypt(keyPair.publicKey, plaintext);
+        auto ciphertext = cryptoContext->Encrypt(keyPair.publicKey, plaintext);
     }
 }
 
-HEXL_BENCHMARK(BGVrns_Encryption);
+BENCHMARK(BGVrns_Encryption)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_Decryption(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -969,10 +819,10 @@ void BGVrns_Decryption(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_Decryption);
+BENCHMARK(BGVrns_Decryption)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_Add(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -990,10 +840,10 @@ void BGVrns_Add(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_Add);
+BENCHMARK(BGVrns_Add)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_AddInPlace(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -1011,89 +861,10 @@ void BGVrns_AddInPlace(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_AddInPlace);
-
-void BGVrns_AddPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    std::vector<int64_t> vectorOfInts2 = {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
-
-    auto plaintext1 = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCoefPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextAdd = cc->EvalAdd(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(BGVrns_AddPlain);
-
-void BGVrns_Negate(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-
-    auto plaintext1 = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextNeg = cc->EvalNegate(ciphertext1);
-    }
-}
-
-HEXL_BENCHMARK(BGVrns_Negate);
-
-void BGVrns_Sub(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    std::vector<int64_t> vectorOfInts2 = {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
-
-    auto plaintext1 = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCoefPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-    auto ciphertext2 = cc->Encrypt(keyPair.publicKey, plaintext2);
-
-    while (state.KeepRunning()) {
-        auto ciphertextSub = cc->EvalSub(ciphertext1, ciphertext2);
-    }
-}
-
-HEXL_BENCHMARK(BGVrns_Sub);
-
-void BGVrns_SubPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    std::vector<int64_t> vectorOfInts2 = {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
-
-    auto plaintext1 = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCoefPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextSub = cc->EvalSub(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(BGVrns_SubPlain);
+BENCHMARK(BGVrns_AddInPlace)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_MultNoRelin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0));
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
 
@@ -1109,12 +880,14 @@ void BGVrns_MultNoRelin(benchmark::State& state) {
     while (state.KeepRunning()) {
         auto ciphertextMul = cc->EvalMultNoRelin(ciphertext1, ciphertext2);
     }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_BENCHMARK(BGVrns_MultNoRelin);
+BENCHMARK(BGVrns_MultNoRelin)->Unit(benchmark::kMicrosecond)->Apply(DepthArgs);  // ->Complexity(benchmark::oAuto);
 
 void BGVrns_MultRelin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0));
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -1131,32 +904,14 @@ void BGVrns_MultRelin(benchmark::State& state) {
     while (state.KeepRunning()) {
         auto ciphertextMul = cc->EvalMult(ciphertext1, ciphertext2);
     }
+
+    state.SetComplexityN(state.range(0));
 }
 
-HEXL_BENCHMARK(BGVrns_MultRelin);
-
-void BGVrns_MultPlain(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
-
-    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
-
-    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
-    std::vector<int64_t> vectorOfInts2 = {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
-
-    auto plaintext1 = cc->MakeCoefPackedPlaintext(vectorOfInts1);
-    auto plaintext2 = cc->MakeCoefPackedPlaintext(vectorOfInts2);
-
-    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
-
-    while (state.KeepRunning()) {
-        auto ciphertextMul = cc->EvalMult(ciphertext1, plaintext2);
-    }
-}
-
-HEXL_BENCHMARK(BGVrns_MultPlain);
+BENCHMARK(BGVrns_MultRelin)->Unit(benchmark::kMicrosecond)->Apply(DepthArgs);  // ->Complexity(benchmark::oAuto);
 
 void BGVrns_Relin(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -1177,10 +932,38 @@ void BGVrns_Relin(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_Relin);
+BENCHMARK(BGVrns_Relin)->Unit(benchmark::kMicrosecond);
+
+void BGVrns_RelinInPlace(benchmark::State& state) {
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
+
+    KeyPair<DCRTPoly> keyPair = cc->KeyGen();
+    cc->EvalMultKeyGen(keyPair.secretKey);
+
+    std::vector<int64_t> vectorOfInts1 = {1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0};
+    std::vector<int64_t> vectorOfInts2 = {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1};
+
+    auto plaintext1 = cc->MakePackedPlaintext(vectorOfInts1);
+    auto plaintext2 = cc->MakePackedPlaintext(vectorOfInts2);
+
+    auto ciphertext1 = cc->Encrypt(keyPair.publicKey, plaintext1);
+    auto ciphertext2 = cc->Encrypt(keyPair.publicKey, plaintext2);
+
+    auto ciphertextMul      = cc->EvalMultNoRelin(ciphertext1, ciphertext2);
+    auto ciphertextMulClone = ciphertextMul->Clone();
+
+    while (state.KeepRunning()) {
+        cc->RelinearizeInPlace(ciphertextMul);
+        state.PauseTiming();
+        ciphertextMul = ciphertextMulClone->Clone();
+        state.ResumeTiming();
+    }
+}
+
+BENCHMARK(BGVrns_RelinInPlace)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_ModSwitch(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -1201,10 +984,10 @@ void BGVrns_ModSwitch(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_ModSwitch);
+BENCHMARK(BGVrns_ModSwitch)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_ModSwitchInPlace(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -1224,10 +1007,10 @@ void BGVrns_ModSwitchInPlace(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_ModSwitchInPlace);
+BENCHMARK(BGVrns_ModSwitchInPlace)->Unit(benchmark::kMicrosecond);
 
 void BGVrns_EvalAtIndex(benchmark::State& state) {
-    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext(state.range(0), state.range(1));
+    CryptoContext<DCRTPoly> cc = GenerateBGVrnsContext();
 
     KeyPair<DCRTPoly> keyPair = cc->KeyGen();
     cc->EvalMultKeyGen(keyPair.secretKey);
@@ -1255,6 +1038,6 @@ void BGVrns_EvalAtIndex(benchmark::State& state) {
     }
 }
 
-HEXL_BENCHMARK(BGVrns_EvalAtIndex);
+BENCHMARK(BGVrns_EvalAtIndex)->Unit(benchmark::kMicrosecond);
 
 BENCHMARK_MAIN();

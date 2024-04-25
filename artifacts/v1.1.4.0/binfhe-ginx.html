@@ -1,0 +1,517 @@
+<!DOCTYPE html><html><head><!-- --></head><body style="background-color:#000000;color:#808080">
+<tr>
+<b>binfhe-ginx</b><br>
+<tr>
+<b></b><br>
+<tr>
+<b>CPU Model Intel(R) Xeon(R) Platinum 8360Y CPU @ 2.40GHz</b><br>
+<tr>
+<b>g++ version (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0</b><br>
+<tr>
+<b>clang version version 10.0.0-4ubuntu1 </b><br>
+<tr>
+<b></b><br>
+<table>
+<tr>
+<td style="text-align:center"><b>BENCHMARK</b></td>	<td style="text-align:center"><b>CLANG13-OPENMP-OFF</b></td>	<td style="text-align:center"><b>CLANG17-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG16-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG12-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG11-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG10-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG9-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG15-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>CLANG14-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC11-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC10-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	<td style="text-align:center"><b>GCC9-OPENMP-OFF</b></td>	<td style="text-align:center"><b>speedup</b></td>	</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BTKEYGEN/MEDIUM</b></td>	<td style="text-align:center">4.04932e+06</td>
+<td style="text-align:center">4.1321e+06</td>
+<td style="text-align:center">0.979967</td>
+<td style="text-align:center">4.29726e+06</td>
+<td style="text-align:center">0.942303</td>
+<td style="text-align:center">4.05873e+06</td>
+<td style="text-align:center">0.997681</td>
+<td style="text-align:center">4.28356e+06</td>
+<td style="text-align:center">0.945316</td>
+<td style="text-align:center">4.62508e+06</td>
+<td style="color:#ff0000;text-align:center">0.875513</td>
+<td style="text-align:center">4.67493e+06</td>
+<td style="color:#ff0000;text-align:center">0.866178</td>
+<td style="text-align:center">4.3245e+06</td>
+<td style="text-align:center">0.936367</td>
+<td style="text-align:center">4.06946e+06</td>
+<td style="text-align:center">0.99505</td>
+<td style="text-align:center">4.143e+06</td>
+<td style="text-align:center">0.977388</td>
+<td style="text-align:center">3.85448e+06</td>
+<td style="color:#00ff00;text-align:center">1.05055</td>
+<td style="text-align:center">3.90913e+06</td>
+<td style="color:#00ff00;text-align:center">1.03586</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BTKEYGEN/STD128</b></td>	<td style="text-align:center">2.04451e+06</td>
+<td style="text-align:center">2.08872e+06</td>
+<td style="text-align:center">0.978834</td>
+<td style="text-align:center">2.16412e+06</td>
+<td style="text-align:center">0.944728</td>
+<td style="text-align:center">2.0459e+06</td>
+<td style="text-align:center">0.999316</td>
+<td style="text-align:center">2.15779e+06</td>
+<td style="text-align:center">0.947501</td>
+<td style="text-align:center">2.33511e+06</td>
+<td style="color:#ff0000;text-align:center">0.875549</td>
+<td style="text-align:center">2.35628e+06</td>
+<td style="color:#ff0000;text-align:center">0.867683</td>
+<td style="text-align:center">2.19177e+06</td>
+<td style="text-align:center">0.932812</td>
+<td style="text-align:center">2.05488e+06</td>
+<td style="text-align:center">0.994951</td>
+<td style="text-align:center">1.91195e+06</td>
+<td style="text-align:center">1.06933</td>
+<td style="text-align:center">1.76746e+06</td>
+<td style="color:#00ff00;text-align:center">1.15675</td>
+<td style="text-align:center">1.79465e+06</td>
+<td style="color:#00ff00;text-align:center">1.13922</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_ENCRYPT/MEDIUM</b></td>	<td style="text-align:center">12</td>
+<td style="text-align:center">11.6</td>
+<td style="color:#00ff00;text-align:center">1.03448</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">11.4</td>
+<td style="color:#00ff00;text-align:center">1.05263</td>
+<td style="text-align:center">11.9</td>
+<td style="color:#00ff00;text-align:center">1.0084</td>
+<td style="text-align:center">13.6</td>
+<td style="color:#ff0000;text-align:center">0.882353</td>
+<td style="text-align:center">13.5</td>
+<td style="color:#ff0000;text-align:center">0.888889</td>
+<td style="text-align:center">12.2</td>
+<td style="text-align:center">0.983607</td>
+<td style="text-align:center">11.5</td>
+<td style="color:#00ff00;text-align:center">1.04348</td>
+<td style="text-align:center">13.2</td>
+<td style="color:#ff0000;text-align:center">0.909091</td>
+<td style="text-align:center">11.6</td>
+<td style="color:#00ff00;text-align:center">1.03448</td>
+<td style="text-align:center">11.9</td>
+<td style="color:#00ff00;text-align:center">1.0084</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_ENCRYPT/STD128</b></td>	<td style="text-align:center">14.2</td>
+<td style="text-align:center">13.8</td>
+<td style="color:#00ff00;text-align:center">1.02899</td>
+<td style="text-align:center">14.2</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">13.5</td>
+<td style="color:#00ff00;text-align:center">1.05185</td>
+<td style="text-align:center">14.1</td>
+<td style="color:#00ff00;text-align:center">1.00709</td>
+<td style="text-align:center">16.2</td>
+<td style="color:#ff0000;text-align:center">0.876543</td>
+<td style="text-align:center">16.1</td>
+<td style="color:#ff0000;text-align:center">0.881988</td>
+<td style="text-align:center">14.5</td>
+<td style="text-align:center">0.97931</td>
+<td style="text-align:center">13.6</td>
+<td style="color:#00ff00;text-align:center">1.04412</td>
+<td style="text-align:center">15.7</td>
+<td style="color:#ff0000;text-align:center">0.904459</td>
+<td style="text-align:center">13.7</td>
+<td style="color:#00ff00;text-align:center">1.0365</td>
+<td style="text-align:center">14.1</td>
+<td style="color:#00ff00;text-align:center">1.00709</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_NOT/MEDIUM</b></td>	<td style="text-align:center">0.173</td>
+<td style="text-align:center">0.169</td>
+<td style="color:#00ff00;text-align:center">1.02367</td>
+<td style="text-align:center">0.17</td>
+<td style="color:#00ff00;text-align:center">1.01765</td>
+<td style="text-align:center">0.173</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">0.173</td>
+<td style="color:#00ff00;text-align:center">1</td>
+<td style="text-align:center">0.174</td>
+<td style="color:#00ff00;text-align:center">0.994253</td>
+<td style="text-align:center">0.167</td>
+<td style="color:#00ff00;text-align:center">1.03593</td>
+<td style="text-align:center">0.17</td>
+<td style="color:#00ff00;text-align:center">1.01765</td>
+<td style="text-align:center">0.185</td>
+<td style="text-align:center">0.935135</td>
+<td style="text-align:center">0.203</td>
+<td style="color:#ff0000;text-align:center">0.852217</td>
+<td style="text-align:center">0.193</td>
+<td style="color:#ff0000;text-align:center">0.896373</td>
+<td style="text-align:center">0.203</td>
+<td style="color:#ff0000;text-align:center">0.852217</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_NOT/STD128</b></td>	<td style="text-align:center">0.182</td>
+<td style="text-align:center">0.179</td>
+<td style="text-align:center">1.01676</td>
+<td style="text-align:center">0.178</td>
+<td style="text-align:center">1.02247</td>
+<td style="text-align:center">0.182</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.182</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0.184</td>
+<td style="text-align:center">0.98913</td>
+<td style="text-align:center">0.168</td>
+<td style="color:#00ff00;text-align:center">1.08333</td>
+<td style="text-align:center">0.178</td>
+<td style="text-align:center">1.02247</td>
+<td style="text-align:center">0.196</td>
+<td style="text-align:center">0.928571</td>
+<td style="text-align:center">0.219</td>
+<td style="color:#ff0000;text-align:center">0.83105</td>
+<td style="text-align:center">0.206</td>
+<td style="color:#ffff00;text-align:center">0.883495</td>
+<td style="text-align:center">0.217</td>
+<td style="color:#ff0000;text-align:center">0.83871</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/MEDIUM_OR/min_time:10.000</b></td>	<td style="text-align:center">16407</td>
+<td style="text-align:center">16506</td>
+<td style="color:#00ff00;text-align:center">0.994002</td>
+<td style="text-align:center">16692</td>
+<td style="color:#00ff00;text-align:center">0.982926</td>
+<td style="text-align:center">16414</td>
+<td style="color:#00ff00;text-align:center">0.999574</td>
+<td style="text-align:center">16729</td>
+<td style="color:#00ff00;text-align:center">0.980752</td>
+<td style="text-align:center">16795</td>
+<td style="color:#00ff00;text-align:center">0.976898</td>
+<td style="text-align:center">16051</td>
+<td style="color:#00ff00;text-align:center">1.02218</td>
+<td style="text-align:center">27717</td>
+<td style="color:#ff0000;text-align:center">0.591947</td>
+<td style="text-align:center">27540</td>
+<td style="color:#ff0000;text-align:center">0.595752</td>
+<td style="text-align:center">22248</td>
+<td style="color:#ffff00;text-align:center">0.73746</td>
+<td style="text-align:center">22020</td>
+<td style="color:#ffff00;text-align:center">0.745095</td>
+<td style="text-align:center">22821</td>
+<td style="color:#ffff00;text-align:center">0.718943</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/MEDIUM_AND</b></td>	<td style="text-align:center">16556</td>
+<td style="text-align:center">16779</td>
+<td style="color:#00ff00;text-align:center">0.98671</td>
+<td style="text-align:center">16665</td>
+<td style="color:#00ff00;text-align:center">0.993459</td>
+<td style="text-align:center">16691</td>
+<td style="color:#00ff00;text-align:center">0.991912</td>
+<td style="text-align:center">17000</td>
+<td style="color:#00ff00;text-align:center">0.973882</td>
+<td style="text-align:center">16969</td>
+<td style="color:#00ff00;text-align:center">0.975662</td>
+<td style="text-align:center">16325</td>
+<td style="color:#00ff00;text-align:center">1.01415</td>
+<td style="text-align:center">27787</td>
+<td style="color:#ff0000;text-align:center">0.595818</td>
+<td style="text-align:center">27795</td>
+<td style="color:#ff0000;text-align:center">0.595647</td>
+<td style="text-align:center">22425</td>
+<td style="color:#ffff00;text-align:center">0.738283</td>
+<td style="text-align:center">22174</td>
+<td style="color:#ffff00;text-align:center">0.74664</td>
+<td style="text-align:center">22985</td>
+<td style="color:#ffff00;text-align:center">0.720296</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/MEDIUM_NOR</b></td>	<td style="text-align:center">16534</td>
+<td style="text-align:center">16584</td>
+<td style="color:#00ff00;text-align:center">0.996985</td>
+<td style="text-align:center">16653</td>
+<td style="color:#00ff00;text-align:center">0.992854</td>
+<td style="text-align:center">16644</td>
+<td style="color:#00ff00;text-align:center">0.993391</td>
+<td style="text-align:center">16818</td>
+<td style="color:#00ff00;text-align:center">0.983113</td>
+<td style="text-align:center">16816</td>
+<td style="color:#00ff00;text-align:center">0.98323</td>
+<td style="text-align:center">16331</td>
+<td style="color:#00ff00;text-align:center">1.01243</td>
+<td style="text-align:center">27893</td>
+<td style="color:#ff0000;text-align:center">0.592765</td>
+<td style="text-align:center">27762</td>
+<td style="color:#ff0000;text-align:center">0.595562</td>
+<td style="text-align:center">22392</td>
+<td style="color:#ffff00;text-align:center">0.738389</td>
+<td style="text-align:center">22219</td>
+<td style="color:#ffff00;text-align:center">0.744138</td>
+<td style="text-align:center">22851</td>
+<td style="color:#ffff00;text-align:center">0.723557</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/MEDIUM_NAND</b></td>	<td style="text-align:center">16441</td>
+<td style="text-align:center">16570</td>
+<td style="color:#00ff00;text-align:center">0.992215</td>
+<td style="text-align:center">16898</td>
+<td style="color:#00ff00;text-align:center">0.972955</td>
+<td style="text-align:center">16428</td>
+<td style="color:#00ff00;text-align:center">1.00079</td>
+<td style="text-align:center">16821</td>
+<td style="color:#00ff00;text-align:center">0.977409</td>
+<td style="text-align:center">16819</td>
+<td style="color:#00ff00;text-align:center">0.977525</td>
+<td style="text-align:center">16167</td>
+<td style="color:#00ff00;text-align:center">1.01695</td>
+<td style="text-align:center">27979</td>
+<td style="color:#ff0000;text-align:center">0.587619</td>
+<td style="text-align:center">27709</td>
+<td style="color:#ff0000;text-align:center">0.593345</td>
+<td style="text-align:center">22460</td>
+<td style="color:#ffff00;text-align:center">0.732012</td>
+<td style="text-align:center">22239</td>
+<td style="color:#ffff00;text-align:center">0.739287</td>
+<td style="text-align:center">23091</td>
+<td style="color:#ffff00;text-align:center">0.712009</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/MEDIUM_XOR</b></td>	<td style="text-align:center">16447</td>
+<td style="text-align:center">16366</td>
+<td style="color:#00ff00;text-align:center">1.00495</td>
+<td style="text-align:center">16833</td>
+<td style="color:#00ff00;text-align:center">0.977069</td>
+<td style="text-align:center">16548</td>
+<td style="color:#00ff00;text-align:center">0.993897</td>
+<td style="text-align:center">16820</td>
+<td style="color:#00ff00;text-align:center">0.977824</td>
+<td style="text-align:center">16856</td>
+<td style="color:#00ff00;text-align:center">0.975736</td>
+<td style="text-align:center">16229</td>
+<td style="color:#00ff00;text-align:center">1.01343</td>
+<td style="text-align:center">27903</td>
+<td style="color:#ff0000;text-align:center">0.589435</td>
+<td style="text-align:center">27346</td>
+<td style="color:#ff0000;text-align:center">0.601441</td>
+<td style="text-align:center">22371</td>
+<td style="color:#ffff00;text-align:center">0.735193</td>
+<td style="text-align:center">22154</td>
+<td style="color:#ffff00;text-align:center">0.742394</td>
+<td style="text-align:center">22898</td>
+<td style="color:#ffff00;text-align:center">0.718272</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/MEDIUM_XNOR</b></td>	<td style="text-align:center">16400</td>
+<td style="text-align:center">16585</td>
+<td style="color:#00ff00;text-align:center">0.988845</td>
+<td style="text-align:center">16672</td>
+<td style="color:#00ff00;text-align:center">0.983685</td>
+<td style="text-align:center">16567</td>
+<td style="color:#00ff00;text-align:center">0.98992</td>
+<td style="text-align:center">16812</td>
+<td style="color:#00ff00;text-align:center">0.975494</td>
+<td style="text-align:center">16879</td>
+<td style="color:#00ff00;text-align:center">0.971622</td>
+<td style="text-align:center">16559</td>
+<td style="color:#00ff00;text-align:center">0.990398</td>
+<td style="text-align:center">27843</td>
+<td style="color:#ff0000;text-align:center">0.589017</td>
+<td style="text-align:center">27480</td>
+<td style="color:#ff0000;text-align:center">0.596798</td>
+<td style="text-align:center">22295</td>
+<td style="color:#ffff00;text-align:center">0.735591</td>
+<td style="text-align:center">21973</td>
+<td style="color:#ffff00;text-align:center">0.746371</td>
+<td style="text-align:center">22930</td>
+<td style="color:#ffff00;text-align:center">0.71522</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/STD128_OR/min_time:10.000</b></td>	<td style="text-align:center">19747</td>
+<td style="text-align:center">19952</td>
+<td style="color:#00ff00;text-align:center">0.989725</td>
+<td style="text-align:center">19938</td>
+<td style="color:#00ff00;text-align:center">0.99042</td>
+<td style="text-align:center">20014</td>
+<td style="color:#00ff00;text-align:center">0.986659</td>
+<td style="text-align:center">20175</td>
+<td style="color:#00ff00;text-align:center">0.978786</td>
+<td style="text-align:center">20172</td>
+<td style="color:#00ff00;text-align:center">0.978931</td>
+<td style="text-align:center">19733</td>
+<td style="color:#00ff00;text-align:center">1.00071</td>
+<td style="text-align:center">33257</td>
+<td style="color:#ff0000;text-align:center">0.59377</td>
+<td style="text-align:center">32947</td>
+<td style="color:#ff0000;text-align:center">0.599357</td>
+<td style="text-align:center">26690</td>
+<td style="color:#ffff00;text-align:center">0.739865</td>
+<td style="text-align:center">26555</td>
+<td style="color:#ffff00;text-align:center">0.743626</td>
+<td style="text-align:center">27469</td>
+<td style="color:#ffff00;text-align:center">0.718883</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/STD128_AND</b></td>	<td style="text-align:center">20006</td>
+<td style="text-align:center">19866</td>
+<td style="color:#00ff00;text-align:center">1.00705</td>
+<td style="text-align:center">20134</td>
+<td style="color:#00ff00;text-align:center">0.993643</td>
+<td style="text-align:center">20112</td>
+<td style="color:#00ff00;text-align:center">0.99473</td>
+<td style="text-align:center">20117</td>
+<td style="color:#00ff00;text-align:center">0.994482</td>
+<td style="text-align:center">20094</td>
+<td style="color:#00ff00;text-align:center">0.995621</td>
+<td style="text-align:center">19882</td>
+<td style="color:#00ff00;text-align:center">1.00624</td>
+<td style="text-align:center">33504</td>
+<td style="color:#ff0000;text-align:center">0.597123</td>
+<td style="text-align:center">33089</td>
+<td style="color:#ff0000;text-align:center">0.604612</td>
+<td style="text-align:center">26851</td>
+<td style="color:#ffff00;text-align:center">0.745075</td>
+<td style="text-align:center">26571</td>
+<td style="color:#ffff00;text-align:center">0.752926</td>
+<td style="text-align:center">27366</td>
+<td style="color:#ffff00;text-align:center">0.731053</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/STD128_NOR</b></td>	<td style="text-align:center">20065</td>
+<td style="text-align:center">20022</td>
+<td style="color:#00ff00;text-align:center">1.00215</td>
+<td style="text-align:center">20253</td>
+<td style="color:#00ff00;text-align:center">0.990717</td>
+<td style="text-align:center">20041</td>
+<td style="color:#00ff00;text-align:center">1.0012</td>
+<td style="text-align:center">20072</td>
+<td style="color:#00ff00;text-align:center">0.999651</td>
+<td style="text-align:center">20354</td>
+<td style="color:#00ff00;text-align:center">0.985801</td>
+<td style="text-align:center">19894</td>
+<td style="color:#00ff00;text-align:center">1.0086</td>
+<td style="text-align:center">33308</td>
+<td style="color:#ff0000;text-align:center">0.602408</td>
+<td style="text-align:center">33215</td>
+<td style="color:#ff0000;text-align:center">0.604095</td>
+<td style="text-align:center">26588</td>
+<td style="color:#ffff00;text-align:center">0.754664</td>
+<td style="text-align:center">26523</td>
+<td style="color:#ffff00;text-align:center">0.756513</td>
+<td style="text-align:center">27676</td>
+<td style="color:#ffff00;text-align:center">0.724996</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/STD128_NAND</b></td>	<td style="text-align:center">19820</td>
+<td style="text-align:center">20030</td>
+<td style="color:#00ff00;text-align:center">0.989516</td>
+<td style="text-align:center">20340</td>
+<td style="color:#00ff00;text-align:center">0.974435</td>
+<td style="text-align:center">19814</td>
+<td style="color:#00ff00;text-align:center">1.0003</td>
+<td style="text-align:center">20203</td>
+<td style="color:#00ff00;text-align:center">0.981042</td>
+<td style="text-align:center">20380</td>
+<td style="color:#00ff00;text-align:center">0.972522</td>
+<td style="text-align:center">19764</td>
+<td style="color:#00ff00;text-align:center">1.00283</td>
+<td style="text-align:center">33381</td>
+<td style="color:#ff0000;text-align:center">0.593751</td>
+<td style="text-align:center">33169</td>
+<td style="color:#ff0000;text-align:center">0.597546</td>
+<td style="text-align:center">26805</td>
+<td style="color:#ffff00;text-align:center">0.739414</td>
+<td style="text-align:center">26565</td>
+<td style="color:#ffff00;text-align:center">0.746094</td>
+<td style="text-align:center">27542</td>
+<td style="color:#ffff00;text-align:center">0.719628</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/STD128_XOR</b></td>	<td style="text-align:center">19809</td>
+<td style="text-align:center">20071</td>
+<td style="color:#00ff00;text-align:center">0.986946</td>
+<td style="text-align:center">20039</td>
+<td style="color:#00ff00;text-align:center">0.988522</td>
+<td style="text-align:center">19983</td>
+<td style="color:#00ff00;text-align:center">0.991293</td>
+<td style="text-align:center">19946</td>
+<td style="color:#00ff00;text-align:center">0.993131</td>
+<td style="text-align:center">20291</td>
+<td style="color:#00ff00;text-align:center">0.976246</td>
+<td style="text-align:center">19773</td>
+<td style="color:#00ff00;text-align:center">1.00182</td>
+<td style="text-align:center">33292</td>
+<td style="color:#ff0000;text-align:center">0.595008</td>
+<td style="text-align:center">33118</td>
+<td style="color:#ff0000;text-align:center">0.598134</td>
+<td style="text-align:center">26902</td>
+<td style="color:#ffff00;text-align:center">0.736339</td>
+<td style="text-align:center">26531</td>
+<td style="color:#ffff00;text-align:center">0.746636</td>
+<td style="text-align:center">27465</td>
+<td style="color:#ffff00;text-align:center">0.721245</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_BINGATE/STD128_XNOR</b></td>	<td style="text-align:center">19621</td>
+<td style="text-align:center">19956</td>
+<td style="color:#00ff00;text-align:center">0.983213</td>
+<td style="text-align:center">19800</td>
+<td style="color:#00ff00;text-align:center">0.99096</td>
+<td style="text-align:center">19835</td>
+<td style="color:#00ff00;text-align:center">0.989211</td>
+<td style="text-align:center">19969</td>
+<td style="color:#00ff00;text-align:center">0.982573</td>
+<td style="text-align:center">20132</td>
+<td style="color:#00ff00;text-align:center">0.974618</td>
+<td style="text-align:center">19742</td>
+<td style="color:#00ff00;text-align:center">0.993871</td>
+<td style="text-align:center">33269</td>
+<td style="color:#ff0000;text-align:center">0.589768</td>
+<td style="text-align:center">32901</td>
+<td style="color:#ff0000;text-align:center">0.596365</td>
+<td style="text-align:center">26805</td>
+<td style="color:#ffff00;text-align:center">0.73199</td>
+<td style="text-align:center">26259</td>
+<td style="color:#ffff00;text-align:center">0.74721</td>
+<td style="text-align:center">27384</td>
+<td style="color:#ffff00;text-align:center">0.716513</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_KEYSWITCH/MEDIUM/min_time:1.000</b></td>	<td style="text-align:center">521</td>
+<td style="text-align:center">399</td>
+<td style="color:#0000ff;text-align:center">1.30576</td>
+<td style="text-align:center">471</td>
+<td style="color:#00ff00;text-align:center">1.10616</td>
+<td style="text-align:center">511</td>
+<td style="text-align:center">1.01957</td>
+<td style="text-align:center">524</td>
+<td style="color:#ff0000;text-align:center">0.994275</td>
+<td style="text-align:center">527</td>
+<td style="color:#ff0000;text-align:center">0.988615</td>
+<td style="text-align:center">537</td>
+<td style="color:#ff0000;text-align:center">0.970205</td>
+<td style="text-align:center">466</td>
+<td style="color:#00ff00;text-align:center">1.11803</td>
+<td style="text-align:center">514</td>
+<td style="color:#ff0000;text-align:center">1.01362</td>
+<td style="text-align:center">484</td>
+<td style="color:#00ff00;text-align:center">1.07645</td>
+<td style="text-align:center">490</td>
+<td style="text-align:center">1.06326</td>
+<td style="text-align:center">539</td>
+<td style="color:#ff0000;text-align:center">0.966605</td>
+</tr>
+<tr>
+<td style="text-align:center"><b>FHEW_KEYSWITCH/STD128/min_time:1.000</b></td>	<td style="text-align:center">872</td>
+<td style="text-align:center">658</td>
+<td style="color:#0000ff;text-align:center">1.32523</td>
+<td style="text-align:center">751</td>
+<td style="color:#00ff00;text-align:center">1.16112</td>
+<td style="text-align:center">862</td>
+<td style="text-align:center">1.0116</td>
+<td style="text-align:center">880</td>
+<td style="text-align:center">0.990909</td>
+<td style="text-align:center">876</td>
+<td style="text-align:center">0.995434</td>
+<td style="text-align:center">1122</td>
+<td style="color:#ff0000;text-align:center">0.777184</td>
+<td style="text-align:center">765</td>
+<td style="color:#00ff00;text-align:center">1.13987</td>
+<td style="text-align:center">871</td>
+<td style="text-align:center">1.00115</td>
+<td style="text-align:center">791</td>
+<td style="color:#00ff00;text-align:center">1.1024</td>
+<td style="text-align:center">801</td>
+<td style="color:#00ff00;text-align:center">1.08864</td>
+<td style="text-align:center">895</td>
+<td style="text-align:center">0.974302</td>
+</tr>
+</body></html>

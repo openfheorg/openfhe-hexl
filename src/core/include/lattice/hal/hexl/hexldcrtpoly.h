@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2023, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2024, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -36,9 +36,9 @@
 
 #include "hexl/hexl.hpp"
 
+#include "lattice/hal/default/ildcrtparams.h"
 #include "lattice/hal/hexl/hexlpoly.h"
 #include "lattice/hal/dcrtpoly-interface.h"
-#include "lattice/ildcrtparams.h"
 
 #include "math/math-hal.h"
 #include "math/distrgen.h"
@@ -122,15 +122,6 @@ public:
 
     DCRTPolyType CloneWithNoise(const DiscreteGaussianGeneratorImpl<VecType>& dgg, Format format) const override;
     DCRTPolyType CloneTowers(uint32_t startTower, uint32_t endTower) const;
-
-    Integer& at(usint i) override;
-    const Integer& at(usint i) const override;
-    Integer& operator[](usint i) override {
-        return DCRTPolyType::CRTInterpolateIndex(i)[i];
-    }
-    const Integer& operator[](usint i) const override {
-        return DCRTPolyType::CRTInterpolateIndex(i)[i];
-    }
 
     bool operator==(const DCRTPolyType& rhs) const override;
 
@@ -273,9 +264,7 @@ public:
     void DropLastElement() override;
     void DropLastElements(size_t i) override;
     void DropLastElementAndScale(const std::vector<NativeInteger>& QlQlInvModqlDivqlModq,
-                                 const std::vector<NativeInteger>& QlQlInvModqlDivqlModqPrecon,
-                                 const std::vector<NativeInteger>& qlInvModq,
-                                 const std::vector<NativeInteger>& qlInvModqPrecon) override;
+                                 const std::vector<NativeInteger>& qlInvModq) override;
 
     void ModReduce(const NativeInteger& t, const std::vector<NativeInteger>& tModqPrecon,
                    const NativeInteger& negtInvModq, const NativeInteger& negtInvModqPrecon,
@@ -460,7 +449,7 @@ public:
     }
 
 protected:
-    std::shared_ptr<Params> m_params{std::make_shared<HexlDCRTPolyImpl::Params>(0, 1)};
+    std::shared_ptr<Params> m_params{std::make_shared<HexlDCRTPolyImpl::Params>()};
     Format m_format{Format::EVALUATION};
     std::vector<PolyType> m_vectors;
 };

@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2022, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2023, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -32,436 +32,118 @@
 /*
   This code benchmarks vector operations.
  */
-#define _USE_MATH_DEFINES
-#define MAX_MODULUS_SIZE_HEXL 51
 
-#include "vechelper.h"
-#include "lattice/elemparamfactory.h"
+#define _USE_MATH_DEFINES
+#define MAX_MODULUS_SIZE_HEXL 50
 
 #include "benchmark/benchmark.h"
+#include "math/discreteuniformgenerator.h"
+#include "math/hal/basicint.h"
+#include "math/math-hal.h"
+#include "math/nbtheory.h"
 
 #include <iostream>
 
 using namespace lbcrypto;
 
-// vec + vec
 template <typename V>
-static void VecVec_Add(V& a, const V& b) {
-    a = a + b;
-}
-template <typename V>
-static void BM_VecVec_Add(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_Add<V>(a, b);
+static void add_BigVec(const V& a, const V& b) {
+    V c = a + b;
 }
 
-// vec += vec
 template <typename V>
-static void VecVec_AddEq(V& a, const V& b) {
+static void BM_BigVec_Add(benchmark::State& state) {
+    auto p = state.range(0);
+    auto q = LastPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p);
+    V a    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    V b    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    while (state.KeepRunning()) {
+        add_BigVec<V>(a, b);
+    }
+}
+
+template <typename V>
+static void addeq_BigVec(V& a, const V& b) {
     a += b;
 }
+
 template <typename V>
-static void BM_VecVec_AddEq(benchmark::State& state) {
+static void BM_BigVec_Addeq(benchmark::State& state) {
     auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_AddEq<V>(a, b);
+    auto q = LastPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p);
+    V a    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    V b    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    while (state.KeepRunning()) {
+        addeq_BigVec<V>(a, b);
+    }
 }
 
-// vec * vec
 template <typename V>
-static void VecVec_Mul(V& a, const V& b) {
-    a = a * b;
-}
-template <typename V>
-static void BM_VecVec_Mul(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_Mul<V>(a, b);
+static void mult_BigVec(const V& a, const V& b) {
+    V c = a * b;
 }
 
-// vec *= vec
 template <typename V>
-static void VecVec_MulEq(V& a, const V& b) {
+static void BM_BigVec_Mult(benchmark::State& state) {
+    auto p = state.range(0);
+    auto q = LastPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p);
+    V a    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    V b    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    while (state.KeepRunning()) {
+        mult_BigVec<V>(a, b);
+    }
+}
+
+template <typename V>
+static void multeq_BigVec(V& a, const V& b) {
     a *= b;
 }
+
 template <typename V>
-static void BM_VecVec_MulEq(benchmark::State& state) {
+static void BM_BigVec_Multeq(benchmark::State& state) {
     auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V b    = makeVector<V>(p, q);
-    V a    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_MulEq<V>(a, b);
+    auto q = LastPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p);
+    V a    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    V b    = DiscreteUniformGeneratorImpl<V>().GenerateVector(p, q);
+    while (state.KeepRunning()) {
+        multeq_BigVec<V>(a, b);
+    }
 }
 
-// vec + scal
-template <typename V>
-static void VecInt_Add(V& a, const typename V::Integer& b) {
-    a = a + b;
-}
-template <typename V>
-static void BM_VecInt_Add(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(37 % q);
-    while (state.KeepRunning())
-        VecInt_Add<V>(a, b);
-}
+#define DO_VECTOR_BENCHMARK(X, Y)                                                               \
+    BENCHMARK_TEMPLATE(X, Y)->Unit(benchmark::kMicrosecond)->ArgName("parm_16")->Arg(16);       \
+    BENCHMARK_TEMPLATE(X, Y)->Unit(benchmark::kMicrosecond)->ArgName("parm_1024")->Arg(1024);   \
+    BENCHMARK_TEMPLATE(X, Y)->Unit(benchmark::kMicrosecond)->ArgName("parm_2048")->Arg(2048);   \
+    BENCHMARK_TEMPLATE(X, Y)->Unit(benchmark::kMicrosecond)->ArgName("parm_4096")->Arg(4096);   \
+    BENCHMARK_TEMPLATE(X, Y)->Unit(benchmark::kMicrosecond)->ArgName("parm_8192")->Arg(8192);   \
+    BENCHMARK_TEMPLATE(X, Y)->Unit(benchmark::kMicrosecond)->ArgName("parm_16384")->Arg(16384); \
+    BENCHMARK_TEMPLATE(X, Y)->Unit(benchmark::kMicrosecond)->ArgName("parm_32768")->Arg(32768);
 
-// vec += scal
-template <typename V>
-static void VecInt_AddEq(V& a, const typename V::Integer& b) {
-    a += b;
-}
-template <typename V>
-static void BM_VecInt_AddEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(42 % q);
-    while (state.KeepRunning())
-        VecInt_AddEq<V>(a, b);
-}
+DO_VECTOR_BENCHMARK(BM_BigVec_Add, NativeVector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Addeq, NativeVector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Mult, NativeVector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Multeq, NativeVector)
 
-// vec * scal
-template <typename V>
-static void VecInt_Mul(V& a, const typename V::Integer& b) {
-    a = a * b;
-}
+#ifdef WITH_BE2
+DO_VECTOR_BENCHMARK(BM_BigVec_Add, M2Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Addeq, M2Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Mult, M2Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Multeq, M2Vector)
+#endif
 
-template <typename V>
-static void BM_VecInt_Mul(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(10101 % q);
-    while (state.KeepRunning())
-        VecInt_Mul<V>(a, b);
-}
+#ifdef WITH_BE4
+DO_VECTOR_BENCHMARK(BM_BigVec_Add, M4Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Addeq, M4Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Mult, M4Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Multeq, M4Vector)
+#endif
 
-// vec *= scal
-template <typename V>
-static void VecInt_MulEq(V& a, const typename V::Integer& b) {
-    a *= b;
-}
-template <typename V>
-static void BM_VecInt_MulEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(55 % q);
-    while (state.KeepRunning())
-        VecInt_MulEq<V>(a, b);
-}
-
-template <typename V>
-static void VecVec_ModAddNoCheckEq(V& a, const V& b) {
-    a.ModAddNoCheckEq(b);
-}
-template <typename V>
-static void BM_VecVec_ModAddNoCheckEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_ModAddNoCheckEq<V>(a, b);
-}
-
-template <typename V>
-static void VecVec_ModMulNoCheckEq(V& a, const V& b) {
-    a.ModMulNoCheckEq(b);
-}
-template <typename V>
-static void BM_VecVec_ModMulNoCheckEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_ModMulNoCheckEq<V>(a, b);
-}
-
-template <typename V>
-static void VecInt_SwitchModulus(V a, const typename V::Integer& b) {
-    a.SwitchModulus(b);
-}
-template <typename V>
-static void BM_VecInt_SwitchModulus_Up(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    auto f2 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL - 1, (p >> 1) + 1);
-    auto q2 = PreviousPrime<typename V::Integer>(f2, (p >> 1) + 1);
-    V a     = makeVector<V>(p, q2);
-    while (state.KeepRunning())
-        VecInt_SwitchModulus<V>(a, q1);
-}
-template <typename V>
-static void BM_VecInt_SwitchModulus_Down(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    auto f2 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL - 1, (p >> 1) + 1);
-    auto q2 = PreviousPrime<typename V::Integer>(f2, (p >> 1) + 1);
-    V a     = makeVector<V>(p, q1);
-    while (state.KeepRunning())
-        VecInt_SwitchModulus<V>(a, q2);
-}
-
-template <typename V>
-static void VecInt_Mod(const V& a, const typename V::Integer& b) {
-    V c = a.Mod(b);
-}
-template <typename V>
-static void BM_VecInt_Mod_Up(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    auto f2 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL - 1, (p >> 1) + 1);
-    auto q2 = PreviousPrime<typename V::Integer>(f2, (p >> 1) + 1);
-    V a     = makeVector<V>(p, q2);
-    while (state.KeepRunning())
-        VecInt_Mod<V>(a, q1);
-}
-template <typename V>
-static void BM_VecInt_Mod_Down(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    auto f2 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL - 1, (p >> 1) + 1);
-    auto q2 = PreviousPrime<typename V::Integer>(f2, (p >> 1) + 1);
-    V a     = makeVector<V>(p, q1);
-    while (state.KeepRunning())
-        VecInt_Mod<V>(a, q2);
-}
-template <typename V>
-static void BM_VecInt_Mod_ModByTwo(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    V a     = makeVector<V>(p, q1);
-    typename V::Integer b(2);
-    while (state.KeepRunning())
-        VecInt_Mod<V>(a, b);
-}
-
-template <typename V>
-static void VecInt_ModEq(V a, const typename V::Integer& b) {
-    a.ModEq(b);
-}
-template <typename V>
-static void BM_VecInt_ModEq_Up(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    auto f2 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL - 1, (p >> 1) + 1);
-    auto q2 = PreviousPrime<typename V::Integer>(f2, (p >> 1) + 1);
-    V a     = makeVector<V>(p, q2);
-    while (state.KeepRunning())
-        VecInt_ModEq<V>(a, q1);
-}
-template <typename V>
-static void BM_VecInt_ModEq_Down(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    auto f2 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL - 1, (p >> 1) + 1);
-    auto q2 = PreviousPrime<typename V::Integer>(f2, (p >> 1) + 1);
-    V a     = makeVector<V>(p, q1);
-    while (state.KeepRunning())
-        VecInt_ModEq<V>(a, q2);
-}
-template <typename V>
-static void BM_VecInt_ModEq_ModByTwo(benchmark::State& state) {
-    auto p  = state.range(0);
-    auto f1 = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q1 = PreviousPrime<typename V::Integer>(f1, p + 1);
-    V a     = makeVector<V>(p, q1);
-    typename V::Integer b(2);
-    while (state.KeepRunning())
-        VecInt_ModEq<V>(a, b);
-}
-
-// vec + scal
-template <typename V>
-static void VecInt_ModAdd(V& a, const typename V::Integer& b) {
-    a = a.ModAdd(b);
-}
-template <typename V>
-static void BM_VecInt_ModAdd(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(37 % q);
-    while (state.KeepRunning())
-        VecInt_ModAdd<V>(a, b);
-}
-
-// vec += scal
-template <typename V>
-static void VecInt_ModAddEq(V& a, const typename V::Integer& b) {
-    a.ModAddEq(b);
-}
-template <typename V>
-static void BM_VecInt_ModAddEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(42 % q);
-    while (state.KeepRunning())
-        VecInt_ModAddEq<V>(a, b);
-}
-
-template <typename V>
-static void VecVec_ModAdd(V& a, const V& b) {
-    a = a.ModAdd(b);
-}
-template <typename V>
-static void BM_VecVec_ModAdd(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_ModAdd<V>(a, b);
-}
-
-// vec += vec
-template <typename V>
-static void VecVec_ModAddEq(V& a, const V& b) {
-    a.ModAddEq(b);
-}
-template <typename V>
-static void BM_VecVec_ModAddEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_ModAddEq<V>(a, b);
-}
-
-template <typename V>
-static void VecInt_ModMul(V& a, const typename V::Integer& b) {
-    a = a.ModMul(b);
-}
-template <typename V>
-static void BM_VecInt_ModMul(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(10101 % q);
-    while (state.KeepRunning())
-        VecInt_ModMul<V>(a, b);
-}
-
-template <typename V>
-static void VecInt_ModMulEq(V& a, const typename V::Integer& b) {
-    a.ModMulEq(b);
-}
-template <typename V>
-static void BM_VecInt_ModMulEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    typename V::Integer b(55 % q);
-    while (state.KeepRunning())
-        VecInt_ModMulEq<V>(a, b);
-}
-
-template <typename V>
-static void VecVec_ModMul(V& a, const V& b) {
-    a = a.ModMul(b);
-}
-template <typename V>
-static void BM_VecVec_ModMul(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V a    = makeVector<V>(p, q);
-    V b    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_ModMul<V>(a, b);
-}
-
-template <typename V>
-static void VecVec_ModMulEq(V& a, const V& b) {
-    a.ModMulEq(b);
-}
-template <typename V>
-static void BM_VecVec_ModMulEq(benchmark::State& state) {
-    auto p = state.range(0);
-    auto f = FirstPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p + 1);
-    auto q = PreviousPrime<typename V::Integer>(f, p + 1);
-    V b    = makeVector<V>(p, q);
-    V a    = makeVector<V>(p, q);
-    while (state.KeepRunning())
-        VecVec_ModMulEq<V>(a, b);
-}
-
-#define DO_NATIVEVECTOR_BENCHMARK(X)                                                                      \
-    BENCHMARK_TEMPLATE(X, NativeVector)->Unit(benchmark::kMicrosecond)->ArgName("RingDm")->Arg(1024);     \
-    /*BENCHMARK_TEMPLATE(X, NativeVector)->Unit(benchmark::kMicrosecond)->ArgName("RingDm")->Arg(2048);*/ \
-    BENCHMARK_TEMPLATE(X, NativeVector)->Unit(benchmark::kMicrosecond)->ArgName("RingDm")->Arg(4096);     \
-    /*BENCHMARK_TEMPLATE(X, NativeVector)->Unit(benchmark::kMicrosecond)->ArgName("RingDm")->Arg(8192);*/ \
-    BENCHMARK_TEMPLATE(X, NativeVector)->Unit(benchmark::kMicrosecond)->ArgName("RingDm")->Arg(16384);    \
-    BENCHMARK_TEMPLATE(X, NativeVector)->Unit(benchmark::kMicrosecond)->ArgName("RingDm")->Arg(32768);
-
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_ModAddNoCheckEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_ModMulNoCheckEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_SwitchModulus_Up)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_SwitchModulus_Down)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_Mod_Up)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_Mod_Down)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_Mod_ModByTwo)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_ModEq_Up)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_ModEq_Down)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_ModEq_ModByTwo)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_ModAdd)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_ModAddEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_ModAdd)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_ModAddEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_ModMul)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_ModMulEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_ModMul)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_ModMulEq)
-
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_Add)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_AddEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_Mul)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecVec_MulEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_Add)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_AddEq)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_Mul)
-DO_NATIVEVECTOR_BENCHMARK(BM_VecInt_MulEq)
+#ifdef WITH_NTL
+DO_VECTOR_BENCHMARK(BM_BigVec_Add, M6Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Addeq, M6Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Mult, M6Vector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Multeq, M6Vector)
+#endif
 
 // execute the benchmarks
 BENCHMARK_MAIN();

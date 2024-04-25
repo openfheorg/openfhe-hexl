@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2023, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2024, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -177,13 +177,13 @@ public:
 
     IntegerType& at(size_t i) {
         if (!NativeVectorT::IndexCheck(i))
-            OPENFHE_THROW(lbcrypto::math_error, "NativeVectorT index out of range");
+            OPENFHE_THROW("NativeVectorT index out of range");
         return m_data[i];
     }
 
     const IntegerType& at(size_t i) const {
         if (!NativeVectorT::IndexCheck(i))
-            OPENFHE_THROW(lbcrypto::math_error, "NativeVectorT index out of range");
+            OPENFHE_THROW("NativeVectorT index out of range");
         return m_data[i];
     }
 
@@ -197,8 +197,7 @@ public:
 
     void SetModulus(const IntegerType& value) {
         if (value.GetMSB() > MAX_MODULUS_SIZE)
-            OPENFHE_THROW(lbcrypto::not_available_error,
-                          "NativeVectorT supports only modulus size <=  " + std::to_string(MAX_MODULUS_SIZE) + " bits");
+            OPENFHE_THROW("NativeVectorT supports only modulus size <=  " + std::to_string(MAX_MODULUS_SIZE) + " bits");
         m_modulus.m_value = value.m_value;
     }
 
@@ -336,8 +335,7 @@ public:
     typename std::enable_if<!cereal::traits::is_text_archive<Archive>::value, void>::type load(
         Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW(lbcrypto::deserialize_error, "serialized object version " + std::to_string(version) +
-                                                           " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) + " is from a later version of the library");
         }
         ::cereal::size_type size;
         ar(size);
@@ -357,8 +355,7 @@ public:
     typename std::enable_if<cereal::traits::is_text_archive<Archive>::value, void>::type load(
         Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW(lbcrypto::deserialize_error, "serialized object version " + std::to_string(version) +
-                                                           " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) + " is from a later version of the library");
         }
         ar(::cereal::make_nvp("v", m_data));
         ar(::cereal::make_nvp("m", m_modulus));

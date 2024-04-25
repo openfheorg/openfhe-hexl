@@ -88,7 +88,7 @@ template <typename VecType>
 void HexlPolyImpl<VecType>::SwitchModulus(const Integer& modulus, const Integer& rootOfUnity, const Integer& modulusArb,
                                           const Integer& rootOfUnityArb) {
     if (!m_values)
-        OPENFHE_THROW(not_available_error, "Poly SwitchModulus on empty values");
+        OPENFHE_THROW("Poly SwitchModulus on empty values");
     if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
         uint64_t om{m_values->GetModulus().ConvertToInt()};
         m_values->SetModulus(modulus);
@@ -119,11 +119,9 @@ HexlPolyImpl<VecType>::HexlPolyImpl(const DggType& dgg, const std::shared_ptr<He
 
 template <typename VecType>
 HexlPolyImpl<VecType>::HexlPolyImpl(DugType& dug, const std::shared_ptr<HexlPolyImpl::Params>& params, Format format)
-    : m_format{Format::COEFFICIENT},
+    : m_format{format},
       m_params{params},
-      m_values{std::make_unique<VecType>(dug.GenerateVector(params->GetRingDimension(), params->GetModulus()))} {
-    HexlPolyImpl<VecType>::SetFormat(format);
-}
+      m_values{std::make_unique<VecType>(dug.GenerateVector(params->GetRingDimension(), params->GetModulus()))} {}
 
 template <typename VecType>
 HexlPolyImpl<VecType>::HexlPolyImpl(const BugType& bug, const std::shared_ptr<HexlPolyImpl::Params>& params,
@@ -250,9 +248,9 @@ HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator=(uint64_t val) {
 template <typename VecType>
 void HexlPolyImpl<VecType>::SetValues(const VecType& values, Format format) {
     if (m_params->GetRootOfUnity() == Integer(0))
-        OPENFHE_THROW(type_error, "Polynomial has a 0 root of unity");
+        OPENFHE_THROW("Polynomial has a 0 root of unity");
     if (m_params->GetRingDimension() != values.GetLength() || m_params->GetModulus() != values.GetModulus())
-        OPENFHE_THROW(type_error, "Parameter mismatch on SetValues for Polynomial");
+        OPENFHE_THROW("Parameter mismatch on SetValues for Polynomial");
     m_format = format;
     m_values = std::make_unique<VecType>(values);
 }
@@ -260,9 +258,9 @@ void HexlPolyImpl<VecType>::SetValues(const VecType& values, Format format) {
 template <typename VecType>
 void HexlPolyImpl<VecType>::SetValues(VecType&& values, Format format) {
     if (m_params->GetRootOfUnity() == Integer(0))
-        OPENFHE_THROW(type_error, "Polynomial has a 0 root of unity");
+        OPENFHE_THROW("Polynomial has a 0 root of unity");
     if (m_params->GetRingDimension() != values.GetLength() || m_params->GetModulus() != values.GetModulus())
-        OPENFHE_THROW(type_error, "Parameter mismatch on SetValues for Polynomial");
+        OPENFHE_THROW("Parameter mismatch on SetValues for Polynomial");
     m_format = format;
     m_values = std::make_unique<VecType>(std::move(values));
 }
@@ -359,7 +357,7 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::AutomorphismTransform(uint32_t k) c
 
     // if (!bf && !bp)
     if (!bp)
-        OPENFHE_THROW(not_implemented_error, "Automorphism Poly Format not EVALUATION or not power-of-two");
+        OPENFHE_THROW("Automorphism Poly Format not EVALUATION or not power-of-two");
     /*
     // TODO: is this branch ever called?
 
@@ -384,7 +382,7 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::AutomorphismTransform(uint32_t k) c
     }
 */
     if (k % 2 == 0)
-        OPENFHE_THROW(math_error, "Automorphism index not odd\n");
+        OPENFHE_THROW("Automorphism index not odd\n");
 
     HexlPolyImpl<VecType> result(m_params, m_format, true);
     uint32_t logm{lbcrypto::GetMSB(m) - 1};
@@ -410,9 +408,9 @@ template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::AutomorphismTransform(uint32_t k,
                                                                    const std::vector<uint32_t>& precomp) const {
     if ((m_format != Format::EVALUATION) || (m_params->GetRingDimension() != (m_params->GetCyclotomicOrder() >> 1)))
-        OPENFHE_THROW(not_implemented_error, "Automorphism Poly Format not EVALUATION or not power-of-two");
+        OPENFHE_THROW("Automorphism Poly Format not EVALUATION or not power-of-two");
     if (k % 2 == 0)
-        OPENFHE_THROW(math_error, "Automorphism index not odd\n");
+        OPENFHE_THROW("Automorphism index not odd\n");
     HexlPolyImpl<VecType> tmp(m_params, m_format, true);
     uint32_t n = m_params->GetRingDimension();
     for (uint32_t j = 0; j < n; ++j)
@@ -453,7 +451,7 @@ void HexlPolyImpl<VecType>::SwitchFormat() {
     }
 
     if (!m_values)
-        OPENFHE_THROW(not_available_error, "Poly switch format to empty values");
+        OPENFHE_THROW("Poly switch format to empty values");
 
     if (m_format != Format::COEFFICIENT) {
         m_format = Format::COEFFICIENT;
@@ -467,7 +465,7 @@ void HexlPolyImpl<VecType>::SwitchFormat() {
 template <typename VecType>
 void HexlPolyImpl<VecType>::ArbitrarySwitchFormat() {
     if (m_values == nullptr)
-        OPENFHE_THROW(not_available_error, "Poly switch format to empty values");
+        OPENFHE_THROW("Poly switch format to empty values");
     const auto& lr = m_params->GetRootOfUnity();
     const auto& bm = m_params->GetBigModulus();
     const auto& br = m_params->GetBigRootOfUnity();
