@@ -1,4 +1,3 @@
-
 //==================================================================================
 // BSD 2-Clause License
 //
@@ -164,7 +163,6 @@ template <typename VecType>
 HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const PolyLargeType& rhs,
                                             const std::shared_ptr<HexlDCRTPolyImpl::Params>& params) noexcept
     : HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(params, rhs.GetFormat(), true) {
-    m_params->SetOriginalModulus(rhs.GetModulus());
     size_t size{m_vectors.size()};
     uint32_t rdim{rhs.GetLength()};
     for (size_t i{0}; i < size; ++i) {
@@ -177,7 +175,6 @@ HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const PolyLargeType& rhs,
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator=(const PolyLargeType& rhs) noexcept {
-    m_params->SetOriginalModulus(rhs.GetModulus());
     m_vectors.clear();
     m_vectors.reserve(m_params->GetParams().size());
     uint32_t rdim{rhs.GetLength()};
@@ -748,7 +745,6 @@ void HexlDCRTPolyImpl<VecType>::SetValuesModSwitch(const HexlDCRTPolyImpl& eleme
                      .Mod(modulus);
     }
     m_vectors[0].SetValues(std::move(tmp), Format::COEFFICIENT);
-    m_params->SetOriginalModulus(modulus);
 }
 
 template <typename VecType>
