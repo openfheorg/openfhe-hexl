@@ -38,7 +38,7 @@
 #include <iostream>
 
 constexpr uint32_t RING_DIM_LOG = 14;
-constexpr uint32_t DCRTBITS     = MAX_MODULUS_SIZE;
+constexpr uint32_t DCRTBITS     = 50;
 
 class Setup {
 public:

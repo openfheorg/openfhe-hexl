@@ -43,9 +43,9 @@
 #include "utils/inttypes.h"
 
 #include <cmath>
-#include <iostream>
 #include <limits>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -77,9 +77,9 @@ void HexlPolyImpl<VecType>::AddILElementOne() {
     }
     else {
         static const Integer ONE(1);
-        usint vlen{m_params->GetRingDimension()};
+        uint32_t vlen{m_params->GetRingDimension()};
         const auto& m{m_params->GetModulus()};
-        for (usint i = 0; i < vlen; ++i)
+        for (uint32_t i = 0; i < vlen; ++i)
             (*m_values)[i].ModAddFastEq(ONE, m);
     }
 }
@@ -440,6 +440,16 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Mod(const Integer& modulus) const {
 }
 
 template <typename VecType>
+void HexlPolyImpl<VecType>::LazySwitchModulus(const Integer& modulus, const Integer& rootOfUnity,
+                                              const Integer& modulusArb, const Integer& rootOfUnityArb) {
+    if (m_values != nullptr) {
+        m_values->LazySwitchModulus(modulus);
+        auto c{m_params->GetCyclotomicOrder()};
+        m_params = std::make_shared<HexlPolyImpl::Params>(c, modulus, rootOfUnity, modulusArb, rootOfUnityArb);
+    }
+}
+
+template <typename VecType>
 void HexlPolyImpl<VecType>::SwitchFormat() {
     const auto& co{m_params->GetCyclotomicOrder()};
     const auto& rd{m_params->GetRingDimension()};
@@ -511,8 +521,8 @@ void HexlPolyImpl<VecType>::MakeSparse(uint32_t wFactor) {
 template <typename VecType>
 bool HexlPolyImpl<VecType>::InverseExists() const {
     static const Integer ZERO(0);
-    usint vlen{m_params->GetRingDimension()};
-    for (usint i = 0; i < vlen; ++i) {
+    uint32_t vlen{m_params->GetRingDimension()};
+    for (uint32_t i = 0; i < vlen; ++i) {
         if ((*m_values)[i] == ZERO)
             return false;
     }
@@ -521,11 +531,11 @@ bool HexlPolyImpl<VecType>::InverseExists() const {
 
 template <typename VecType>
 double HexlPolyImpl<VecType>::Norm() const {
-    usint vlen{m_params->GetRingDimension()};
+    uint32_t vlen{m_params->GetRingDimension()};
     const auto& q{m_params->GetModulus()};
     const auto& half{q >> 1};
     Integer maxVal{}, minVal{q};
-    for (usint i = 0; i < vlen; i++) {
+    for (uint32_t i = 0; i < vlen; i++) {
         auto& val = (*m_values)[i];
         if (val > half)
             minVal = val < minVal ? val : minVal;
@@ -544,10 +554,10 @@ double HexlPolyImpl<VecType>::Norm() const {
 
 // TODO: optimize this
 template <typename VecType>
-std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::BaseDecompose(usint baseBits, bool evalModeAnswer) const {
-    usint nBits = m_params->GetModulus().GetLengthForBase(2);
+std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::BaseDecompose(uint32_t baseBits, bool evalModeAnswer) const {
+    uint32_t nBits = m_params->GetModulus().GetLengthForBase(2);
 
-    usint nWindows = nBits / baseBits;
+    uint32_t nWindows = nBits / baseBits;
     if (nBits % baseBits > 0)
         nWindows++;
 
@@ -560,7 +570,7 @@ std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::BaseDecompose(usint ba
     x.SetFormat(Format::COEFFICIENT);
 
     // TP: x is same for BACKEND 2 and 6
-    for (usint i = 0; i < nWindows; ++i) {
+    for (uint32_t i = 0; i < nWindows; ++i) {
         xDigit.SetValues(x.GetValues().GetDigitAtIndexForBase(i + 1, 1 << baseBits), x.GetFormat());
 
         // TP: xDigit is all zeros for BACKEND=6, but not for BACKEND-2
@@ -579,11 +589,11 @@ std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::BaseDecompose(usint ba
 // base = 2^baseBits
 
 template <typename VecType>
-std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::PowersOfBase(usint baseBits) const {
+std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::PowersOfBase(uint32_t baseBits) const {
     static const Integer TWO(2);
     const auto& m{m_params->GetModulus()};
-    usint nBits{m.GetLengthForBase(2)};
-    usint nWindows{nBits / baseBits};
+    uint32_t nBits{m.GetLengthForBase(2)};
+    uint32_t nWindows{nBits / baseBits};
     if (nBits % baseBits > 0)
         ++nWindows;
     std::vector<HexlPolyImpl<VecType>> result(nWindows);
@@ -591,7 +601,7 @@ std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::PowersOfBase(usint bas
 
     // TODO: result[0] = (*this); result[i] = result[i - 1] * TWO.ModExp(bbits, m);
 
-    for (usint i = 0; i < nWindows; ++i, shift += bbits)
+    for (uint32_t i = 0; i < nWindows; ++i, shift += bbits)
         result[i] = (*this) * TWO.ModExp(shift, m);
     return result;
 }
@@ -599,11 +609,11 @@ std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::PowersOfBase(usint bas
 template <typename VecType>
 typename HexlPolyImpl<VecType>::PolyNative HexlPolyImpl<VecType>::DecryptionCRTInterpolate(PlaintextModulus ptm) const {
     const HexlPolyImpl<VecType> smaller(HexlPolyImpl<VecType>::Mod(ptm));
-    usint vlen{m_params->GetRingDimension()};
+    uint32_t vlen{m_params->GetRingDimension()};
     auto c{m_params->GetCyclotomicOrder()};
     auto params{std::make_shared<ILNativeParams>(c, NativeInteger(ptm), 1)};
     typename HexlPolyImpl<VecType>::PolyNative tmp(params, m_format, true);
-    for (usint i = 0; i < vlen; ++i)
+    for (uint32_t i = 0; i < vlen; ++i)
         tmp[i] = NativeInteger((*smaller.m_values)[i]);
     return tmp;
 }

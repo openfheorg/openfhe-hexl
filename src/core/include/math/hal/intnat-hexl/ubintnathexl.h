@@ -50,16 +50,11 @@
 #include "utils/serializable.h"
 
 #include <cstdint>
-// #include <cstdlib>
-// #include <fstream>
 #include <functional>
-#include <iostream>
 #include <limits>
-// #include <memory>
-// #include <sstream>
+#include <ostream>
 #include <string>
 #include <type_traits>
-// #include <typeinfo>
 #include <vector>
 #include <utility>
 
@@ -1152,7 +1147,7 @@ public:
         MultD(av.m_value, bv.m_value, tmp);
         auto rv = GetD(tmp);
         MultD(RShiftD(tmp, n), mu.m_value, tmp);
-        rv -= DNativeInt(mv) * (GetD(tmp) >> n + 7);
+        rv -= DNativeInt(mv) * (GetD(tmp) >> (n + 7));
         NativeIntegerT r(rv);
         if (r.m_value >= mv)
             r.m_value -= mv;
@@ -1220,7 +1215,7 @@ public:
         MultD(av.m_value, bv.m_value, tmp);
         auto rv = GetD(tmp);
         MultD(RShiftD(tmp, n), muv, tmp);
-        rv -= DNativeInt(mv) * (GetD(tmp) >> n + 7);
+        rv -= DNativeInt(mv) * (GetD(tmp) >> (n + 7));
         m_value = static_cast<NativeInt>(rv);
         if (m_value >= mv)
             m_value -= mv;
@@ -1367,7 +1362,7 @@ public:
         MultD(m_value, b.m_value, tmp);
         auto rv = GetD(tmp);
         MultD(RShiftD(tmp, n), mu.m_value, tmp);
-        rv -= DNativeInt(mv) * (GetD(tmp) >> n + 7);
+        rv -= DNativeInt(mv) * (GetD(tmp) >> (n + 7));
         NativeIntegerT r(rv);
         if (r.m_value >= mv)
             r.m_value -= mv;
@@ -1408,7 +1403,7 @@ public:
         int64_t n{modulus.GetMSB() - 2};
         MultD(RShiftD(tmp, n), mu.m_value, tmp);
         auto& mv{modulus.m_value};
-        rv -= DNativeInt(mv) * (GetD(tmp) >> n + 7);
+        rv -= DNativeInt(mv) * (GetD(tmp) >> (n + 7));
         m_value = NativeInt(rv);
         if (m_value >= mv)
             m_value -= mv;
@@ -1792,7 +1787,8 @@ public:
     typename std::enable_if_t<std::is_same_v<NativeInt, U64BITS> || std::is_same_v<NativeInt, U32BITS>, T> load(
         Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW("serialized object version " + std::to_string(version) + " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) +
+                          " is from a later version of the library");
         }
         ar(::cereal::make_nvp("v", m_value));
     }
@@ -1803,7 +1799,8 @@ public:
                               void>
     load(Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW("serialized object version " + std::to_string(version) + " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) +
+                          " is from a later version of the library");
         }
         // get an array with 2 unint64_t values for m_value
         uint64_t vec[2];
@@ -1818,7 +1815,8 @@ public:
                               void>
     load(Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW("serialized object version " + std::to_string(version) + " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) +
+                          " is from a later version of the library");
         }
         // get an array with 2 unint64_t values for m_value
         uint64_t vec[2];
@@ -2060,7 +2058,7 @@ private:
                       typename std::enable_if_t<!std::is_same_v<T, DNativeInt>, bool> = true) {
         prod = {0, a.m_value};
         MultD(RShiftD(prod, n), mu, prod);
-        a.m_value -= static_cast<NativeInt>((GetD(prod) >> n + 7) * mv);
+        a.m_value -= static_cast<NativeInt>((GetD(prod) >> (n + 7)) * mv);
         if (a.m_value >= mv)
             a.m_value -= mv;
     }

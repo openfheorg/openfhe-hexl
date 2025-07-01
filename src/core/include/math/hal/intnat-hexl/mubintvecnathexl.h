@@ -47,7 +47,7 @@
 
 #include <algorithm>
 #include <initializer_list>
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -202,6 +202,9 @@ public:
     }
 
     void SwitchModulus(const IntegerType& value);
+    void LazySwitchModulus(const IntegerType& value);
+
+    NativeVectorT& MultAccEqNoCheck(const NativeVectorT& V, const IntegerType& I);
 
     const IntegerType& GetModulus() const {
         return m_modulus;
@@ -335,7 +338,8 @@ public:
     typename std::enable_if<!cereal::traits::is_text_archive<Archive>::value, void>::type load(
         Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW("serialized object version " + std::to_string(version) + " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) +
+                          " is from a later version of the library");
         }
         ::cereal::size_type size;
         ar(size);
@@ -355,7 +359,8 @@ public:
     typename std::enable_if<cereal::traits::is_text_archive<Archive>::value, void>::type load(
         Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW("serialized object version " + std::to_string(version) + " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) +
+                          " is from a later version of the library");
         }
         ar(::cereal::make_nvp("v", m_data));
         ar(::cereal::make_nvp("m", m_modulus));

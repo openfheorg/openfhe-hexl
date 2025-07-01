@@ -7,8 +7,11 @@
 #cmakedefine WITH_BE2
 #cmakedefine WITH_BE4
 #cmakedefine WITH_NOISE_DEBUG
+#cmakedefine WITH_REDUCED_NOISE
 #cmakedefine WITH_NTL
 #cmakedefine WITH_TCM
+#cmakedefine WITH_OPENMP
+#cmakedefine WITH_NATIVEOPT
 #cmakedefine WITH_INTEL_HEXL
 #cmakedefine WITH_INTEL_HEXL_PREBUILT
 
@@ -19,4 +22,4 @@
 #cmakedefine NATIVEINT @NATIVEINT@
 #cmakedefine INTEL_HEXL_HINT_DIR @INTEL_HEXL_HINT_DIR@
 
-#endif // __CMAKE_GENERATED_CONFIG_CORE_H__
+#endif  // __CMAKE_GENERATED_CONFIG_CORE_H__
