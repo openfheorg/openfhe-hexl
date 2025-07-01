@@ -4,7 +4,7 @@
 include(ExternalProject)
 
 if (INTEL_HEXL_PREBUILT)  # Skip download from github
-  find_package(HEXL 1.2.5 HINTS ${INTEL_HEXL_HINT_DIR} REQUIRED)
+  find_package(HEXL 1.2.6 HINTS ${INTEL_HEXL_HINT_DIR} REQUIRED)
   if (NOT TARGET HEXL::hexl)
     message(FATAL_ERROR, "Intel HEXL not found")
   endif()
@@ -22,7 +22,7 @@ else()
   # Download and install Intel HEXL ...
   # ------------------------------------------------------------------------------
   set(INTEL_HEXL_GIT_REPO_URL https://github.com/intel/hexl.git)
-  set(INTEL_HEXL_GIT_LABEL 2d196fdd71f24511bd7e0e23dc07d37c888f53e7)
+  set(INTEL_HEXL_GIT_LABEL v1.2.6)
   set(INTEL_HEXL_DEBUG OFF) # Set to ON/OFF to toggle debugging
   set(INTEL_HEXL_SHARED_LIB ${BUILD_SHARED}) # Set to ON/OFF to toggle shared library build
 

@@ -49,7 +49,7 @@ include_directories(${OpenFHE_INCLUDE}/pke)
 include_directories(${OpenFHE_INCLUDE}/binfhe)
 
 if(OpenFHE_WITH_INTEL_HEXL)
-    find_package(HEXL 1.2.5 HINTS ${OpenFHE_INTEL_HEXL_HINT_DIR} REQUIRED)
+    find_package(HEXL 1.2.6 HINTS ${OpenFHE_INTEL_HEXL_HINT_DIR} REQUIRED)
     if(NOT TARGET HEXL::hexl)
         message(FATAL_ERROR, "Intel HEXL not found")
     endif()
