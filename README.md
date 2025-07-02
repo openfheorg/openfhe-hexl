@@ -25,11 +25,11 @@ Cloning openfhe-development repository.
 
 ===============================================================================
 
-Switching to openfhe-development branch v1.3.1.
+Switching to openfhe-development branch v1.3.0.
 
 ===============================================================================
 
-Status of openfhe-development brach v1.3.1.
+Status of openfhe-development brach v1.3.0.
 
 ===============================================================================
 
@@ -46,11 +46,11 @@ Cloning openfhe-hexl repository.
 
 ===============================================================================
 
-Switching to openfhe-hexl branch v1.3.1.0.
+Switching to openfhe-hexl branch v1.3.0.0.
 
 ===============================================================================
 
-Status of openfhe-hexl branch v1.3.1.0.
+Status of openfhe-hexl branch v1.3.0.0.
 
 ===============================================================================
 
