@@ -232,26 +232,34 @@ void NativeVectorT<IntegerType>::SwitchModulus(const IntegerType& modulus) {
         intel::hexl::EltwiseCmpSubMod(op1, op1, m_data.size(), nm, intel::hexl::CMPINT::NLE, (om >> 1), (om - nm) % nm);
 }
 
-//  ****HEXLFY these
-
 template <class IntegerType>
 void NativeVectorT<IntegerType>::LazySwitchModulus(const IntegerType& modulus) {
-    for (auto& v : m_data)
-        v.ModEq(modulus);
-    this->SetModulus(modulus);
+    NativeVectorT::SetModulus(modulus);
+    uint64_t nm{modulus.m_value};
+    uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+    intel::hexl::EltwiseReduceMod(op1, op1, m_data.size(), nm, 1, 1);
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::MultAccEqNoCheck(const NativeVectorT& V, const IntegerType& I) {
-    auto iv{I};
-    auto mv{m_modulus};
-    if (iv.m_value >= mv.m_value)
-        iv.ModEq(mv);
-    auto iinv{iv.PrepModMulConst(mv)};
-    const uint32_t ringdm = m_data.size();
-    for (uint32_t i = 0; i < ringdm; ++i)
-        m_data[i].ModAddFastEq(V.m_data[i].ModMulFastConst(iv, mv, iinv), mv);
-    return *this;
+    if constexpr (HEXL_MUL_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+        uint64_t* res       = reinterpret_cast<uint64_t*>(&m_data[0]);
+        const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+        intel::hexl::EltwiseFMAMod(res, op1, I.m_value >= m_modulus.m_value ? I.m_value % m_modulus.m_value : I.m_value,
+                                   nullptr, m_data.size(), m_modulus.m_value, 1);
+        return *this;
+    }
+    else {
+        auto iv{I};
+        auto mv{m_modulus};
+        if (iv.m_value >= mv.m_value)
+            iv.ModEq(mv);
+        auto iinv{iv.PrepModMulConst(mv)};
+        const uint32_t ringdm = m_data.size();
+        for (uint32_t i = 0; i < ringdm; ++i)
+            m_data[i].ModAddFastEq(V.m_data[i].ModMulFastConst(iv, mv, iinv), mv);
+        return *this;
+    }
 }
 
 template <class IntegerType>
