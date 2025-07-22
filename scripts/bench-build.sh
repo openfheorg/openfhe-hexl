@@ -22,6 +22,9 @@ for variant in $VARIANTS; do
   gnu9=`echo $variant    | grep "GCC9"    | wc -l`
   gnu10=`echo $variant   | grep "GCC10"   | wc -l`
   gnu11=`echo $variant   | grep "GCC11"   | wc -l`
+  gnu12=`echo $variant   | grep "GCC12"   | wc -l`
+  gnu13=`echo $variant   | grep "GCC13"   | wc -l`
+  gnu14=`echo $variant   | grep "GCC14"   | wc -l`
   clang9=`echo $variant | grep "CLANG9" | wc -l`
   clang10=`echo $variant | grep "CLANG10" | wc -l`
   clang11=`echo $variant | grep "CLANG11" | wc -l`
@@ -31,6 +34,7 @@ for variant in $VARIANTS; do
   clang15=`echo $variant | grep "CLANG15" | wc -l`
   clang16=`echo $variant | grep "CLANG16" | wc -l`
   clang17=`echo $variant | grep "CLANG17" | wc -l`
+  clang18=`echo $variant | grep "CLANG18" | wc -l`
   if [ $gnu9 -eq 1 ]; then
     cc=/usr/bin/gcc-9
     cxx=/usr/bin/g++-9
@@ -40,6 +44,15 @@ for variant in $VARIANTS; do
   elif [ $gnu11 -eq 1 ]; then
     cc=/usr/bin/gcc-11
     cxx=/usr/bin/g++-11
+  elif [ $gnu12 -eq 1 ]; then
+    cc=/usr/bin/gcc-12
+    cxx=/usr/bin/g++-12
+  elif [ $gnu13 -eq 1 ]; then
+    cc=/usr/bin/gcc-13
+    cxx=/usr/bin/g++-13
+  elif [ $gnu14 -eq 1 ]; then
+    cc=/usr/bin/gcc-14
+    cxx=/usr/bin/g++-14
   elif [ $clang9 -eq 1 ]; then
     cc=/usr/bin/clang-9
     cxx=/usr/bin/clang++-9
@@ -67,6 +80,9 @@ for variant in $VARIANTS; do
   elif [ $clang17 -eq 1 ]; then
     cc=/usr/bin/clang-17
     cxx=/usr/bin/clang++-17
+  elif [ $clang18 -eq 1 ]; then
+    cc=/usr/bin/clang-18
+    cxx=/usr/bin/clang++-18
   else
     abort "unable to parse compiler options"
   fi

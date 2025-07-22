@@ -43,6 +43,7 @@
 #include "scheme/bfvrns/gen-cryptocontext-bfvrns.h"
 #include "scheme/bgvrns/gen-cryptocontext-bgvrns.h"
 #include "gen-cryptocontext.h"
+#include "cryptocontext.h"
 
 #include <fstream>
 #include <iostream>

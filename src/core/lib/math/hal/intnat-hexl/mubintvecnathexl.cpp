@@ -91,7 +91,7 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModAddEq(const IntegerTy
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModAdd(const NativeVectorT& b) const {
     if (m_modulus != b.m_modulus || m_data.size() != b.m_data.size())
-        OPENFHE_THROW(lbcrypto::math_error, "ModAdd called on NativeVectorT's with different parameters.");
+        OPENFHE_THROW("ModAdd called on NativeVectorT's with different parameters.");
     if constexpr (HEXL_ADD_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
         NativeVectorT ans(m_data.size(), m_modulus);
         uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
@@ -112,7 +112,7 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModAdd(const NativeVector
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModAddEq(const NativeVectorT& b) {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
-        OPENFHE_THROW(lbcrypto::math_error, "ModAddEq called on NativeVectorT's with different parameters.");
+        OPENFHE_THROW("ModAddEq called on NativeVectorT's with different parameters.");
     if constexpr (HEXL_ADD_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
         uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
         const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b.m_data[0]);
@@ -171,7 +171,7 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModMulEq(const IntegerTy
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModMul(const NativeVectorT& b) const {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
-        OPENFHE_THROW(lbcrypto::math_error, "ModMul called on NativeVectorT's with different parameters.");
+        OPENFHE_THROW("ModMul called on NativeVectorT's with different parameters.");
     if constexpr (HEXL_MUL_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
         NativeVectorT ans(m_data.size(), m_modulus);
         uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
@@ -199,7 +199,7 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModMul(const NativeVector
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModMulEq(const NativeVectorT& b) {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
-        OPENFHE_THROW(lbcrypto::math_error, "ModMulEq called on NativeVectorT's with different parameters.");
+        OPENFHE_THROW("ModMulEq called on NativeVectorT's with different parameters.");
     if constexpr (HEXL_MUL_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
         uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
         const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b[0]);
@@ -233,6 +233,36 @@ void NativeVectorT<IntegerType>::SwitchModulus(const IntegerType& modulus) {
 }
 
 template <class IntegerType>
+void NativeVectorT<IntegerType>::LazySwitchModulus(const IntegerType& modulus) {
+    NativeVectorT::SetModulus(modulus);
+    uint64_t nm{modulus.m_value};
+    uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+    intel::hexl::EltwiseReduceMod(op1, op1, m_data.size(), nm, 1, 1);
+}
+
+template <class IntegerType>
+NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::MultAccEqNoCheck(const NativeVectorT& V, const IntegerType& I) {
+    if constexpr (HEXL_MUL_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+        uint64_t* res       = reinterpret_cast<uint64_t*>(&m_data[0]);
+        const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+        intel::hexl::EltwiseFMAMod(res, op1, I.m_value >= m_modulus.m_value ? I.m_value % m_modulus.m_value : I.m_value,
+                                   nullptr, m_data.size(), m_modulus.m_value, 1);
+        return *this;
+    }
+    else {
+        auto iv{I};
+        auto mv{m_modulus};
+        if (iv.m_value >= mv.m_value)
+            iv.ModEq(mv);
+        auto iinv{iv.PrepModMulConst(mv)};
+        const uint32_t ringdm = m_data.size();
+        for (uint32_t i = 0; i < ringdm; ++i)
+            m_data[i].ModAddFastEq(V.m_data[i].ModMulFastConst(iv, mv, iinv), mv);
+        return *this;
+    }
+}
+
+template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::Mod(const IntegerType& modulus) const {
     uint64_t nm{modulus.m_value};
     if (nm == 2)
@@ -263,30 +293,30 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModEq(const IntegerType&
 }
 
 template <class IntegerType>
-NativeVectorT<IntegerType>::NativeVectorT(usint length, const IntegerType& modulus,
+NativeVectorT<IntegerType>::NativeVectorT(uint32_t length, const IntegerType& modulus,
                                           std::initializer_list<std::string> rhs) noexcept
     : m_data(length), m_modulus{modulus} {
-    const size_t len = (rhs.size() < m_data.size()) ? rhs.size() : m_data.size();
-    for (size_t i = 0; i < len; ++i)
+    const uint32_t vlen = (rhs.size() < m_data.size()) ? rhs.size() : m_data.size();
+    for (uint32_t i = 0; i < vlen; ++i)
         m_data[i] = *(rhs.begin() + i) % m_modulus;
 }
 
 template <class IntegerType>
-NativeVectorT<IntegerType>::NativeVectorT(usint length, const IntegerType& modulus,
+NativeVectorT<IntegerType>::NativeVectorT(uint32_t length, const IntegerType& modulus,
                                           std::initializer_list<uint64_t> rhs) noexcept
     : m_data(length), m_modulus{modulus} {
-    const size_t len = (rhs.size() < m_data.size()) ? rhs.size() : m_data.size();
-    for (size_t i = 0; i < len; ++i)
+    const uint32_t vlen = (rhs.size() < m_data.size()) ? rhs.size() : m_data.size();
+    for (uint32_t i = 0; i < vlen; ++i)
         m_data[i].m_value = BasicInt(*(rhs.begin() + i)) % m_modulus.m_value;
 }
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::operator=(std::initializer_list<std::string> rhs) noexcept {
-    const size_t len = rhs.size();
-    if (m_data.size() < len)
-        m_data.resize(len);
+    const size_t vlen = rhs.size();
+    if (m_data.size() < vlen)
+        m_data.resize(vlen);
     for (size_t i = 0; i < m_data.size(); ++i) {
-        if (i < len) {
+        if (i < vlen) {
             m_data[i] = *(rhs.begin() + i);
             if (m_modulus.m_value != 0)
                 m_data[i].m_value = m_data[i].m_value % m_modulus.m_value;
@@ -300,11 +330,11 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::operator=(std::initializ
 
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::operator=(std::initializer_list<uint64_t> rhs) noexcept {
-    const size_t len = rhs.size();
-    if (m_data.size() < len)
-        m_data.resize(len);
+    const size_t vlen = rhs.size();
+    if (m_data.size() < vlen)
+        m_data.resize(vlen);
     for (size_t i = 0; i < m_data.size(); ++i) {
-        if (i < len) {
+        if (i < vlen) {
             m_data[i].m_value = BasicInt(*(rhs.begin() + i));
             if (m_modulus.m_value != 0)
                 m_data[i].m_value = m_data[i].m_value % m_modulus.m_value;
@@ -355,7 +385,7 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModSubEq(const IntegerTy
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModSub(const NativeVectorT& b) const {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
-        OPENFHE_THROW(lbcrypto::math_error, "ModSub called on NativeVectorT's with different parameters.");
+        OPENFHE_THROW("ModSub called on NativeVectorT's with different parameters.");
     auto mv{m_modulus};
     auto ans(*this);
     for (size_t i = 0; i < ans.m_data.size(); ++i)
@@ -366,7 +396,7 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModSub(const NativeVector
 template <class IntegerType>
 NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModSubEq(const NativeVectorT& b) {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
-        OPENFHE_THROW(lbcrypto::math_error, "ModSubEq called on NativeVectorT's with different parameters.");
+        OPENFHE_THROW("ModSubEq called on NativeVectorT's with different parameters.");
     for (size_t i = 0; i < m_data.size(); ++i)
         m_data[i].ModSubFastEq(b[i], m_modulus);
     return *this;
@@ -415,7 +445,7 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModExpEq(const IntegerTy
 template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::MultWithOutMod(const NativeVectorT& b) const {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
-        OPENFHE_THROW(lbcrypto::math_error, "ModMul called on NativeVectorT's with different parameters.");
+        OPENFHE_THROW("ModMul called on NativeVectorT's with different parameters.");
     auto ans(*this);
     for (size_t i = 0; i < ans.m_data.size(); ++i)
         ans[i].m_value = ans[i].m_value * b[i].m_value;
@@ -490,7 +520,7 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::DivideAndRoundEq(const I
 }
 
 template <class IntegerType>
-NativeVectorT<IntegerType> NativeVectorT<IntegerType>::GetDigitAtIndexForBase(usint index, usint base) const {
+NativeVectorT<IntegerType> NativeVectorT<IntegerType>::GetDigitAtIndexForBase(uint32_t index, uint32_t base) const {
     auto ans(*this);
     for (size_t i = 0; i < ans.m_data.size(); ++i)
         ans[i].m_value = static_cast<BasicInt>(ans[i].GetDigitAtIndexForBase(index, base));

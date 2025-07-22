@@ -160,8 +160,8 @@ public:
     DCRTPolyType Negate() const override;
     DCRTPolyType operator-() const override;
 
-    std::vector<DCRTPolyType> BaseDecompose(usint baseBits, bool evalModeAnswer) const override;
-    std::vector<DCRTPolyType> PowersOfBase(usint baseBits) const override;
+    std::vector<DCRTPolyType> BaseDecompose(uint32_t baseBits, bool evalModeAnswer) const override;
+    std::vector<DCRTPolyType> PowersOfBase(uint32_t baseBits) const override;
     std::vector<DCRTPolyType> CRTDecompose(uint32_t baseBits) const;
 
     DCRTPolyType AutomorphismTransform(uint32_t i) const override;
@@ -171,14 +171,14 @@ public:
     DCRTPolyType Plus(const std::vector<Integer>& rhs) const;
     DCRTPolyType Plus(const DCRTPolyType& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW(math_error, "RingDimension missmatch");
+            OPENFHE_THROW("RingDimension missmatch");
         if (m_format != rhs.m_format)
-            OPENFHE_THROW(not_implemented_error, "Format missmatch");
+            OPENFHE_THROW("Format missmatch");
         size_t size{m_vectors.size()};
         if (size != rhs.m_vectors.size())
-            OPENFHE_THROW(math_error, "tower size mismatch; cannot add");
+            OPENFHE_THROW("tower size mismatch; cannot add");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
-            OPENFHE_THROW(math_error, "Modulus missmatch");
+            OPENFHE_THROW("Modulus missmatch");
         if constexpr (HEXL_ADD_ENABLE) {
             // if constexpr (HEXL_ADD_ENABLE && std::is_same_v<PolyType, NativePoly>) {
             DCRTPolyType tmp(m_params, m_format, true);
@@ -211,14 +211,14 @@ public:
 
     DCRTPolyType Times(const DCRTPolyType& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW(math_error, "RingDimension missmatch");
+            OPENFHE_THROW("RingDimension missmatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
-            OPENFHE_THROW(not_implemented_error, "operator* for HexlDCRTPolyImpl supported only in Format::EVALUATION");
+            OPENFHE_THROW("operator* for HexlDCRTPolyImpl supported only in Format::EVALUATION");
         size_t size{m_vectors.size()};
         if (size != rhs.m_vectors.size())
-            OPENFHE_THROW(math_error, "tower size mismatch; cannot multiply");
+            OPENFHE_THROW("tower size mismatch; cannot multiply");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
-            OPENFHE_THROW(math_error, "Modulus missmatch");
+            OPENFHE_THROW("Modulus missmatch");
         if constexpr (HEXL_MUL_ENABLE) {
             // if constexpr (HEXL_MUL_ENABLE && std::is_same_v<PolyType, NativePoly>) {
             DCRTPolyType tmp(m_params, m_format, true);
@@ -274,7 +274,7 @@ public:
     PolyLargeType CRTInterpolate() const override;
     PolyType DecryptionCRTInterpolate(PlaintextModulus ptm) const override;
     PolyType ToNativePoly() const override;
-    PolyLargeType CRTInterpolateIndex(usint i) const override;
+    PolyLargeType CRTInterpolateIndex(uint32_t i) const override;
     Integer GetWorkingModulus() const override;
 
     void SetValuesModSwitch(const DCRTPolyType& element, const NativeInteger& modulus) override;
@@ -331,7 +331,7 @@ public:
     void FastExpandCRTBasisPloverQ(const Precomputations& precomputed) override;
 
     void ExpandCRTBasisQlHat(const std::shared_ptr<Params>& paramsQ, const std::vector<NativeInteger>& QlHatModq,
-                             const std::vector<NativeInteger>& QlHatModqPrecon, const usint sizeQ) override;
+                             const std::vector<NativeInteger>& QlHatModqPrecon, const uint32_t sizeQ) override;
 
     PolyType ScaleAndRound(const NativeInteger& t, const std::vector<NativeInteger>& tQHatInvModqDivqModt,
                            const std::vector<NativeInteger>& tQHatInvModqDivqModtPrecon,
@@ -400,8 +400,8 @@ public:
     template <class Archive>
     void load(Archive& ar, std::uint32_t const version) {
         if (version > SerializedVersion()) {
-            OPENFHE_THROW(deserialize_error, "serialized object version " + std::to_string(version) +
-                                                 " is from a later version of the library");
+            OPENFHE_THROW("serialized object version " + std::to_string(version) +
+                          " is from a later version of the library");
         }
         ar(::cereal::make_nvp("v", m_vectors));
         ar(::cereal::make_nvp("f", m_format));
@@ -440,11 +440,11 @@ public:
         return m_vectors;
     }
 
-    void SetElementAtIndex(usint index, const PolyType& element) {
+    void SetElementAtIndex(uint32_t index, const PolyType& element) {
         m_vectors[index] = element;
     }
 
-    void SetElementAtIndex(usint index, PolyType&& element) {
+    void SetElementAtIndex(uint32_t index, PolyType&& element) {
         m_vectors[index] = std::move(element);
     }
 

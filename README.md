@@ -25,11 +25,11 @@ Cloning openfhe-development repository.
 
 ===============================================================================
 
-Switching to openfhe-development branch v1.2.0.
+Switching to openfhe-development branch v1.3.0.
 
 ===============================================================================
 
-Status of openfhe-development brach v1.2.0.
+Status of openfhe-development brach v1.3.0.
 
 ===============================================================================
 
@@ -46,11 +46,11 @@ Cloning openfhe-hexl repository.
 
 ===============================================================================
 
-Switching to openfhe-hexl branch v1.2.0.0.
+Switching to openfhe-hexl branch v1.3.0.0.
 
 ===============================================================================
 
-Status of openfhe-hexl branch v1.2.0.0.
+Status of openfhe-hexl branch v1.3.0.0.
 
 ===============================================================================
 
@@ -62,7 +62,7 @@ Build [hexl-enabled] is staged.
 You may now run scripts/build-openfhe-development.sh to perform a hexl-enabled build.
 
 % scripts/build-openfhe-development.sh
-[ OpenFHE HEXL-enabled build commences]
+[ OpenFHE HEXL-enabled build commences ]
 ```
 
 By default, the `OpenFHE` and `HEXL` libraries are built and installed at `openfhe-configurator/openfhe-staging/install`.
