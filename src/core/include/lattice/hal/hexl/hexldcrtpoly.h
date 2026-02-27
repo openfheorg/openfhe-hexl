@@ -171,14 +171,14 @@ public:
     DCRTPolyType Plus(const std::vector<Integer>& rhs) const;
     DCRTPolyType Plus(const DCRTPolyType& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW("RingDimension missmatch");
+            OPENFHE_THROW("RingDimension mismatch");
         if (m_format != rhs.m_format)
-            OPENFHE_THROW("Format missmatch");
+            OPENFHE_THROW("Format mismatch");
         size_t size{m_vectors.size()};
         if (size != rhs.m_vectors.size())
             OPENFHE_THROW("tower size mismatch; cannot add");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
-            OPENFHE_THROW("Modulus missmatch");
+            OPENFHE_THROW("Modulus mismatch");
         if constexpr (HEXL_ADD_ENABLE) {
             // if constexpr (HEXL_ADD_ENABLE && std::is_same_v<PolyType, NativePoly>) {
             DCRTPolyType tmp(m_params, m_format, true);
@@ -211,14 +211,14 @@ public:
 
     DCRTPolyType Times(const DCRTPolyType& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW("RingDimension missmatch");
+            OPENFHE_THROW("RingDimension mismatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
             OPENFHE_THROW("operator* for HexlDCRTPolyImpl supported only in Format::EVALUATION");
         size_t size{m_vectors.size()};
         if (size != rhs.m_vectors.size())
             OPENFHE_THROW("tower size mismatch; cannot multiply");
         if (m_vectors[0].GetModulus() != rhs.m_vectors[0].GetModulus())
-            OPENFHE_THROW("Modulus missmatch");
+            OPENFHE_THROW("Modulus mismatch");
         if constexpr (HEXL_MUL_ENABLE) {
             // if constexpr (HEXL_MUL_ENABLE && std::is_same_v<PolyType, NativePoly>) {
             DCRTPolyType tmp(m_params, m_format, true);
@@ -386,7 +386,7 @@ public:
                         const std::vector<NativeInteger>& BModq,
                         const std::vector<NativeInteger>& BModqPrecon) override;
 
-    void SwitchFormat() override;
+    void SwitchFormat(uint32_t thread_limit = 0) override;
 
     void SwitchModulusAtIndex(size_t index, const Integer& modulus, const Integer& rootOfUnity) override;
 

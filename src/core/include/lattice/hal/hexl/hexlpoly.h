@@ -217,11 +217,11 @@ public:
 
     HexlPolyImpl Plus(const HexlPolyImpl& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW("RingDimension missmatch");
+            OPENFHE_THROW("RingDimension mismatch");
         if (m_params->GetModulus() != rhs.m_params->GetModulus())
-            OPENFHE_THROW("Modulus missmatch");
+            OPENFHE_THROW("Modulus mismatch");
         if (m_format != rhs.m_format)
-            OPENFHE_THROW("Format missmatch");
+            OPENFHE_THROW("Format mismatch");
         auto tmp(*this);
         if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
             uint64_t* op1       = reinterpret_cast<uint64_t*>(&tmp[0]);
@@ -265,9 +265,9 @@ public:
 
     HexlPolyImpl Times(const HexlPolyImpl& rhs) const override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW("RingDimension missmatch");
+            OPENFHE_THROW("RingDimension mismatch");
         if (m_params->GetModulus() != rhs.m_params->GetModulus())
-            OPENFHE_THROW("Modulus missmatch");
+            OPENFHE_THROW("Modulus mismatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
             OPENFHE_THROW("operator* for HexlPolyImpl supported only in Format::EVALUATION");
         if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
@@ -300,9 +300,9 @@ public:
     }
     HexlPolyImpl& operator*=(const HexlPolyImpl& rhs) override {
         if (m_params->GetRingDimension() != rhs.m_params->GetRingDimension())
-            OPENFHE_THROW("RingDimension missmatch");
+            OPENFHE_THROW("RingDimension mismatch");
         if (m_params->GetModulus() != rhs.m_params->GetModulus())
-            OPENFHE_THROW("Modulus missmatch");
+            OPENFHE_THROW("Modulus mismatch");
         if (m_format != Format::EVALUATION || rhs.m_format != Format::EVALUATION)
             OPENFHE_THROW("operator* for HexlPolyImpl supported only in Format::EVALUATION");
         if (m_values) {
@@ -364,7 +364,7 @@ public:
         return *this;
     }
 
-    void SwitchFormat() override;
+    void SwitchFormat(uint32_t thread_limit = 0) override;
     void MakeSparse(uint32_t wFactor) override;
     bool InverseExists() const override;
     double Norm() const override;

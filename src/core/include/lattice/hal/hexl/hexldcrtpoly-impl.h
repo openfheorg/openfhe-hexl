@@ -60,9 +60,9 @@ void HexlDCRTPolyImpl<VecType>::DropLastElementAndScale(const std::vector<Native
     lastPoly.SetFormat(Format::COEFFICIENT);
     this->DropLastElement();
     [[maybe_unused]] uint64_t ringdm{this->GetRingDimension()};
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         auto tmp{lastPoly};
         auto& qi{m_vectors[i].GetModulus()};
         tmp.SwitchModulus(qi, m_vectors[i].GetRootOfUnity(), 0, 0);
@@ -97,9 +97,9 @@ void HexlDCRTPolyImpl<VecType>::ModReduce(const NativeInteger& t, const std::vec
     delta *= negtInvModq;
     this->DropLastElement();
     [[maybe_unused]] uint64_t ringdm{this->GetRingDimension()};
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         auto tmp{delta};
         auto& qi{m_vectors[i].GetModulus()};
         tmp.SwitchModulus(qi, m_vectors[i].GetRootOfUnity(), 0, 0);
@@ -137,13 +137,13 @@ std::vector<HexlDCRTPolyImpl<VecType>> HexlDCRTPolyImpl<VecType>::PowersOfBase(u
     std::vector<HexlDCRTPolyImpl<VecType>> result;
     result.reserve(nWindows);
     Integer twoPow(1);
-    size_t towers{m_vectors.size()};
+    uint32_t towers(m_vectors.size());
     [[maybe_unused]] uint64_t ringdm{this->GetRingDimension()};
     for (uint32_t i = 0; i < nWindows; ++i) {
         HexlDCRTPolyImpl<VecType> x(m_params, m_format);
         twoPow.LShiftEq(baseBits);
 
-        for (size_t t = 0; t < towers; ++t) {
+        for (uint32_t t = 0; t < towers; ++t) {
             if constexpr (HEXL_MUL_ENABLE) {
                 uint64_t* res       = reinterpret_cast<uint64_t*>(&x.m_vectors[t][0]);
                 const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_vectors[t][0]);
@@ -163,13 +163,11 @@ template <typename VecType>
 HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const PolyLargeType& rhs,
                                             const std::shared_ptr<HexlDCRTPolyImpl::Params>& params) noexcept
     : HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(params, rhs.GetFormat(), true) {
-    size_t size{m_vectors.size()};
-    uint32_t rdim{rhs.GetLength()};
-    for (size_t i{0}; i < size; ++i) {
-        auto& v{m_vectors[i]};
-        const auto& m{v.GetParams()->GetModulus()};
-        for (uint32_t j{0}; j < rdim; ++j)
-            v[j] = rhs[j].Mod(m);
+    const uint32_t rdim = rhs.GetLength();
+    for (auto& v : m_vectors) {
+        const auto& m = v.GetParams()->GetModulus();
+        for (uint32_t i = 0; i < rdim; ++i)
+            v[i] = rhs[i].Mod(m);
     }
 }
 
@@ -177,12 +175,13 @@ template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator=(const PolyLargeType& rhs) noexcept {
     m_vectors.clear();
     m_vectors.reserve(m_params->GetParams().size());
-    uint32_t rdim{rhs.GetLength()};
+    const uint32_t rdim = rhs.GetLength();
     for (const auto& p : m_params->GetParams()) {
         m_vectors.emplace_back(p, m_format, true);
         const auto& m = p->GetModulus();
-        for (uint32_t e = 0; e < rdim; ++e)
-            m_vectors.back()[e] = rhs[e].Mod(m);
+        auto& v       = m_vectors.back();
+        for (uint32_t i = 0; i < rdim; ++i)
+            v[i] = rhs[i].Mod(m);
     }
     return *this;
 }
@@ -191,9 +190,9 @@ template <typename VecType>
 HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const PolyType& rhs,
                                             const std::shared_ptr<HexlDCRTPolyImpl::Params>& params) noexcept
     : m_params{params}, m_format{rhs.GetFormat()}, m_vectors(params->GetParams().size(), rhs) {
-    size_t size{m_vectors.size()};
-    const auto& p{params->GetParams()};
-    for (size_t i{1}; i < size; ++i)
+    const uint32_t size = m_vectors.size();
+    const auto& p       = params->GetParams();
+    for (uint32_t i = 1; i < size; ++i)
         m_vectors[i].SwitchModulus(p[i]->GetModulus(), p[i]->GetRootOfUnity(), 0, 0);
 }
 
@@ -226,8 +225,6 @@ HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const std::vector<HexlDCRTPolyImpl::
     m_params = std::make_shared<HexlDCRTPolyImpl::Params>(cyclotomicOrder, parms);
 }
 
-/*The dgg will be the seed to populate the towers of the HexlDCRTPolyImpl with
- * random numbers. The algorithm to populate the towers can be seen below. */
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const DggType& dgg,
                                             const std::shared_ptr<HexlDCRTPolyImpl::Params>& dcrtParams, Format format)
@@ -237,27 +234,21 @@ HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const DggType& dgg,
     m_vectors.reserve(m_params->GetParams().size());
     for (auto& p : m_params->GetParams()) {
         NativeVector ildv(rdim, p->GetModulus());
-        for (uint32_t j = 0; j < rdim; j++) {
-            NativeInteger::SignedNativeInt k = (dggValues.get())[j];
-            auto m                           = p->GetModulus().ConvertToInt();
-            auto dcrt_qmodulus               = static_cast<NativeInteger::SignedNativeInt>(m);
-            auto dgg_stddev                  = dgg.GetStd();
-            if (dgg_stddev > dcrt_qmodulus) {
-                // rescale k to dcrt_qmodulus
-                k = static_cast<NativeInteger::Integer>(k % dcrt_qmodulus);
-            }
-            if (k < 0) {
-                k *= (-1);
-                ildv[j] = static_cast<NativeInteger::Integer>(dcrt_qmodulus) - static_cast<NativeInteger::Integer>(k);
-            }
-            else {
-                ildv[j] = static_cast<NativeInteger::Integer>(k);
+        if (dgg.GetStd() > p->GetModulus().ConvertToDouble()) {
+            auto modulus = (p->GetModulus()).template ConvertToInt<int64_t>();
+            for (uint32_t j = 0; j < rdim; ++j) {
+                NativeInteger::SignedNativeInt k = (dggValues[j] % modulus);
+                ildv[j] = (k < 0) ? p->GetModulus() - static_cast<NativeInteger>(-k) : static_cast<NativeInteger>(k);
             }
         }
-        HexlDCRTPolyImpl::PolyType ilvector(p);
-        ilvector.SetValues(std::move(ildv), Format::COEFFICIENT);
-        ilvector.SetFormat(m_format);
-        m_vectors.push_back(std::move(ilvector));
+        else {
+            for (uint32_t j = 0; j < rdim; ++j)
+                ildv[j] = (dggValues[j] < 0) ? p->GetModulus() - static_cast<NativeInteger>(-dggValues[j]) :
+                                               static_cast<NativeInteger>(dggValues[j]);
+        }
+        m_vectors.emplace_back(p);
+        m_vectors.back().SetValues(std::move(ildv), Format::COEFFICIENT);
+        m_vectors.back().SetFormat(m_format);
     }
 }
 
@@ -266,10 +257,8 @@ HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(DugType& dug, const std::shared_ptr<
     : m_params{dcrtParams}, m_format{format} {
     m_vectors.reserve(m_params->GetParams().size());
     for (auto& p : m_params->GetParams()) {
-        NativeVector vals(dug.GenerateVector(p->GetRingDimension(), p->GetModulus()));
-        HexlDCRTPolyImpl::PolyType ilvector(p);
-        ilvector.SetValues(std::move(vals), m_format);
-        m_vectors.push_back(std::move(ilvector));
+        m_vectors.emplace_back(p);
+        m_vectors.back().SetValues(NativeVector(dug.GenerateVector(p->GetRingDimension(), p->GetModulus())), m_format);
     }
 }
 
@@ -283,9 +272,8 @@ HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const BugType& bug, const std::share
     for (auto& p : m_params->GetParams()) {
         if (!first)
             ilvector.SwitchModulus(p->GetModulus(), p->GetRootOfUnity(), 0, 0);
-        auto newVector = ilvector;
-        newVector.SetFormat(m_format);
-        m_vectors.push_back(std::move(newVector));
+        m_vectors.push_back(ilvector);
+        m_vectors.back().SetFormat(m_format);
         first = false;
     }
 }
@@ -299,21 +287,12 @@ HexlDCRTPolyImpl<VecType>::HexlDCRTPolyImpl(const TugType& tug, const std::share
     m_vectors.reserve(m_params->GetParams().size());
     for (auto& p : m_params->GetParams()) {
         NativeVector iltvs(rdim, p->GetModulus());
-        for (uint32_t j = 0; j < rdim; j++) {
-            NativeInteger::SignedNativeInt k = (tugValues.get())[j];
-            if (k < 0) {
-                k *= (-1);
-                iltvs[j] = static_cast<NativeInteger::Integer>(p->GetModulus().ConvertToInt()) -
-                           static_cast<NativeInteger::Integer>(k);
-            }
-            else {
-                iltvs[j] = static_cast<NativeInteger::Integer>(k);
-            }
-        }
-        HexlDCRTPolyImpl<VecType>::PolyType ilvector(p);
-        ilvector.SetValues(std::move(iltvs), Format::COEFFICIENT);
-        ilvector.SetFormat(m_format);
-        m_vectors.push_back(std::move(ilvector));
+        for (uint32_t j = 0; j < rdim; ++j)
+            iltvs[j] = (tugValues[j] < 0) ? p->GetModulus() - static_cast<NativeInteger>(-tugValues[j]) :
+                                            static_cast<NativeInteger>(tugValues[j]);
+        m_vectors.emplace_back(p);
+        m_vectors.back().SetValues(std::move(iltvs), Format::COEFFICIENT);
+        m_vectors.back().SetFormat(m_format);
     }
 }
 
@@ -326,14 +305,14 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::CloneWithNoise(const Discre
     auto parm{std::make_shared<ILParamsImpl<Integer>>(c, m, 1)};
     HexlDCRTPolyImpl<VecType>::PolyLargeType element(parm);
     element.SetValues(dgg.GenerateVector(c / 2, m), m_format);
-    return res = element;
+    return (HexlDCRTPolyImpl(m_params, m_format) = element);
 }
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::CloneTowers(uint32_t startTower, uint32_t endTower) const {
     auto cycorder = m_params->GetCyclotomicOrder();
     auto params   = std::make_shared<Params>(cycorder, m_params->GetParamPartition(startTower, endTower));
-    auto res      = HexlDCRTPolyImpl(params, Format::EVALUATION, false);
+    auto res      = HexlDCRTPolyImpl(params, m_format, false);
     for (uint32_t i = startTower; i <= endTower; ++i)
         res.SetElementAtIndex(i - startTower, this->GetElementAtIndex(i));
     return res;
@@ -359,14 +338,13 @@ std::vector<HexlDCRTPolyImpl<VecType>> HexlDCRTPolyImpl<VecType>::CRTDecompose(u
     cp.SwitchFormat();
     const HexlDCRTPolyImpl<VecType>* coef = (m_format == Format::COEFFICIENT) ? this : &cp;
     const HexlDCRTPolyImpl<VecType>* eval = (m_format == Format::COEFFICIENT) ? &cp : this;
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 
     if (baseBits == 0) {
         std::vector<DCRTPolyType> result(size, *eval);
-
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-        for (size_t i = 0; i < size; ++i) {
-            for (size_t k = 0; k < size; ++k) {
+        for (uint32_t i = 0; i < size; ++i) {
+            for (uint32_t k = 0; k < size; ++k) {
                 if (i != k) {
                     HexlDCRTPolyImpl::PolyType tmp((*coef).m_vectors[i]);
                     tmp.SwitchModulus((*coef).m_vectors[k].GetModulus(), (*coef).m_vectors[k].GetRootOfUnity(), 0, 0);
@@ -382,7 +360,7 @@ std::vector<HexlDCRTPolyImpl<VecType>> HexlDCRTPolyImpl<VecType>::CRTDecompose(u
     // used to store the number of digits for each small modulus
     std::vector<uint32_t> arrWindows(size);
     // creates an array of digits up to a certain tower
-    for (size_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         uint32_t nBits{m_vectors[i].GetModulus().GetLengthForBase(2)};
         uint32_t curWindows{nBits / baseBits};
         if (nBits % baseBits != 0)
@@ -393,11 +371,11 @@ std::vector<HexlDCRTPolyImpl<VecType>> HexlDCRTPolyImpl<VecType>::CRTDecompose(u
     std::vector<DCRTPolyType> result(nWindows);
 
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         auto decomposed = (*coef).m_vectors[i].BaseDecompose(baseBits, false);
-        for (size_t j = 0; j < decomposed.size(); j++) {
+        for (size_t j = 0; j < decomposed.size(); ++j) {
             HexlDCRTPolyImpl<VecType> currentDCRTPoly(*coef);
-            for (size_t k = 0; k < size; ++k) {
+            for (uint32_t k = 0; k < size; ++k) {
                 HexlDCRTPolyImpl::PolyType tmp(decomposed[j]);
                 if (i != k)
                     tmp.SwitchModulus((*coef).m_vectors[k].GetModulus(), (*coef).m_vectors[k].GetRootOfUnity(), 0, 0);
@@ -436,10 +414,10 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::AutomorphismTransform(uint3
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::MultiplicativeInverse() const {
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
     // TODO: figure out why this segfaults
     // #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].MultiplicativeInverse();
     return tmp;
 }
@@ -447,9 +425,9 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::MultiplicativeInverse() con
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Negate() const {
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Negate();
     return tmp;
 }
@@ -464,18 +442,18 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Minus(const HexlDCRTPolyImp
     if (m_vectors.size() != rhs.m_vectors.size())
         OPENFHE_THROW("tower size mismatch; cannot subtract");
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Minus(rhs.m_vectors[i]);
     return tmp;
 }
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator+=(const HexlDCRTPolyImpl& rhs) {
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] += rhs.m_vectors[i];
     return *this;
 }
@@ -483,27 +461,27 @@ HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator+=(const HexlDCRTP
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator+=(const Integer& rhs) {
     NativeInteger val{rhs};
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] += val;
     return *this;
 }
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator+=(const NativeInteger& rhs) {
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] += rhs;
     return *this;
 }
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator-=(const HexlDCRTPolyImpl& rhs) {
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] -= rhs.m_vectors[i];
     return *this;
 }
@@ -511,18 +489,18 @@ HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator-=(const HexlDCRTP
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator-=(const Integer& rhs) {
     NativeInteger val{rhs};
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] -= val;
     return *this;
 }
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator-=(const NativeInteger& rhs) {
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] -= rhs;
     return *this;
 }
@@ -537,15 +515,15 @@ bool HexlDCRTPolyImpl<VecType>::operator==(const HexlDCRTPolyImpl& rhs) const {
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator=(std::initializer_list<uint64_t> rhs) noexcept {
     static constexpr HexlDCRTPolyImpl::PolyType::Integer ZERO(0);
-    const size_t llen = rhs.size();
-    const size_t vlen = m_params->GetRingDimension();
+    const uint32_t llen = rhs.size();
+    const uint32_t vlen = m_params->GetRingDimension();
     for (auto& v : m_vectors) {
         if (v.IsEmpty()) {
             NativeVector temp(vlen);
             temp.SetModulus(v.GetModulus());
             v.SetValues(std::move(temp), m_format);
         }
-        for (size_t j = 0; j < vlen; ++j)
+        for (uint32_t j = 0; j < vlen; ++j)
             v[j] = (j < llen) ? *(rhs.begin() + j) : ZERO;
     }
     return *this;
@@ -554,15 +532,15 @@ HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator=(std::initializer
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator=(std::initializer_list<std::string> rhs) noexcept {
     static constexpr HexlDCRTPolyImpl::PolyType::Integer ZERO(0);
-    const size_t llen = rhs.size();
-    const size_t vlen = m_params->GetRingDimension();
+    const uint32_t llen = rhs.size();
+    const uint32_t vlen = m_params->GetRingDimension();
     for (auto& v : m_vectors) {
         if (v.IsEmpty()) {
             NativeVector temp(vlen);
             temp.SetModulus(v.GetModulus());
             v.SetValues(std::move(temp), m_format);
         }
-        for (size_t j = 0; j < vlen; ++j)
+        for (uint32_t j = 0; j < vlen; ++j)
             v[j] = (j < llen) ? *(rhs.begin() + j) : ZERO;
     }
     return *this;
@@ -610,9 +588,9 @@ template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Plus(const Integer& rhs) const {
     NativeInteger val{rhs};
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Plus(val);
     return tmp;
 }
@@ -620,9 +598,9 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Plus(const Integer& rhs) co
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Plus(const std::vector<Integer>& crtElement) const {
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Plus(NativeInteger(crtElement[i]));
     return tmp;
 }
@@ -631,9 +609,9 @@ template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Minus(const Integer& rhs) const {
     NativeInteger val{rhs};
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Minus(val);
     return tmp;
 }
@@ -641,9 +619,9 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Minus(const Integer& rhs) c
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Minus(const std::vector<Integer>& crtElement) const {
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Minus(NativeInteger(crtElement[i]));
     return tmp;
 }
@@ -652,9 +630,9 @@ template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Times(const Integer& rhs) const {
     NativeInteger val{rhs};
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Times(val);
     return tmp;
 }
@@ -662,9 +640,9 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Times(const Integer& rhs) c
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Times(NativeInteger::SignedNativeInt rhs) const {
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Times(rhs);
     return tmp;
 }
@@ -672,9 +650,9 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Times(NativeInteger::Signed
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Times(const std::vector<Integer>& crtElement) const {
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Times(NativeInteger(crtElement[i]));
     return tmp;
 }
@@ -684,19 +662,19 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::Times(const std::vector<Nat
     if (m_vectors.size() != rhs.size())
         OPENFHE_THROW("tower size mismatch; cannot multiply");
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         tmp.m_vectors[i] = m_vectors[i].Times(rhs[i]);
     return tmp;
 }
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::TimesNoCheck(const std::vector<NativeInteger>& rhs) const {
-    size_t vecSize = m_vectors.size() < rhs.size() ? m_vectors.size() : rhs.size();
+    uint32_t vecSize = m_vectors.size() < rhs.size() ? m_vectors.size() : rhs.size();
     HexlDCRTPolyImpl<VecType> tmp(m_params, m_format);
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(vecSize))
-    for (size_t i = 0; i < vecSize; ++i)
+    for (uint32_t i = 0; i < vecSize; ++i)
         tmp.m_vectors[i] = m_vectors[i].Times(rhs[i]);
     return tmp;
 }
@@ -704,43 +682,43 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::TimesNoCheck(const std::vec
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator*=(const Integer& rhs) {
     NativeInteger val{rhs};
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] *= val;
     return *this;
 }
 
 template <typename VecType>
 HexlDCRTPolyImpl<VecType>& HexlDCRTPolyImpl<VecType>::operator*=(const NativeInteger& rhs) {
-    size_t size{m_vectors.size()};
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i] *= rhs;
     return *this;
 }
 
 template <typename VecType>
 void HexlDCRTPolyImpl<VecType>::SetValuesToZero() {
-    size_t size{m_vectors.size()};
-    for (size_t i = 0; i < size; ++i)
+    uint32_t size(m_vectors.size());
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i].SetValuesToZero();
 }
 
 template <typename VecType>
 void HexlDCRTPolyImpl<VecType>::SetValuesModSwitch(const HexlDCRTPolyImpl& element, const NativeInteger& modulus) {
-    size_t N(m_params->GetRingDimension());
+    uint32_t N(m_params->GetRingDimension());
     if (N != element.GetRingDimension())
-        OPENFHE_THROW(std::string(__func__) + ": Ring dimension mismatch.");
+        OPENFHE_THROW("Ring dimension mismatch");
     if (element.m_vectors.size() != 1 || m_vectors.size() != 1)
-        OPENFHE_THROW(std::string(__func__) + ": Only implemented for DCRTPoly with one tower.");
+        OPENFHE_THROW("Only implemented for DCRTPoly with one tower");
 
     auto input{element.m_vectors[0]};
     input.SetFormat(Format::COEFFICIENT);
     NativeVector tmp(N);
     tmp.SetModulus(modulus);
     auto Qmod_double{modulus.ConvertToDouble() / element.GetModulus().ConvertToDouble()};
-    for (size_t j = 0; j < N; ++j) {
+    for (uint32_t j = 0; j < N; ++j) {
         tmp[j] = NativeInteger(static_cast<BasicInteger>(std::floor(0.5 + input[j].ConvertToDouble() * Qmod_double)))
                      .Mod(modulus);
     }
@@ -750,10 +728,10 @@ void HexlDCRTPolyImpl<VecType>::SetValuesModSwitch(const HexlDCRTPolyImpl& eleme
 template <typename VecType>
 void HexlDCRTPolyImpl<VecType>::AddILElementOne() {
     if (m_format != Format::EVALUATION)
-        OPENFHE_THROW(std::string(__func__) + ": only available in COEFFICIENT format.");
-    size_t size{m_vectors.size()};
+        OPENFHE_THROW("Only available in COEFFICIENT format");
+    uint32_t size(m_vectors.size());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i].AddILElementOne();
 }
 
@@ -769,9 +747,9 @@ bool HexlDCRTPolyImpl<VecType>::IsEmpty() const {
 template <typename VecType>
 void HexlDCRTPolyImpl<VecType>::DropLastElement() {
     if (m_vectors.size() == 0)
-        OPENFHE_THROW(std::string(__func__) + ": Input has no elements to drop.");
+        OPENFHE_THROW("Input has no elements to drop");
     if (m_vectors.size() == 1)
-        OPENFHE_THROW(std::string(__func__) + ": Removing last element of DCRTPoly renders it invalid.");
+        OPENFHE_THROW("Removing last element of DCRTPoly renders it invalid");
     m_vectors.resize(m_vectors.size() - 1);
     HexlDCRTPolyImpl::Params* newP = new HexlDCRTPolyImpl::Params(*m_params);
     newP->PopLastParam();
@@ -781,7 +759,7 @@ void HexlDCRTPolyImpl<VecType>::DropLastElement() {
 template <typename VecType>
 void HexlDCRTPolyImpl<VecType>::DropLastElements(size_t i) {
     if (m_vectors.size() <= i)
-        OPENFHE_THROW(std::string(__func__) + ": Too few towers in input.");
+        OPENFHE_THROW("Too few towers in input");
     m_vectors.resize(m_vectors.size() - i);
     HexlDCRTPolyImpl::Params* newP = new HexlDCRTPolyImpl::Params(*m_params);
     for (size_t j = 0; j < i; j++)
@@ -801,7 +779,7 @@ void HexlDCRTPolyImpl<VecType>::DropLastElements(size_t i) {
 template <typename VecType>
 typename HexlDCRTPolyImpl<VecType>::PolyLargeType HexlDCRTPolyImpl<VecType>::CRTInterpolate() const {
     if (m_format != Format::COEFFICIENT)
-        OPENFHE_THROW(std::string(__func__) + ": Only available in COEFFICIENT format.");
+        OPENFHE_THROW("Only available in COEFFICIENT format");
 
     const uint32_t t(m_vectors.size());
     const uint32_t r{m_params->GetRingDimension()};
@@ -839,7 +817,7 @@ typename HexlDCRTPolyImpl<VecType>::PolyLargeType HexlDCRTPolyImpl<VecType>::CRT
 template <typename VecType>
 typename HexlDCRTPolyImpl<VecType>::PolyLargeType HexlDCRTPolyImpl<VecType>::CRTInterpolateIndex(uint32_t i) const {
     if (m_format != Format::COEFFICIENT)
-        OPENFHE_THROW(std::string(__func__) + ": Only available in COEFFICIENT format.");
+        OPENFHE_THROW("Only available in COEFFICIENT format");
 
     uint32_t r{m_params->GetRingDimension()};
     const Integer qt{m_params->GetModulus()};
@@ -885,17 +863,17 @@ typename VecType::Integer HexlDCRTPolyImpl<VecType>::GetWorkingModulus() const {
 template <typename VecType>
 std::shared_ptr<typename HexlDCRTPolyImpl<VecType>::Params> HexlDCRTPolyImpl<VecType>::GetExtendedCRTBasis(
     const std::shared_ptr<Params>& paramsP) const {
-    size_t sizeQ  = m_vectors.size();
-    size_t sizeQP = sizeQ + paramsP->GetParams().size();
+    uint32_t sizeQ  = m_vectors.size();
+    uint32_t sizeQP = sizeQ + paramsP->GetParams().size();
     std::vector<NativeInteger> moduliQP(sizeQP);
     std::vector<NativeInteger> rootsQP(sizeQP);
     const auto& parq = m_params->GetParams();
-    for (size_t i = 0; i < sizeQ; ++i) {
+    for (uint32_t i = 0; i < sizeQ; ++i) {
         moduliQP[i] = parq[i]->GetModulus();
         rootsQP[i]  = parq[i]->GetRootOfUnity();
     }
     const auto& parp = paramsP->GetParams();
-    for (size_t i = sizeQ, j = 0; i < sizeQP; ++i, ++j) {
+    for (uint32_t i = sizeQ, j = 0; i < sizeQP; ++i, ++j) {
         moduliQP[i] = parp[j]->GetModulus();
         rootsQP[i]  = parp[j]->GetRootOfUnity();
     }
@@ -1093,7 +1071,7 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::SwitchCRTBasis(
 #pragma omp parallel for firstprivate(xQHatInvModq) num_threads(OpenFHEParallelControls.GetThreadLimit(8))
     for (uint32_t ri = 0; ri < ringDim; ++ri) {
         double nu{0.5};
-        for (size_t i = 0; i < sizeQ; ++i) {
+        for (uint32_t i = 0; i < sizeQ; ++i) {
             const auto& qi = m_vectors[i].GetModulus();
             // computes [x_i (Q/q_i)^{-1}]_{q_i}
             xQHatInvModq[i] = m_vectors[i][ri].ModMulFastConst(QHatInvModq[i], qi, QHatInvModqPrecon[i]);
@@ -1558,12 +1536,12 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::ScaleAndRound(
         OPENFHE_THROW("Use of ScaleAndRound with NATIVEINT == 32 may lead to overflow");
 
     HexlDCRTPolyImpl<VecType> ans(paramsOutput, m_format, true);
-    uint32_t ringDim   = m_params->GetRingDimension();
-    size_t sizeQP      = m_vectors.size();
-    size_t sizeO       = ans.m_vectors.size();
-    size_t sizeI       = sizeQP - sizeO;
-    size_t inputIndex  = 0;
-    size_t outputIndex = 0;
+    uint32_t ringDim     = m_params->GetRingDimension();
+    uint32_t sizeQP      = m_vectors.size();
+    uint32_t sizeO       = ans.m_vectors.size();
+    uint32_t sizeI       = sizeQP - sizeO;
+    uint32_t inputIndex  = 0;
+    uint32_t outputIndex = 0;
 
     if (paramsOutput->GetParams()[0]->GetModulus() == m_params->GetParams()[0]->GetModulus()) {
         // If the output modulus is Q, then the input index refers to the values (mod p_j), shifted by sizeQ.
@@ -1582,7 +1560,7 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::ScaleAndRound(
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(8))
     for (uint32_t ri = 0; ri < ringDim; ++ri) {
         double nu = 0.5;
-        for (size_t i = 0; i < sizeI; ++i) {
+        for (uint32_t i = 0; i < sizeI; ++i) {
             // possible loss of precision if modulus greater than 2^53 + 1
             const NativeInteger& xi = m_vectors[i + inputIndex][ri];
             nu += tOSHatInvModsDivsFrac[i] * xi.ConvertToDouble();
@@ -1590,10 +1568,10 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::ScaleAndRound(
 #if defined(HAVE_INT128) && NATIVEINT == 64
         if (isConvertableToNativeInt(nu)) {
             NativeInteger alpha = static_cast<BasicInteger>(nu);
-            for (size_t j = 0; j < sizeO; ++j) {
+            for (uint32_t j = 0; j < sizeO; ++j) {
                 const auto& tOSHatInvModsDivsModoj = tOSHatInvModsDivsModo[j];
                 DoubleNativeInt curValue{0};
-                for (size_t i = 0; i < sizeI; ++i) {
+                for (uint32_t i = 0; i < sizeI; ++i) {
                     const NativeInteger& xi = m_vectors[i + inputIndex][ri];
                     curValue += Mul128(xi.ConvertToInt(), tOSHatInvModsDivsModoj[i].ConvertToInt());
                 }
@@ -1611,10 +1589,10 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::ScaleAndRound(
         }
         else {
             auto alpha = static_cast<DoubleNativeInt>(nu);
-            for (size_t j = 0; j < sizeO; ++j) {
+            for (uint32_t j = 0; j < sizeO; ++j) {
                 const auto& tOSHatInvModsDivsModoj = tOSHatInvModsDivsModo[j];
                 DoubleNativeInt curValue{0};
-                for (size_t i = 0; i < sizeI; ++i) {
+                for (uint32_t i = 0; i < sizeI; ++i) {
                     const NativeInteger& xi = m_vectors[i + inputIndex][ri];
                     curValue += Mul128(xi.ConvertToInt(), tOSHatInvModsDivsModoj[i].ConvertToInt());
                 }
@@ -1632,11 +1610,11 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::ScaleAndRound(
 #else
         if (isConvertableToNativeInt(nu)) {
             NativeInteger alpha = static_cast<BasicInteger>(nu);
-            for (size_t j = 0; j < sizeO; ++j) {
+            for (uint32_t j = 0; j < sizeO; ++j) {
                 const auto& tOSHatInvModsDivsModoj = tOSHatInvModsDivsModo[j];
                 const auto& oj                     = ans.m_vectors[j].GetModulus();
                 auto& curValue                     = ans.m_vectors[j][ri];
-                for (size_t i = 0; i < sizeI; i++) {
+                for (uint32_t i = 0; i < sizeI; ++i) {
                     const auto& xi = m_vectors[i + inputIndex][ri];
                     curValue.ModAddFastEq(xi.ModMul(tOSHatInvModsDivsModoj[i], oj, mu[j]), oj);
                 }
@@ -1650,11 +1628,11 @@ HexlDCRTPolyImpl<VecType> HexlDCRTPolyImpl<VecType>::ScaleAndRound(
             double mant            = std::frexp(nu, &exp);
             NativeInteger mantissa = static_cast<BasicInteger>(mant * (1ULL << 53));
             NativeInteger exponent = static_cast<BasicInteger>(1ULL << (exp - 53));
-            for (size_t j = 0; j < sizeO; j++) {
+            for (uint32_t j = 0; j < sizeO; ++j) {
                 const auto& tOSHatInvModsDivsModoj = tOSHatInvModsDivsModo[j];
                 const auto& oj                     = ans.m_vectors[j].GetModulus();
                 auto& curValue                     = ans.m_vectors[j][ri];
-                for (size_t i = 0; i < sizeI; i++) {
+                for (uint32_t i = 0; i < sizeI; ++i) {
                     const auto& xi = m_vectors[i + inputIndex][ri];
                     curValue.ModAddFastEq(xi.ModMul(tOSHatInvModsDivsModoj[i], oj, mu[j]), oj);
                 }
@@ -1972,23 +1950,20 @@ void HexlDCRTPolyImpl<VecType>::FastBaseConvSK(
 
 /*Switch format calls IlVector2n's switchformat*/
 template <typename VecType>
-void HexlDCRTPolyImpl<VecType>::SwitchFormat() {
+void HexlDCRTPolyImpl<VecType>::SwitchFormat(uint32_t thread_limit) {
     m_format = (m_format == Format::COEFFICIENT) ? Format::EVALUATION : Format::COEFFICIENT;
-    size_t size{m_vectors.size()};
-#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(size))
-    for (size_t i = 0; i < size; ++i)
+
+    const uint32_t size                   = m_vectors.size();
+    [[maybe_unused]] const uint32_t limit = thread_limit < size ? thread_limit : size;
+#pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(limit))
+    for (uint32_t i = 0; i < size; ++i)
         m_vectors[i].SwitchFormat();
 }
 
 template <typename VecType>
 void HexlDCRTPolyImpl<VecType>::SwitchModulusAtIndex(size_t index, const Integer& modulus, const Integer& rootOfUnity) {
-    if (index >= m_vectors.size()) {
-        std::string errMsg;
-        errMsg = "HexlDCRTPolyImpl is of size = " + std::to_string(m_vectors.size()) +
-                 " but SwitchModulus for tower at index " + std::to_string(index) + "is called.";
-        OPENFHE_THROW(errMsg);
-    }
-
+    if (index >= m_vectors.size())
+        OPENFHE_THROW("Index out of range");
     m_vectors[index].SwitchModulus(PolyType::Integer(modulus.ConvertToInt()),
                                    PolyType::Integer(rootOfUnity.ConvertToInt()), 0, 0);
     m_params->RecalculateModulus();
