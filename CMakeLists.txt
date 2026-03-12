@@ -1,12 +1,12 @@
-##
-## CMakeLists.txt for OpenFHE
-##
-## This script will build machine-specific header files for compile
-## as it generates the Makefile
-##
-## Note many user options are handled using an OPTION in CMake
-## An option has the value of ON or OFF
-## See below for the list of options
+#
+# CMakeLists.txt for OpenFHE
+#
+# This script will build machine-specific header files for compile
+# as it generates the Makefile
+#
+# Note many user options are handled using an OPTION in CMake
+# An option has the value of ON or OFF
+# See below for the list of options
 
 cmake_minimum_required(VERSION 3.16.3)
 
@@ -15,18 +15,20 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-### To use gcc/g++ on a Macintosh, you must set the Compilers
-### here, not inside the project
-##if(APPLE)
-##       set(CMAKE_C_COMPILER "/usr/local/bin/gcc-10")
-##       set(CMAKE_CXX_COMPILER "/usr/local/bin/g++-10")
-##endif()
-### TODO: for now, we use CLang for Mac
+# To use gcc/g++ on a Macintosh, you must set the Compilers
+# here, not inside the project
+#
+# if(APPLE)
+#     set(CMAKE_C_COMPILER "/usr/local/bin/gcc-10")
+#     set(CMAKE_CXX_COMPILER "/usr/local/bin/g++-10")
+# endif()
+#
+# TODO: for now, we use CLang for Mac
 
 project (OpenFHE C CXX)
 
 set(OPENFHE_VERSION_MAJOR 1)
-set(OPENFHE_VERSION_MINOR 4)
+set(OPENFHE_VERSION_MINOR 5)
 set(OPENFHE_VERSION_PATCH 0)
 set(OPENFHE_VERSION ${OPENFHE_VERSION_MAJOR}.${OPENFHE_VERSION_MINOR}.${OPENFHE_VERSION_PATCH})
 
@@ -49,6 +51,18 @@ else()
 endif()
 
 message(STATUS "Building in ${CMAKE_BUILD_TYPE} mode")
+
+if(WITH_COVTEST AND NOT ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU"))
+    # Generating the coverage report:
+    # 1. Make sure that "g++ --version" and "gcov --version" display the same version number
+    # 2. Ubuntu terminal commands:
+    #    - cmake .. -DWITH_COVTEST=ON
+    #    - make -j6 testall
+    #    - make cov
+    # 3. Open coverage/assets/index.html in a browser to see the report
+    message(WARNING "WITH_COVTEST can be used with g++ only. Disabling coverage.")
+    set(WITH_COVTEST OFF)
+endif()
 
 if (EMSCRIPTEN)
     set(BUILD_SHARED OFF)
@@ -75,12 +89,12 @@ option(WITH_BE4 "Include MATHBACKEND 4 in build by setting WITH_BE4 to ON"      
 option(WITH_NTL "Include MATHBACKEND 6 and NTL in build by setting WITH_NTL to ON"     OFF )
 option(WITH_TCM "Activate tcmalloc by setting WITH_TCM to ON"                          OFF )
 option(WITH_NATIVEOPT "Use machine-specific optimizations"                             ON  )
-option(WITH_COVTEST "Turn on to enable coverage testing"                               OFF )
+option(WITH_COVTEST "Turn on to enable coverage testing (can be used with g++ only)"   OFF )
 option(WITH_NOISE_DEBUG "Use only when running lattice estimator; not for production"  OFF )
 option(WITH_REDUCED_NOISE "Enable reduced noise within HKS and BFV HPSPOVERQ modes"    OFF )
 option(USE_MACPORTS "Use MacPorts installed packages"                                  OFF )
-option( WITH_INTEL_HEXL "Use Intel HEXL library"                                       ON  )
-option( INTEL_HEXL_PREBUILT "Specify if Intel HEXL library was prebuilt"               OFF )
+option(WITH_INTEL_HEXL "Use Intel HEXL library"                                        ON  )
+option(INTEL_HEXL_PREBUILT "Specify if Intel HEXL library was prebuilt"                OFF )
 
 # Set required number of bits for native integer in build by setting NATIVE_SIZE to 64 or 128
 if(NOT NATIVE_SIZE)
@@ -95,7 +109,7 @@ if(NOT INTEL_HEXL_HINT_DIR)
     set(INTEL_HEXL_HINT_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-### Print options
+# Print options
 message(STATUS "BUILD_UNITTESTS:    ${BUILD_UNITTESTS}")
 message(STATUS "BUILD_EXAMPLES:     ${BUILD_EXAMPLES}")
 message(STATUS "BUILD_BENCHMARKS:   ${BUILD_BENCHMARKS}")
@@ -123,12 +137,10 @@ message(STATUS "INTEL_HEXL_HINT_DIR: ${INTEL_HEXL_HINT_DIR}")
 # Compiler logic
 #--------------------------------------------------------------------
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # require at least gcc 9.0
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
         message(WARNING "GCC version should be at least 9.0.")
     endif()
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    # require at least clang 10
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10)
         message(WARNING "Clang version should be at least 10.0.")
     endif()
@@ -136,20 +148,20 @@ else()
     message(WARNING "You are using ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}, which is unsupported.")
 endif()
 
-# use, i.e. don't skip the full RPATH for the build tree
+# Use, i.e. don't skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
-# when building, don't use the install RPATH already
+# When building, don't use the install RPATH already
 # (but later on when installing)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 set(CMAKE_INSTALL_RPATH "${LIBINSTALL}")
 
-# add the automatically determined parts of the RPATH
+# Add the automatically determined parts of the RPATH,
 # which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-# the RPATH to be used when installing, but only if it's not a system directory
+# RPATH to be used when installing, but only if it's not a system directory
 LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${LIBINSTALL}" isSystemDir)
 if("${isSystemDir}" STREQUAL "-1")
     set(CMAKE_INSTALL_RPATH "${LIBINSTALL}")
@@ -164,19 +176,19 @@ if(WITH_NATIVEOPT)
 endif()
 
 set(IGNORE_WARNINGS "") # initialize IGNORE_WARNINGS
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Add -Wno-parentheses for compatibility with g++
     set (IGNORE_WARNINGS "-Wno-parentheses")
-    # we can use GNU built-in functions provided by GCC for debugging. ex: __builtin_LINE (), __builtin_FUNCTION (), __builtin_FILE ()
+    # We can use GNU built-in functions provided by GCC for debugging. ex: __builtin_LINE (), __builtin_FUNCTION (), __builtin_FILE ()
     add_definitions(-DBUILTIN_INFO_AVAILABLE)
     message(STATUS "BUILTIN_INFO_AVAILABLE is defined")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(IGNORE_WARNINGS "-Wno-unused-private-field -Wno-shift-op-parentheses")
     endif()
 endif()
 if(IGNORE_WARNINGS)
-    # for C++ only
+    # For C++ only
     string(APPEND CXX_COMPILE_FLAGS " ${IGNORE_WARNINGS}")
 endif()
 
@@ -206,11 +218,12 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_COMPILE_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_COMPILE_FLAGS}")
 
 if(WITH_COVTEST)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-    link_libraries(gcov)
-    set(BUILDDIR ${CMAKE_CURRENT_SOURCE_DIR}/build/)
-    set(COVDIR ${BUILDDIR}coverage/)
+    set(CMAKE_C_FLAGS             "${CMAKE_C_FLAGS} --coverage")
+    set(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} --coverage")
+    set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+    set(BUILDDIR ${CMAKE_BINARY_DIR})
+    set(COVDIR ${BUILDDIR}/coverage/)
 endif()
 
 if(UNIX AND NOT APPLE AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -232,7 +245,7 @@ set(OpenFHE_PACKAGE_LIBS ${OpenFHE_STATIC_LIBS} ${OpenFHE_SHARED_LIBS})
 #--------------------------------------------------------------------
 # Installation logic
 #--------------------------------------------------------------------
-### set up for install
+# set up for install
 # include(GNUInstallDirs)
 
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
@@ -264,11 +277,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 #--------------------------------------------------------------------
 # Uninstall logic
 #--------------------------------------------------------------------
-## clobber cleans and deletes the third-party stuff
-add_custom_target(
-    COMMAND make clean
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-
+# Clobber cleans and deletes the third-party stuff
+add_custom_target(clobber COMMAND make clean WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_custom_target("uninstall" COMMENT "Uninstall OpenFHE files")
 add_custom_command(
     TARGET "uninstall"
@@ -280,7 +290,7 @@ add_custom_command(
 #--------------------------------------------------------------------
 # Machine-specific checks
 #--------------------------------------------------------------------
-# determine the architecture on a Linux/Unix/macOS/MinGW system
+# Determine the architecture on a Linux/Unix/macOS/MinGW system
 if(CMAKE_HOST_UNIX OR MINGW)
     EXECUTE_PROCESS(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
 else()
@@ -300,13 +310,14 @@ include(CheckTypeSize)
 check_type_size("__int128" INT128)
 check_type_size("uint64_t" INT64)
 
-### dsuponit: uncomment the following "if" block if HAVE_INT64 is false. It may happen when compiling with pthreads enabled.
-### Seems like I have disabled link with pthreads for Emscripten in all makefiles
+# TODO: check this
+# dsuponit: uncomment the following "if" block if HAVE_INT64 is false. It may happen when compiling with pthreads enabled.
+# Seems like I have disabled link with pthreads for Emscripten in all makefiles
 if(EMSCRIPTEN)
-     # Emscripten always(!) supports uint64_t, but check_type_size() may not work correctly due to the way
-     # Emscripten handles cross-compilation. Instead of checking, we can hardcode the result.
-     set(HAVE_INT64 1)
- endif()
+    # Emscripten always(!) supports uint64_t, but check_type_size() may not work correctly due to the way
+    # Emscripten handles cross-compilation. Instead of checking, we can hardcode the result.
+    set(HAVE_INT64 1)
+endif()
 
 if(NOT(BUILD_SHARED OR BUILD_STATIC))
     message(SEND_ERROR "Either BUILD_SHARED or BUILD_STATIC neeed to be turned on.")
@@ -396,16 +407,17 @@ if(WITH_TCM)
     endif()
 endif()
 
-### build configure_core.h to make options available
+# Build configure_core.h to make options available
 configure_file(./configure/config_core.in src/core/config_core.h)
 install(FILES ${CMAKE_BINARY_DIR}/src/core/config_core.h DESTINATION include/openfhe/core)
 
+# TODO (dsuponit): do we need TAR?
 find_program(TAR "gtar")
 find_program(TAR "tar")
 
 if(WITH_TCM OR WITH_NTL)
-    ### tcmalloc, NTL and GMP require autoconf/automake/libtool to be installed.
-    ### we need to make sure that they are:
+    # tcmalloc, NTL and GMP require autoconf/automake/libtool to be installed.
+    # We need to make sure that they are:
     execute_process(COMMAND autogen --version OUTPUT_VARIABLE AUTOGEN_VER)
     # execute_process in MINGW by default does not run in a shell
     if(MINGW)
@@ -439,7 +451,7 @@ if(WITH_OPENMP)
                 set(OpenMP_C_LIB_NAMES "omp")
                 set(OpenMP_omp_LIBRARY ${OpenMP_C_LIB_NAMES})
             endif()
-            if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+            if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
                 set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
                 set(OpenMP_CXX_LIB_NAMES "omp")
                 set(OpenMP_omp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
@@ -462,7 +474,7 @@ if(WITH_OPENMP)
                 set(OpenMP_C_LIB_NAMES "libomp")
                 set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
             endif()
-            if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
                 set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
                 set(OpenMP_CXX_LIB_NAMES "libomp")
                 set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
@@ -549,20 +561,60 @@ endif()
 # Coverage logic
 #--------------------------------------------------------------------
 if(WITH_COVTEST)
-    find_program(LCOV_BIN lcov)
-    if(LCOV_BIN MATCHES "lcov$")
-        #Creates the command make cov
+    find_program(LCOV lcov)
+    find_program(GENHTML genhtml)
+    if(LCOV AND GENHTML)
+        # gcov version should match the compiler major version
+        string(REGEX MATCH "^[0-9]+" GCC_MAJOR "${CMAKE_CXX_COMPILER_VERSION}")
+        find_program(GCOV NAMES gcov-${GCC_MAJOR} gcov)
+        if(NOT GCOV)
+            message(FATAL_ERROR "Could not find gcov matching GCC-${GCC_MAJOR}.To install it: 'sudo apt-get install -y lcov gcc-${GCC_MAJOR} g++-${GCC_MAJOR}'")
+        endif()
+
+        set(LCOV_EXCLUDES --exclude '*/usr/include/*' --exclude '*/third-party/*')
+
+        # as some options are not available for older versions of lcov, i am adding a version-based guard for them
+        # get lcov version. ${LCOV_VERSION_OUT} should contain something like this "lcov: LCOV version 2.0-1"
+        execute_process(COMMAND ${LCOV} --version
+                        OUTPUT_VARIABLE LCOV_VERSION_OUT
+                        OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        string(REGEX MATCH "[0-9]+\\.[0-9]+" LCOV_VERSION "${LCOV_VERSION_OUT}")
+        message(STATUS "LCOV version: ${LCOV_VERSION}")
+
+        # set ${LCOV_VERSION_OUT} for LCOV versions starting with 2.0 only
+        if(LCOV_VERSION VERSION_GREATER_EQUAL "2.0")
+            # keep double “mismatch” and "unused" for mismatch, multiple mismatch, unused, multiple unused and empty
+            list(APPEND LCOV_IGNORE_ERRORS
+                --ignore-errors mismatch
+                --ignore-errors mismatch
+                --ignore-errors unused
+                --ignore-errors unused
+                --ignore-errors empty
+            )
+        # else()
+        #     # older supported option values:
+        #     # set(LCOV_IGNORE_ERRORS "--ignore-errors gcov,source,graph")
+        endif()
+
+        set(LCOV_OPTIONS
+            ${LCOV_IGNORE_ERRORS}
+            --rc geninfo_unexecuted_blocks=1
+            --gcov-tool ${GCOV}
+        )
+
+        # Creates the command: make cov
         add_custom_target(cov
             DEPENDS core_tests pke_tests binfhe_tests
             COMMAND cd ${BUILDDIR} && mkdir -p coverage
-            COMMAND cd ${BUILDDIR}/src/core/CMakeFiles/core_tests.dir/unittest/ && gcov *.gcno && lcov --capture --directory . --output-file ${COVDIR}/core.info --exclude '*/usr/include/*' --exclude '*/usr/local/include/*' --exclude '*/third-party/*'
-            COMMAND cd ${BUILDDIR}/src/core/CMakeFiles/coreobj.dir/ && gcov *.gcno && lcov --capture --directory . --output-file ${COVDIR}/core_cpp.info --exclude '*/usr/include/*' --exclude '*/usr/local/include/*' --exclude '*/third-party/*'
-            COMMAND cd ${BUILDDIR}/src/pke/CMakeFiles/pke_tests.dir/unittest/ && gcov *.gcno && lcov --capture --directory . --output-file ${COVDIR}/pke.info --exclude '*/usr/include/*' --exclude '*/usr/local/include/*' --exclude '*/third-party/*'
-            COMMAND cd ${BUILDDIR}/src/pke/CMakeFiles/pkeobj.dir/ && gcov *.gcno && lcov --capture --directory . --output-file ${COVDIR}/pke_cpp.info --exclude '*/usr/include/*' --exclude '*/usr/local/include/*' --exclude '*/third-party/*'
-            COMMAND cd ${BUILDDIR}/src/binfhe/CMakeFiles/binfhe_tests.dir/unittest/ && gcov  *.gcno && lcov --capture --directory . --output-file ${COVDIR}/binfhe.info --exclude '*/usr/include/*' --exclude '*/usr/local/include/*' --exclude '*/third-party/*'
-            COMMAND cd ${BUILDDIR}/src/binfhe/CMakeFiles/binfheobj.dir/ && gcov  *.gcno && lcov --capture --directory . --output-file ${COVDIR}/binfhe_cpp.info --exclude '*/usr/include/*' --exclude '*/usr/local/include/*' --exclude '*/third-party/*'
-            COMMAND cd ${COVDIR} && mkdir -p assets && genhtml -t "Coverage Test" -o ${COVDIR}/assets/ *.info)
-        message(STATUS "lcov found in ${LCOV_BIN}")
+            COMMAND cd ${BUILDDIR}/src/core/CMakeFiles/core_tests.dir/unittest/ && ${LCOV} --capture --directory . --output-file ${COVDIR}/core.info ${LCOV_EXCLUDES} ${LCOV_OPTIONS}
+            COMMAND cd ${BUILDDIR}/src/core/CMakeFiles/coreobj.dir/ && ${LCOV} --capture --directory . --output-file ${COVDIR}/core_cpp.info ${LCOV_EXCLUDES} ${LCOV_OPTIONS}
+            COMMAND cd ${BUILDDIR}/src/pke/CMakeFiles/pke_tests.dir/unittest/ && ${LCOV} --capture --directory . --output-file ${COVDIR}/pke.info ${LCOV_EXCLUDES} ${LCOV_OPTIONS}
+            COMMAND cd ${BUILDDIR}/src/pke/CMakeFiles/pkeobj.dir/ && ${LCOV} --capture --directory . --output-file ${COVDIR}/pke_cpp.info ${LCOV_EXCLUDES} ${LCOV_OPTIONS}
+            COMMAND cd ${BUILDDIR}/src/binfhe/CMakeFiles/binfhe_tests.dir/unittest/ && ${LCOV} --capture --directory . --output-file ${COVDIR}/binfhe.info ${LCOV_EXCLUDES} ${LCOV_OPTIONS}
+            COMMAND cd ${BUILDDIR}/src/binfhe/CMakeFiles/binfheobj.dir/ && ${LCOV} --capture --directory . --output-file ${COVDIR}/binfhe_cpp.info ${LCOV_EXCLUDES} ${LCOV_OPTIONS}
+            COMMAND cd ${COVDIR} && mkdir -p assets && ${GENHTML} -t "Coverage Test" -o ${COVDIR}/assets/ *.info)
+        message(STATUS "lcov found in ${LCOV}")
     else()
         message(STATUS "lcov needs to be installed to generate a coverage report")
     endif()
@@ -574,7 +626,6 @@ endif()
 #--------------------------------------------------------------------
 include(ExternalProject)
 
-# third party directories
 set(THIRDPARTYDIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party)
 include_directories(${THIRDPARTYDIR}/include)
 
@@ -582,7 +633,6 @@ if(WITH_INTEL_HEXL)
     include(third-party/intel-hexl/intel-hexl.cmake)
 endif()
 
-### Handle third-party CEREAL
 include_directories(${THIRDPARTYDIR}/cereal/include)
 install(DIRECTORY ${THIRDPARTYDIR}/cereal/include/ DESTINATION include/openfhe)
 
@@ -593,8 +643,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/binfhe/include)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/core)
 
-### Handle third-party gperftools for optional tcmalloc
-
+# Handle third-party gperftools for optional tcmalloc
 add_custom_target(
     tcm
     COMMAND ./autogen.sh
@@ -627,7 +676,7 @@ if(WITH_TCM)
 endif()
 
 if(WITH_NTL)
-    ### Find gmp and ntl libraries. They must be installed by the user
+    # Find gmp and ntl libraries. They must be installed by the user
     list(APPEND general_paths "/usr" "/usr/local" "/opt" "/opt/local")
     list(APPEND header_suffixes "include" "include/NTL" "include/${CMAKE_LIBRARY_ARCHITECTURE}")
     list(APPEND lib_suffixes "lib" "lib/${CMAKE_LIBRARY_ARCHITECTURE}")
@@ -651,7 +700,7 @@ if(WITH_NTL)
         endif()
     endif()
 
-    if(NOT(GMP_INCLUDE_DIR AND GMP_LIBRARIES))
+    if (NOT(GMP_INCLUDE_DIR AND GMP_LIBRARIES))
         find_path(GMP_INCLUDE_DIR
             NAMES gmp.h
             PATHS ${general_paths}
@@ -692,48 +741,45 @@ endif()
 set(DEMODATAPATH ${CMAKE_CURRENT_SOURCE_DIR}/demoData)
 set(BINDEMODATAPATH ${CMAKE_CURRENT_BINARY_DIR}/demoData)
 
-# copies demoData folder from the root of the repo to build/demoData if the folder does not exist
+# Copies demoData folder from the root of the repo to build/demoData if the folder does not exist
 add_custom_target(third-party ALL
     COMMAND [ ! -d ${BINDEMODATAPATH} ] && cp -R ${DEMODATAPATH} ${BINDEMODATAPATH} && echo "-- Copied demoData files" || echo "-- demoData folder already exists")
 
-# when running "make clean", additionally deletes the demoData folder and CMake cache file
+# When running "make clean", additionally deletes the demoData folder and CMake cache file
 set(ADDITIONAL_CLEAN_FILES "")
 LIST(APPEND ADDITIONAL_CLEAN_FILES ${BINDEMODATAPATH})
 LIST(APPEND ADDITIONAL_CLEAN_FILES ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt)
 
-## for tests
 if(BUILD_UNITTESTS)
     set(UNITTESTMAIN ${PROJECT_SOURCE_DIR}/test/Main_TestAll.cpp)
 endif()
 
-### add each of the subdirs of src
 add_subdirectory(src/core)
 add_subdirectory(src/pke)
 add_subdirectory(src/binfhe)
 
-### build the google test handlers
+# Build the google test handlers
 if(BUILD_UNITTESTS)
     add_subdirectory(third-party/google-test EXCLUDE_FROM_ALL)
-    ##############################################################################################################
-    ### Handle third-party/google-test/googletest's uninitialized variable dummy. Remove
-    ### add_compile_options(-Wno-error=maybe-uninitialized)
-    ### once googletest has been updated to v1.11.0 or later.
-    ##############################################################################################################
-    ### 1. This applies to gtest only
-    ### 2. Build does not fail because of "uninitialized error"
-    ### 3. We still see a warning if the variable is truly uninitialized
-    ### 4. All other warnings still remain errors
-    ##############################################################################################################
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    ############################################################################################################
+    # Handle third-party/google-test/googletest's uninitialized variable dummy. Remove
+    # add_compile_options(-Wno-error=maybe-uninitialized)
+    # once googletest has been updated to v1.11.0 or later.
+    ############################################################################################################
+    # 1. This applies to gtest only
+    # 2. Build does not fail because of "uninitialized error"
+    # 3. We still see a warning if the variable is truly uninitialized
+    # 4. All other warnings still remain errors
+    ############################################################################################################
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         target_compile_options(gtest PRIVATE -Wno-error=maybe-uninitialized)
         target_compile_options(gtest_main PRIVATE -Wno-error=maybe-uninitialized)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         target_compile_options(gtest PRIVATE -Wno-uninitialized)
         target_compile_options(gtest_main PRIVATE -Wno-uninitialized)
     endif()
 endif()
 
-### build the google benchmark handlers (just the parts we need)
 if(BUILD_BENCHMARKS)
     set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Enable testing of the benchmark library." FORCE)
     set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "Enable installation of benchmark. (Projects embedding benchmark may want to turn this OFF.)" FORCE)
@@ -741,9 +787,6 @@ if(BUILD_BENCHMARKS)
     add_subdirectory(third-party/google-benchmark EXCLUDE_FROM_ALL)
     add_subdirectory(benchmark)
 endif()
-
-## clobber cleans AND deletes the third-party stuff
-add_custom_target(clobber COMMAND make clean WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 if(BUILD_UNITTESTS)
     add_custom_target(testall

@@ -450,7 +450,7 @@ void HexlPolyImpl<VecType>::LazySwitchModulus(const Integer& modulus, const Inte
 }
 
 template <typename VecType>
-void HexlPolyImpl<VecType>::SwitchFormat() {
+void HexlPolyImpl<VecType>::SwitchFormat(uint32_t thread_limit) {
     const auto& co{m_params->GetCyclotomicOrder()};
     const auto& rd{m_params->GetRingDimension()};
     const auto& ru{m_params->GetRootOfUnity()};
