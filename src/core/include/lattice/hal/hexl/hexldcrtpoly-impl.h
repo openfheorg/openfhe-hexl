@@ -1189,16 +1189,16 @@ void HexlDCRTPolyImpl<VecType>::ExpandCRTBasisQlHat(const std::shared_ptr<Params
     uint32_t sizeQl(m_vectors.size());
     uint32_t ringDim(m_params->GetRingDimension());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQl))
-    for (uint32_t i = 0; i < sizeQl; i++) {
+    for (uint32_t i = 0; i < sizeQl; ++i) {
         const NativeInteger& qi               = m_vectors[i].GetModulus();
         const NativeInteger& QlHatModqi       = QlHatModq[i];
         const NativeInteger& QlHatModqiPrecon = QlHatModqPrecon[i];
-        for (uint32_t ri = 0; ri < ringDim; ri++) {
+        for (uint32_t ri = 0; ri < ringDim; ++ri) {
             m_vectors[i][ri].ModMulFastConstEq(QlHatModqi, qi, QlHatModqiPrecon);
         }
     }
     m_vectors.resize(sizeQ);
-    for (uint32_t i = sizeQl; i < sizeQ; i++) {
+    for (uint32_t i = sizeQl; i < sizeQ; ++i) {
         typename HexlDCRTPolyImpl<VecType>::PolyType newvec(paramsQ->GetParams()[i], m_format, true);
         m_vectors[i] = std::move(newvec);
     }
@@ -1216,11 +1216,16 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
     uint32_t sizeQ   = m_vectors.size();
 
     // MSB of q_i
-    uint32_t qMSB = m_vectors[0].GetModulus().GetMSB();
+    auto qtmp = m_vectors[0].GetModulus();
+    for (uint32_t i = 1; i < sizeQ; ++i) {
+        if (m_vectors[i].GetModulus() > qtmp)
+            qtmp = m_vectors[i].GetModulus();
+    }
+    uint32_t qMSB = qtmp.GetMSB();
     // MSB of t
     uint32_t tMSB = t.GetMSB();
     // MSB of sizeQ
-    uint32_t sizeQMSB = GetMSB64(sizeQ);
+    uint32_t sizeQMSB = GetMSB(sizeQ);
 
     HexlDCRTPolyImpl::PolyType::Vector coefficients(ringDim, t.ConvertToInt());
     // For power of two t we can do modulo reduction easily
@@ -1233,16 +1238,16 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
             // error is bounded by 2^{-53}. Thus the floating point error is bounded
             // by sizeQ * q_i/2 * 2^{-53}. In case of qMSB + sizeQMSB < 52 the error
             // is bounded by 1/4, and the rounding will be correct.
-            if ((qMSB + tMSB + sizeQMSB) < 63) {
+            if ((qMSB + sizeQMSB + tMSB) < 63) {
                 // No intermediate modulo reductions are needed in this case
                 // we fit in 63 bits, so we can do multiplications and
                 // additions without modulo reduction, and do modulo reduction
                 // only once
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum      = 0.5;
                     NativeInteger intSum = 0, tmp;
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         tmp = m_vectors[i][ri];
 
                         floatSum += tmp.ConvertToDouble() * tQHatInvModqDivqFrac[i];
@@ -1267,10 +1272,10 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                 // sizeQ * 2^30 * 2^{-53}. We always have sizeQ < 2^11, which means the
                 // error is bounded by 1/4, and the rounding will be correct.
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum      = 0.5;
                     NativeInteger intSum = 0, tmp;
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         tmp = m_vectors[i][ri];
 
                         floatSum += tmp.ConvertToDouble() * tQHatInvModqDivqFrac[i];
@@ -1292,11 +1297,11 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                 // additions without modulo reduction, and do modulo reduction
                 // only once
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum      = 0.5;
                     NativeInteger intSum = 0;
                     NativeInteger tmpHi, tmpLo;
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         tmpLo = m_vectors[i][ri];
                         tmpHi = tmpLo.RShift(qMSBHf);
                         tmpLo.SubEqFast(tmpHi.LShift(qMSBHf));
@@ -1317,11 +1322,11 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
             }
             else {
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum      = 0.5;
                     NativeInteger intSum = 0;
                     NativeInteger tmpHi, tmpLo;
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         tmpLo = m_vectors[i][ri];
                         tmpHi = tmpLo.RShift(qMSBHf);
                         tmpLo.SubEqFast(tmpHi.LShift(qMSBHf));
@@ -1358,10 +1363,10 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                 // additions without modulo reduction, and do modulo reduction
                 // only once using floating point techniques
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum      = 0.0;
                     NativeInteger intSum = 0, tmp;
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         tmp = m_vectors[i][ri];
 
                         floatSum += tmp.ConvertToDouble() * tQHatInvModqDivqFrac[i];
@@ -1373,8 +1378,7 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                     // compute modulo reduction by finding the quotient using doubles
                     // and then substracting quotient * t
                     floatSum += intSum.ConvertToInt();
-                    uint64_t quot = static_cast<uint64_t>(floatSum * tInv);
-                    floatSum -= td * quot;
+                    floatSum -= td * static_cast<uint64_t>(floatSum * tInv);
                     // rounding
                     coefficients[ri] = static_cast<uint64_t>(floatSum + 0.5);
                 }
@@ -1390,10 +1394,10 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                 // sizeQ * 2^30 * 2^{-53}. We always have sizeQ < 2^11, which means the
                 // error is bounded by 1/4, and the rounding will be correct.
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum{0.0};
                     NativeInteger intSum{0};
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         const auto& tmp = m_vectors[i][ri];
                         floatSum += tmp.ConvertToDouble() * tQHatInvModqDivqFrac[i];
                         intSum.AddEqFast(
@@ -1402,8 +1406,7 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                     // compute modulo reduction by finding the quotient using doubles
                     // and then substracting quotient * t
                     floatSum += intSum.ConvertToDouble();
-                    uint64_t quot = static_cast<uint64_t>(floatSum * tInv);
-                    floatSum -= td * quot;
+                    floatSum -= td * static_cast<uint64_t>(floatSum * tInv);
                     // rounding
                     coefficients[ri] = static_cast<uint64_t>(floatSum + 0.5);
                 }
@@ -1417,11 +1420,11 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                 // additions without modulo reduction, and do modulo reduction
                 // only once using floating point techniques
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum      = 0.0;
                     NativeInteger intSum = 0;
                     NativeInteger tmpHi, tmpLo;
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         tmpLo = m_vectors[i][ri];
                         tmpHi = tmpLo.RShift(qMSBHf);
                         tmpLo.SubEqFast(tmpHi.LShift(qMSBHf));
@@ -1438,19 +1441,18 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                     // compute modulo reduction by finding the quotient using doubles
                     // and then substracting quotient * t
                     floatSum += intSum.ConvertToInt();
-                    uint64_t quot = static_cast<uint64_t>(floatSum * tInv);
-                    floatSum -= td * quot;
+                    floatSum -= td * static_cast<uint64_t>(floatSum * tInv);
                     // rounding
                     coefficients[ri] = static_cast<uint64_t>(floatSum + 0.5);
                 }
             }
             else {
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(4))
-                for (uint32_t ri = 0; ri < ringDim; ri++) {
+                for (uint32_t ri = 0; ri < ringDim; ++ri) {
                     double floatSum      = 0.0;
                     NativeInteger intSum = 0;
                     NativeInteger tmpHi, tmpLo;
-                    for (uint32_t i = 0; i < sizeQ; i++) {
+                    for (uint32_t i = 0; i < sizeQ; ++i) {
                         tmpLo = m_vectors[i][ri];
                         tmpHi = tmpLo.RShift(qMSBHf);
                         tmpLo.SubEqFast(tmpHi.LShift(qMSBHf));
@@ -1466,8 +1468,7 @@ typename HexlDCRTPolyImpl<VecType>::PolyType HexlDCRTPolyImpl<VecType>::ScaleAnd
                     // compute modulo reduction by finding the quotient using doubles
                     // and then substracting quotient * t
                     floatSum += intSum.ConvertToInt();
-                    uint64_t quot = static_cast<uint64_t>(floatSum * tInv);
-                    floatSum -= td * quot;
+                    floatSum -= td * static_cast<uint64_t>(floatSum * tInv);
                     // rounding
                     coefficients[ri] = static_cast<uint64_t>(floatSum + 0.5);
                 }
@@ -1890,7 +1891,7 @@ void HexlDCRTPolyImpl<VecType>::FastBaseConvSK(
     [[maybe_unused]] NativeInteger muBsk(moduliBsk[sizeBskm1].ComputeMu());
     NativeInteger mskDivTwo(moduliBsk[sizeBskm1] >> 1);
 
-    for (uint32_t i = 0; i < sizeBskm1; i++) {  // exclude msk residue
+    for (uint32_t i = 0; i < sizeBskm1; ++i) {  // exclude msk residue
         const auto& moduliBski        = moduliBsk[i];
         const auto& bHatModmski       = BHatModmsk[i];
         const auto& bDivBiModBi       = BHatInvModb[i];
@@ -1982,7 +1983,7 @@ template <typename VecType>
 std::ostream& operator<<(std::ostream& os, const HexlDCRTPolyImpl<VecType>& p) {
     // TODO(gryan): Standardize this printing so it is like other poly's
     os << "---START PRINT DOUBLE CRT-- WITH SIZE" << p.m_vectors.size() << std::endl;
-    for (uint32_t i = 0; i < p.m_vectors.size(); i++) {
+    for (uint32_t i = 0; i < p.m_vectors.size(); ++i) {
         os << "VECTOR " << i << std::endl;
         os << p.m_vectors[i];
     }
