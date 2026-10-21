@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2024, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2026, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -33,120 +33,156 @@
  * This file contains the vector manipulation functionality for native integers
  */
 
-#ifndef LBCRYPTO_MATH_HAL_INTNATHEXL_MUBINTVECNAT_H
-#define LBCRYPTO_MATH_HAL_INTNATHEXL_MUBINTVECNAT_H
-
-#include "hexl/hexl.hpp"
-
-#include "math/hal/intnat-hexl/ubintnathexl.h"
-#include "math/hal/vector.h"
-
-#include "utils/inttypes.h"
-#include "utils/serializable.h"
-#include "utils/blockAllocator/xvector.h"
+#ifndef SRC_CORE_INCLUDE_MATH_HAL_INTNAT_HEXL_MUBINTVECNATHEXL_H_
+#define SRC_CORE_INCLUDE_MATH_HAL_INTNAT_HEXL_MUBINTVECNATHEXL_H_
 
 #include <algorithm>
+#include <cstdint>
 #include <initializer_list>
 #include <ostream>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
+#include "hexl/hexl.hpp"
+
+#include "math/hal/basicint.h"
+#include "math/hal/intnat-hexl/ubintnathexl.h"
+#include "math/hal/vector.h"
+#include "utils/exception.h"
+#include "utils/inttypes.h"
+#include "utils/serializable.h"
+
 /**
  * @namespace intnathexl
- * The namespace of intnathexl
+ * The namespace of intnat
  */
 namespace intnathexl {
 
-// Forward declare class and give it an alias for the expected type
 template <typename IntType>
 class NativeVectorT;
+/// vector of native integers of the default word width of the build
 using NativeVector = NativeVectorT<NativeInteger>;
+/// native integer with a 32-bit word
+using NativeInteger32 = NativeIntegerT<uint32_t>;
+/// vector of 32-bit native integers
+using NativeVector32 = NativeVectorT<NativeInteger32>;
 
 /**
  * @brief The class for representing vectors of native integers.
  */
-
-#if 0  // allocator that reports bytes used.
-template <class Tp>
-struct NAlloc {
-    typedef Tp value_type;
-    NAlloc() = default;
-    template <class T> NAlloc(const NAlloc<T>&) {}
-    Tp* allocate(std::size_t n) {
-        n *= sizeof(Tp);
-        return static_cast<Tp*>(::operator new(n));
-    }
-    void deallocate(Tp* p, std::size_t n) {
-        std::cout << "deallocating " << n*sizeof*p << " bytes\n";
-        ::operator delete(p);
-    }
-};
-template <class T, class U>
-bool operator==(const NAlloc<T>&, const NAlloc<U>&) { return true; }
-template <class T, class U>
-bool operator!=(const NAlloc<T>&, const NAlloc<U>&) { return false; }
-#endif
-
-#if 0  // allocator that reports bytes used.
-template <class Tp>
-struct NAlloc {
-    typedef Tp value_type;
-    NAlloc() = default;
-    template <class T> NAlloc(const NAlloc<T>&) {}
-    Tp* allocate(std::size_t n) {
-        n *= sizeof(Tp);
-        std::cout << "allocating   " << n << " bytes\n";
-        return static_cast<Tp*>(::operator new(n));
-    }
-    void deallocate(Tp* p, std::size_t n) {
-        std::cout << "deallocating " << n*sizeof*p << " bytes\n";
-        ::operator delete(p);
-    }
-};
-template <class T, class U>
-bool operator==(const NAlloc<T>&, const NAlloc<U>&) { return true; }
-template <class T, class U>
-bool operator!=(const NAlloc<T>&, const NAlloc<U>&) { return false; }
-#endif
-
 template <class IntegerType>
 class NativeVectorT final : public lbcrypto::BigVectorInterface<NativeVectorT<IntegerType>, IntegerType>,
                             public lbcrypto::Serializable {
-private:
-    intel::hexl::AlignedVector64<IntegerType> m_data{};
+  private:
     IntegerType m_modulus{0};
+    intel::hexl::AlignedVector64<IntegerType> m_data{};
 
-    // function to check if the index is a valid index.
     bool IndexCheck(size_t length) const {
         return length < m_data.size();
     }
 
-public:
+  public:
+    /// the native word type underlying IntegerType
     using BasicInt = typename IntegerType::Integer;
 
     constexpr NativeVectorT() = default;
 
+    /**
+     * Creates a vector of length 1 holding val reduced modulo modulus.
+     *
+     * @param val is the single entry.
+     * @param modulus is the modulus of the vector.
+     * @return the one-entry vector.
+     */
     static constexpr NativeVectorT Single(const IntegerType& val, const IntegerType& modulus) noexcept {
         return NativeVectorT(1, modulus, val);
     }
 
-    explicit constexpr NativeVectorT(usint length) noexcept : m_data(length) {}
+    /**
+     * Basic constructor for specifying the length of the vector.
+     *
+     * @param length is the length of the native vector, in terms of the number of
+     * entries.
+     */
+    explicit constexpr NativeVectorT(uint32_t length) noexcept : m_data(length) {}
 
-    constexpr NativeVectorT(usint length, const IntegerType& modulus) noexcept : m_data(length), m_modulus{modulus} {}
+    /**
+     * Basic constructor for specifying the length of the vector and the modulus.
+     *
+     * @param length is the length of the native vector, in terms of the number of
+     * entries.
+     * @param modulus is the modulus of the ring.
+     */
+    constexpr NativeVectorT(uint32_t length, const IntegerType& modulus) noexcept
+        : m_modulus{modulus}, m_data(length) {}
 
-    constexpr NativeVectorT(usint length, const IntegerType& modulus, const IntegerType& val) noexcept
-        : m_data(length, val.Mod(modulus)), m_modulus{modulus} {}
+    /**
+     * Constructor for specifying the length, the modulus, and one value for every entry.
+     *
+     * @param length is the length of the native vector, in terms of the number of
+     * entries.
+     * @param modulus is the modulus of the ring.
+     * @param val is the value assigned to every entry, reduced modulo modulus.
+     */
+    constexpr NativeVectorT(uint32_t length, const IntegerType& modulus, const IntegerType& val) noexcept
+        : m_modulus{modulus}, m_data(length, val.Mod(modulus)) {}
 
-    constexpr NativeVectorT(const NativeVectorT& v) noexcept : m_data{v.m_data}, m_modulus{v.m_modulus} {}
+    /**
+     * Basic constructor for copying a vector
+     *
+     * @param v is the native vector to be copied.
+     */
+    constexpr NativeVectorT(const NativeVectorT& v) noexcept : m_modulus{v.m_modulus}, m_data{v.m_data} {}
 
+    /**
+     * Constructor from a vector under a different modulus: the values of v switched to the
+     * new modulus, equivalent to a copy followed by SwitchModulus(modulus) but fused into
+     * one pass over the data.
+     *
+     * @param v is the source vector.
+     * @param modulus is the modulus to switch the copied values to.
+     */
+    NativeVectorT(const NativeVectorT& v, const IntegerType& modulus) noexcept;
+
+    /**
+     * Basic move constructor for moving a vector
+     *
+     * @param v is the native vector to be moved.
+     */
     constexpr NativeVectorT(NativeVectorT&& v) noexcept
-        : m_data{std::move(v.m_data)}, m_modulus{std::move(v.m_modulus)} {}
+        : m_modulus{std::move(v.m_modulus)}, m_data{std::move(v.m_data)} {}
 
-    NativeVectorT(usint length, const IntegerType& modulus, std::initializer_list<std::string> rhs) noexcept;
+    /**
+     * Basic constructor for specifying the length of the vector
+     * the modulus and an initializer list.
+     *
+     * @param length is the length of the native vector, in terms of the number of
+     * entries.
+     * @param modulus is the modulus of the ring.
+     * @param rhs is an initializer list of strings
+     */
 
-    NativeVectorT(usint length, const IntegerType& modulus, std::initializer_list<uint64_t> rhs) noexcept;
+    NativeVectorT(uint32_t length, const IntegerType& modulus, std::initializer_list<std::string> rhs) noexcept;
 
+    /**
+     * Basic constructor for specifying the length of the vector
+     * the modulus and an initializer list.
+     *
+     * @param length is the length of the native vector, in terms of the number of
+     * entries.
+     * @param modulus is the modulus of the ring.
+     * @param rhs is an initializer list of uint64_t
+     */
+    NativeVectorT(uint32_t length, const IntegerType& modulus, std::initializer_list<uint64_t> rhs) noexcept;
+
+    /**
+     * Assignment operator to assign value from rhs
+     *
+     * @param rhs is the native vector to be assigned from.
+     * @return Assigned NativeVectorT.
+     */
     NativeVectorT& operator=(const NativeVectorT& rhs) noexcept {
         m_modulus = rhs.m_modulus;
         if (m_data.size() >= rhs.m_data.size()) {
@@ -159,72 +195,215 @@ public:
         return *this;
     }
 
+    /**
+     * Move assignment operator
+     *
+     * @param rhs is the native vector to be moved.
+     * @return moved NativeVectorT object
+     */
     NativeVectorT& operator=(NativeVectorT&& rhs) noexcept {
         m_modulus = std::move(rhs.m_modulus);
-        m_data    = std::move(rhs.m_data);
+        m_data = std::move(rhs.m_data);
         return *this;
     }
 
+    /**
+     * Initializer list for NativeVectorT.
+     *
+     * @param rhs is the list of strings containing integers to be assigned to
+     * the BBV.
+     * @return NativeVectorT object
+     */
     NativeVectorT& operator=(std::initializer_list<std::string> rhs) noexcept;
 
+    /**
+     * Initializer list for NativeVectorT.
+     *
+     * @param rhs is the list of integers to be assigned to the BBV.
+     * @return NativeVectorT object
+     */
     NativeVectorT& operator=(std::initializer_list<uint64_t> rhs) noexcept;
 
+    /**
+     * Assignment operator to assign value val to first entry, 0 for the rest of
+     * entries.
+     *
+     * @param val is the value to be assigned at the first entry.
+     * @return Assigned NativeVectorT.
+     */
     constexpr NativeVectorT& operator=(uint64_t val) {
         std::fill(m_data.begin(), m_data.end(), 0);
         m_data.at(0) = val;
         return *this;
     }
 
+    /**
+     * Sets/gets a value at an index.
+     * This method is slower than operator[] as it checks if index out of range
+     *
+     * @param i is the index to set a value at.
+     * @return is the reference to the value at the index.
+     */
     IntegerType& at(size_t i) {
         if (!NativeVectorT::IndexCheck(i))
             OPENFHE_THROW("NativeVectorT index out of range");
         return m_data[i];
     }
 
+    /**
+     * operators to get a value at an index.
+     * @param i is the index to get a value at.
+     * @return is the value at the index; throws if i is out of range.
+     */
     const IntegerType& at(size_t i) const {
         if (!NativeVectorT::IndexCheck(i))
             OPENFHE_THROW("NativeVectorT index out of range");
         return m_data[i];
     }
 
+    /**
+     * operators to get a value at an index.
+     * @param idx is the index to get a value at.
+     * @return is the value at the index; no range check is performed.
+     */
     IntegerType& operator[](size_t idx) {
         return m_data[idx];
     }
 
+    /**
+     * operators to get a value at an index.
+     * @param idx is the index to get a value at.
+     * @return is the value at the index; no range check is performed.
+     */
     const IntegerType& operator[](size_t idx) const {
         return m_data[idx];
     }
 
+    /**
+     * Sets the vector modulus.
+     *
+     * @param value is the modulus value to set.
+     */
     void SetModulus(const IntegerType& value) {
-        if (value.GetMSB() > MAX_MODULUS_SIZE)
-            OPENFHE_THROW("NativeVectorT supports only modulus size <=  " + std::to_string(MAX_MODULUS_SIZE) + " bits");
+        constexpr uint32_t maxBits{MaxModulusBits<typename IntegerType::Integer>::value};
+        if (value.GetMSB() > maxBits)
+            OPENFHE_THROW("Modulus too large for requested IntegerType");
         m_modulus.m_value = value.m_value;
     }
 
+    /**
+     * Sets the vector modulus and changes the values to match the new modulus.
+     *
+     * @param value is the modulus value to set.
+     */
     void SwitchModulus(const IntegerType& value);
+
+    /**
+     * Sets the vector modulus and reduces every entry modulo the new modulus as a non-negative
+     * integer, without the centered (signed) adjustment performed by SwitchModulus.
+     *
+     * @param value is the modulus value to set.
+     */
     void LazySwitchModulus(const IntegerType& value);
 
-    NativeVectorT& MultAccEqNoCheck(const NativeVectorT& V, const IntegerType& I);
-
+    /**
+     * Gets the vector modulus.
+     *
+     * @return the vector modulus.
+     */
     const IntegerType& GetModulus() const {
         return m_modulus;
     }
 
+    /**
+     * Gets the vector length.
+     *
+     * @return vector length.
+     */
     size_t GetLength() const {
         return m_data.size();
     }
 
+    // MODULAR ARITHMETIC OPERATIONS
+
+    /**
+     * Vector Modulus operator.
+     *
+     * @param modulus is the modulus to perform on the current vector entries.
+     * @return is the result after the modulus operation on current vector.
+     */
     NativeVectorT Mod(const IntegerType& modulus) const;
+
+    /**
+     * Vector Modulus operator. In-place variant.
+     *
+     * @param modulus is the modulus to perform on the current vector entries.
+     * @return is the result after the modulus operation on current vector.
+     */
     NativeVectorT& ModEq(const IntegerType& modulus);
 
+    /**
+     * Scalar modulus addition.
+     *
+     * After addition modulus operation is performed with the current vector
+     * modulus.
+     * @param b is the scalar to add at all locations.
+     * @return is the result of the modulus addition operation.
+     */
     NativeVectorT ModAdd(const IntegerType& b) const;
+
+    /**
+     * Scalar modulus addition. In-place variant.
+     *
+     * After addition modulus operation is performed with the current vector
+     * modulus.
+     * @param b is the scalar to add at all locations.
+     * @return is the result of the modulus addition operation.
+     */
     NativeVectorT& ModAddEq(const IntegerType& b);
 
+    /**
+     * Scalar modulus addition at a particular index.
+     *
+     * @param i is the index of the entry to add.
+     * @param b is the scalar to add.
+     * @return is the result of the modulus addition operation.
+     */
     NativeVectorT ModAddAtIndex(size_t i, const IntegerType& b) const;
+
+    /**
+     * Scalar modulus addition at a particular index. In-place variant.
+     *
+     * @param i is the index of the entry to add.
+     * @param b is the scalar to add.
+     * @return is the result of the modulus addition operation.
+     */
     NativeVectorT& ModAddAtIndexEq(size_t i, const IntegerType& b);
 
+    /**
+     * vector modulus addition.
+     *
+     * @param b is the vector to add at all locations.
+     * @return is the result of the modulus addition operation.
+     */
     NativeVectorT ModAdd(const NativeVectorT& b) const;
+
+    /**
+     * vector modulus addition. In-place variant.
+     *
+     * @param b is the vector to add at all locations.
+     * @return is the result of the modulus addition operation.
+     */
     NativeVectorT& ModAddEq(const NativeVectorT& b);
+
+    /**
+     * vector modulus addition. In-place variant that skips the length and modulus
+     * compatibility check of ModAddEq; b must have the same length and modulus, and the
+     * entries of both vectors must be reduced (ModAddFast per entry).
+     *
+     * @param b is the vector to add at all locations.
+     * @return is the result of the modulus addition operation.
+     */
     NativeVectorT& ModAddNoCheckEq(const NativeVectorT& b) {
         if constexpr (HEXL_ADD_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
             uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
@@ -240,42 +419,148 @@ public:
         return *this;
     }
 
+    /**
+     * Scalar modulus subtraction.
+     * After subtraction modulus operation is performed with the current vector
+     * modulus.
+     * @param b is the scalar to subtract from all locations.
+     * @return is the result of the modulus subtraction operation.
+     */
     NativeVectorT ModSub(const IntegerType& b) const;
+
+    /**
+     * Scalar modulus subtraction. In-place variant.
+     * After subtraction modulus operation is performed with the current vector
+     * modulus.
+     * @param b is the scalar to subtract from all locations.
+     * @return is the result of the modulus subtraction operation.
+     */
     NativeVectorT& ModSubEq(const IntegerType& b);
 
+    /**
+     * Vector Modulus subtraction.
+     *
+     * @param b is the vector to subtract.
+     * @return is the result of the modulus subtraction operation.
+     */
     NativeVectorT ModSub(const NativeVectorT& b) const;
+
+    /**
+     * Vector Modulus subtraction. In-place variant.
+     *
+     * @param b is the vector to subtract.
+     * @return is the result of the modulus subtraction operation.
+     */
     NativeVectorT& ModSubEq(const NativeVectorT& b);
 
+    /**
+     * Scalar modular multiplication.
+     * See the comments in the cpp files for details of the implementation.
+     *
+     * @param b is the scalar to multiply at all locations.
+     * @return is the result of the modulus multiplication operation.
+     */
     NativeVectorT ModMul(const IntegerType& b) const;
+
+    /**
+     * Scalar modular multiplication. In-place variant.
+     * See the comments in the cpp files for details of the implementation.
+     *
+     * @param b is the scalar to multiply at all locations.
+     * @return is the result of the modulus multiplication operation.
+     */
     NativeVectorT& ModMulEq(const IntegerType& b);
 
+    /**
+     * Vector modulus multiplication.
+     *
+     * @param b is the vector to multiply.
+     * @return is the result of the modulus multiplication operation.
+     */
     NativeVectorT ModMul(const NativeVectorT& b) const;
+
+    /**
+     * Vector modulus multiplication. In-place variant.
+     *
+     * @param b is the vector to multiply.
+     * @return is the result of the modulus multiplication operation.
+     */
     NativeVectorT& ModMulEq(const NativeVectorT& b);
-    NativeVectorT& ModMulNoCheckEq(const NativeVectorT& b) {
-        if constexpr (HEXL_MUL_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
-            uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
-            const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b[0]);
-            intel::hexl::EltwiseMultMod(op1, op1, op2, m_data.size(), m_modulus.m_value, 1);
-        }
-        else {
-            size_t size{m_data.size()};
-            auto mv{m_modulus};
-#ifdef NATIVEINT_BARRET_MOD
-            auto mu{m_modulus.ComputeMu()};
-            for (size_t i = 0; i < size; ++i)
-                m_data[i].ModMulFastEq(b[i], mv, mu);
-#else
-            for (size_t i = 0; i < size; ++i)
-                m_data[i].ModMulFastEq(b[i], mv);
-#endif
-        }
-        return *this;
-    }
+
+    /**
+     * Vector modulus multiplication. In-place variant that skips the length and modulus
+     * compatibility check of ModMulEq; b must have the same length and modulus, and the
+     * entries of both vectors must be reduced (Barrett kernel with hoisted constants).
+     *
+     * @param b is the vector to multiply.
+     * @return is the result of the modulus multiplication operation.
+     */
+    NativeVectorT& ModMulNoCheckEq(const NativeVectorT& b);
+
+    /**
+     * Fused multiply-accumulate: *this += V * I (mod the vector modulus), without
+     * size/modulus validation. Operand contract: the values of *this must be reduced;
+     * the values of V need NOT be reduced (the Shoup multiplication is exact for any
+     * unreduced multiplicand, which ApproxSwitchCRTBasis relies on for its cross-basis
+     * accumulation); I is reduced internally. Alternative backends implementing this
+     * interface must honor the unreduced-V tolerance.
+     *
+     * @param V is the vector to multiply and accumulate.
+     * @param I is the scalar multiplier.
+     * @return *this after the accumulation.
+     */
+    NativeVectorT& MultAccEqNoCheck(const NativeVectorT& V, const IntegerType& I);
+
+    /**
+     * Fused multiply-accumulate: *this += a * b (mod the vector modulus), without
+     * size/modulus validation. Operand contract: STRICTER than the scalar overload —
+     * *this, a, and b must ALL hold reduced values (Barrett kernel, no unreduced-operand
+     * tolerance). Saves the full-vector temporary of *this += a * b.
+     *
+     * @param a is the vector of first operands.
+     * @param b is the vector of second operands.
+     * @return *this after the accumulation.
+     */
+    NativeVectorT& MultAccEqNoCheck(const NativeVectorT& a, const NativeVectorT& b);
+
+    /**
+     * Reduces every element modulo the vector's own modulus.
+     *
+     * @return is the reduced vector.
+     */
+    NativeVectorT& ModReduceEq();
+
+    /**
+     * Vector multiplication without applying the modulus operation.
+     *
+     * @param b is the vector to multiply.
+     * @return is the result of the multiplication operation.
+     */
     NativeVectorT MultWithOutMod(const NativeVectorT& b) const;
 
+    /**
+     * Scalar modulus exponentiation.
+     *
+     * @param b is the scalar exponent to apply at all locations.
+     * @return a new vector which is the result of the modulus exponentiation
+     * operation.
+     */
     NativeVectorT ModExp(const IntegerType& b) const;
+
+    /**
+     * Scalar modulus exponentiation. In-place variant.
+     *
+     * @param b is the scalar exponent to apply at all locations.
+     * @return the resulting vector (same object) after the modulus exponentiation
+     * operation.
+     */
     NativeVectorT& ModExpEq(const IntegerType& b);
 
+    /**
+     * Modulus inverse.
+     *
+     * @return a new vector which is the result of the modulus inverse operation.
+     */
     NativeVectorT ModInverse() const {
         size_t size{m_data.size()};
         auto mv{m_modulus};
@@ -285,6 +570,11 @@ public:
         return ans;
     }
 
+    /**
+     * Modulus inverse. In-place variant.
+     *
+     * @return the resulting vector (same object) after the modulus inverse operation.
+     */
     NativeVectorT& ModInverseEq() {
         size_t size{m_data.size()};
         auto mv{m_modulus};
@@ -293,22 +583,108 @@ public:
         return *this;
     }
 
+    /**
+     * Perform a modulus by 2 operation.  Returns the least significant bit.
+     *
+     * @return a new vector which is the return value of the modulus by 2, also
+     * the least significant bit.
+     */
     NativeVectorT ModByTwo() const;
+
+    /**
+     * Perform a modulus by 2 operation.  Returns the least significant bit.
+     * In-place variant.
+     *
+     * @return the resulting vector (same object) holding the modulus by 2, also
+     * the least significant bit.
+     */
     NativeVectorT& ModByTwoEq();
 
+    /**
+     * Multiply and Rounding operation on a BigInteger x. Returns [x*p/q] where []
+     * is the rounding operation.
+     *
+     * @param p is the numerator to be multiplied.
+     * @param q is the denominator to be divided.
+     * @return the result of multiply and round.
+     */
     NativeVectorT MultiplyAndRound(const IntegerType& p, const IntegerType& q) const;
+
+    /**
+     * Multiply and Rounding operation on a BigInteger x. Returns [x*p/q] where []
+     * is the rounding operation. In-place variant.
+     *
+     * @param p is the numerator to be multiplied.
+     * @param q is the denominator to be divided.
+     * @return the result of multiply and round.
+     */
     NativeVectorT& MultiplyAndRoundEq(const IntegerType& p, const IntegerType& q);
 
+    /**
+     * Divide and Rounding operation on a BigInteger x. Returns [x/q] where [] is
+     * the rounding operation.
+     *
+     * @param q is the denominator to be divided.
+     * @return the result of divide and round.
+     */
     NativeVectorT DivideAndRound(const IntegerType& q) const;
+
+    /**
+     * Divide and Rounding operation on a BigInteger x. Returns [x/q] where [] is
+     * the rounding operation. In-place variant.
+     *
+     * @param q is the denominator to be divided.
+     * @return the result of divide and round.
+     */
     NativeVectorT& DivideAndRoundEq(const IntegerType& q);
 
-    NativeVectorT GetDigitAtIndexForBase(usint index, usint base) const;
+    // OTHER FUNCTIONS
 
-    template <class IntegerType_c>
-    friend std::ostream& operator<<(std::ostream& os, const NativeVectorT<IntegerType_c>& ptr_obj) {
+    /**
+     * Digit vector at a specific index for all entries for a given number base.
+     * Warning: only power-of-2 bases are currently supported.
+     * Example: for vector (83, 1, 45), index 2 and base 4 we have:
+     *
+     *                           index:0,1,2,3
+     * |83|                           |3,0,1,1|                 |1|
+     * |1 | --base 4 decomposition--> |1,0,0,0| --at index 2--> |0|
+     * |45|                           |1,3,2,0|                 |2|
+     *
+     * The return vector is (1,0,2)
+     *
+     * @param index is the index to return the digit from in all entries.
+     * @param base is the base to use for the operation.
+     * @return is the digit at a specific index for all entries for a given number
+     * base
+     */
+    NativeVectorT GetDigitAtIndexForBase(uint32_t index, uint32_t base) const;
+
+    /**
+     * Decomposes every entry into all of its base-2^digitLen digits at once. Digits are
+     * balanced, i.e. in [-2^(digitLen-1), 2^(digitLen-1)) of the centered representative
+     * and returned mod q, which halves the digit bound of BV key switching; the top digit
+     * absorbs the remaining quotient so that the digits reconstruct the value exactly
+     * (mod q). Falls back to plain unsigned digit windows when the bias does not fit the
+     * native word (ceil(qBits/digitLen)*digitLen + 1 > MaxBits).
+     *
+     * @param digitLen is the bit width of one digit.
+     * @return one vector per digit position, least significant first.
+     */
+    std::vector<NativeVectorT> BaseDecompose(uint32_t digitLen) const;
+
+    // STRINGS & STREAMS
+
+    /**
+     * ostream operator to output vector values to console
+     *
+     * @param os is the std ostream object.
+     * @param ptr_obj is the NativeVectorT object to be printed.
+     * @return std ostream object which captures the vector values.
+     */
+    friend std::ostream& operator<<(std::ostream& os, const NativeVectorT& ptr_obj) {
         auto len = ptr_obj.m_data.size();
         os << "[";
-        for (usint i = 0; i < len; i++) {
+        for (uint32_t i = 0; i < len; i++) {
             os << ptr_obj.m_data[i];
             os << ((i == (len - 1)) ? "]" : " ");
         }
@@ -317,8 +693,8 @@ public:
     }
 
     template <class Archive>
-    typename std::enable_if<!cereal::traits::is_text_archive<Archive>::value, void>::type save(
-        Archive& ar, std::uint32_t const version) const {
+    std::enable_if_t<!cereal::traits::is_text_archive<Archive>::value, void> save(Archive& ar,
+                                                                                  std::uint32_t const version) const {
         ::cereal::size_type size = m_data.size();
         ar(size);
         if (size > 0) {
@@ -328,15 +704,15 @@ public:
     }
 
     template <class Archive>
-    typename std::enable_if<cereal::traits::is_text_archive<Archive>::value, void>::type save(
-        Archive& ar, std::uint32_t const version) const {
+    std::enable_if_t<cereal::traits::is_text_archive<Archive>::value, void> save(Archive& ar,
+                                                                                 std::uint32_t const version) const {
         ar(::cereal::make_nvp("v", m_data));
         ar(::cereal::make_nvp("m", m_modulus));
     }
 
     template <class Archive>
-    typename std::enable_if<!cereal::traits::is_text_archive<Archive>::value, void>::type load(
-        Archive& ar, std::uint32_t const version) {
+    std::enable_if_t<!cereal::traits::is_text_archive<Archive>::value, void> load(Archive& ar,
+                                                                                  std::uint32_t const version) {
         if (version > SerializedVersion()) {
             OPENFHE_THROW("serialized object version " + std::to_string(version) +
                           " is from a later version of the library");
@@ -345,19 +721,14 @@ public:
         ar(size);
         m_data.resize(size);
         if (size > 0) {
-            auto* data = reinterpret_cast<IntegerType*>(malloc(size * sizeof(IntegerType)));
-            ar(::cereal::binary_data(data, size * sizeof(IntegerType)));
-            for (::cereal::size_type i = 0; i < size; i++) {
-                m_data[i] = data[i];
-            }
-            free(data);
+            ar(::cereal::binary_data(m_data.data(), size * sizeof(IntegerType)));
         }
         ar(m_modulus);
     }
 
     template <class Archive>
-    typename std::enable_if<cereal::traits::is_text_archive<Archive>::value, void>::type load(
-        Archive& ar, std::uint32_t const version) {
+    std::enable_if_t<cereal::traits::is_text_archive<Archive>::value, void> load(Archive& ar,
+                                                                                 std::uint32_t const version) {
         if (version > SerializedVersion()) {
             OPENFHE_THROW("serialized object version " + std::to_string(version) +
                           " is from a later version of the library");
@@ -373,6 +744,71 @@ public:
     static uint32_t SerializedVersion() {
         return 1;
     }
+
+  private:
+    /**
+     * Generalized-Barrett multiply loop with the reduction constants hoisted out of the
+     * loop. Uses the same shift structure and validity domain (operands < modulus) as
+     * NativeIntegerT::ModMulFast(b, modulus, mu); falls back to the per-element path when
+     * no double-width integer type is available.
+     *
+     * In-place variant: a is both the array of first operands and the destination.
+     *
+     * @param a is the array of first operands, overwritten with the products.
+     * @param b is the array of second operands.
+     * @param size is the number of elements.
+     * @param modulus is the modulus to perform operations with.
+     */
+    static void BarrettModMulLoop(IntegerType* a, const IntegerType* b, size_t size, const IntegerType& modulus);
+
+    /**
+     * Generalized-Barrett multiply loop writing to a separate destination; see the
+     * in-place overload for the kernel and its validity domain.
+     *
+     * @param dst is the destination array (may alias a).
+     * @param a is the array of first operands.
+     * @param b is the array of second operands.
+     * @param size is the number of elements.
+     * @param modulus is the modulus to perform operations with.
+     */
+    static void BarrettModMulLoop(IntegerType* dst, const IntegerType* a, const IntegerType* b, size_t size,
+                                  const IntegerType& modulus);
+
+    /**
+     * General-shrink loop shared by SwitchModulus, ModEq and the copy-with-switch ctor:
+     * reduces every element modulo nv and applies the centered correction, whose subtrahend
+     * only takes the values {diffR, 0}.
+     *
+     * The reduction uses a reciprocal computed once for the whole loop instead of a divide
+     * per element. Note this is NOT the ComputeMu/ModMu Barrett used elsewhere: that one is
+     * scaled to the modulus (valid only for inputs below 2^(2*MSB(nv)+3)), whereas this one
+     * is scaled to the word width, so it is valid for any input the vector can hold. That
+     * matters because callers do not agree on a bound: the arbitrary-cyclotomic transform
+     * reduces values that are residues of a much larger modulus.
+     *
+     * @param dst is the destination array (may alias src for the in-place callers).
+     * @param src is the source array.
+     * @param size is the number of elements.
+     * @param ov is the old modulus, only used for the centered correction.
+     * @param nv is the modulus to reduce by.
+     */
+    static void GeneralShrinkLoop(IntegerType* dst, const IntegerType* src, size_t size, BasicInt ov, BasicInt nv);
+
+    /**
+     * Fused multiply-accumulate loop: acc += a * b (mod modulus), with the same Barrett
+     * kernel and dispatch as BarrettModMulLoop and the modular addition fused into the
+     * same pass. Validity domain: ALL of acc, a, and b must hold reduced values — unlike
+     * the scalar MultAccEqNoCheck, the Barrett kernel has no tolerance for unreduced
+     * multiplicands.
+     *
+     * @param acc is the accumulator array.
+     * @param a is the array of first operands.
+     * @param b is the array of second operands.
+     * @param size is the number of elements.
+     * @param modulus is the modulus to perform operations with.
+     */
+    static void BarrettMultAccLoop(IntegerType* acc, const IntegerType* a, const IntegerType* b, size_t size,
+                                   const IntegerType& modulus);
 };
 
 }  // namespace intnathexl
@@ -391,15 +827,14 @@ inline void CEREAL_SAVE_FUNCTION_NAME(Archive& ar, std::vector<intnathexl::Nativ
 
 #if defined(HAVE_INT128)
 template <class Archive, class A>
-inline void CEREAL_SAVE_FUNCTION_NAME(Archive& ar,
-                                      std::vector<intnathexl::NativeIntegerT<unsigned __int128>, A> const& vec) {
+inline void CEREAL_SAVE_FUNCTION_NAME(Archive& ar, std::vector<intnathexl::NativeIntegerT<uint128_t>, A> const& vec) {
     ar(make_size_tag(static_cast<cereal::size_type>(vec.size())));  // number of elements
-    constexpr unsigned __int128 mask = (static_cast<unsigned __int128>(1) << 64) - 1;
+    constexpr uint128_t mask = (static_cast<uint128_t>(1) << 64) - 1;
     for (const auto& v : vec) {
         uint64_t vec[2];
-        unsigned __int128 int128 = v.ConvertToInt();
-        vec[0]                   = int128 & mask;  // least significant word
-        vec[1]                   = int128 >> 64;   // most significant word
+        uint128_t v128 = v.ConvertToInt();
+        vec[0] = v128 & mask;  // least significant word
+        vec[1] = v128 >> 64;   // most significant word
         ar(vec);
     }
 }
@@ -421,7 +856,7 @@ inline void CEREAL_LOAD_FUNCTION_NAME(Archive& ar, std::vector<intnathexl::Nativ
 
 #if defined(HAVE_INT128)
 template <class Archive, class A>
-inline void CEREAL_LOAD_FUNCTION_NAME(Archive& ar, std::vector<intnathexl::NativeIntegerT<unsigned __int128>, A>& vec) {
+inline void CEREAL_LOAD_FUNCTION_NAME(Archive& ar, std::vector<intnathexl::NativeIntegerT<uint128_t>, A>& vec) {
     cereal::size_type size;
     ar(make_size_tag(size));
     vec.resize(static_cast<size_t>(size));
@@ -436,4 +871,4 @@ inline void CEREAL_LOAD_FUNCTION_NAME(Archive& ar, std::vector<intnathexl::Nativ
 #endif
 }  // namespace cereal
 
-#endif  // LBCRYPTO_MATH_HAL_INTNATHEXL_MUBINTVECNAT_H
+#endif  // SRC_CORE_INCLUDE_MATH_HAL_INTNAT_HEXL_MUBINTVECNATHEXL_H_
