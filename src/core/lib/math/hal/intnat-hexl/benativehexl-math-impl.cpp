@@ -29,66 +29,14 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
+
 /*
-  This file contains template instantiations for all math classes & functions using math be6
- */
+  This file is intentionally empty.
 
-// TODO: remove this file. will require changes to openfhe-development
-
-#include "config_core.h"
-#ifdef WITH_INTEL_HEXL
-
-    #include "math/math-hal.h"
-    #include "math/hal/transform.h"
-
-    #include "math/binaryuniformgenerator-impl.h"
-    #include "math/discretegaussiangenerator-impl.h"
-    #include "math/discreteuniformgenerator-impl.h"
-    #include "math/matrix-impl.h"
-    #include "math/nbtheory-impl.h"
-    #include "math/ternaryuniformgenerator-impl.h"
-
-namespace lbcrypto {
-
-template class DiscreteGaussianGeneratorImpl<NativeVector>;
-template class BinaryUniformGeneratorImpl<NativeVector>;
-template class TernaryUniformGeneratorImpl<NativeVector>;
-template class DiscreteUniformGeneratorImpl<NativeVector>;
-
-template NativeInteger RootOfUnity<NativeInteger>(uint32_t m, const NativeInteger& modulo);
-template std::vector<NativeInteger> RootsOfUnity(uint32_t m, const std::vector<NativeInteger>& moduli);
-template NativeInteger GreatestCommonDivisor(const NativeInteger& a, const NativeInteger& b);
-template bool MillerRabinPrimalityTest(const NativeInteger& p, const uint32_t niter);
-template const NativeInteger PollardRhoFactorization(const NativeInteger& n);
-template void PrimeFactorize(NativeInteger n, std::set<NativeInteger>& primeFactors);
-template NativeInteger FirstPrime(uint32_t nBits, uint64_t m);
-template NativeInteger LastPrime(uint32_t nBits, uint64_t m);
-template NativeInteger NextPrime(const NativeInteger& q, uint64_t m);
-template NativeInteger PreviousPrime(const NativeInteger& q, uint64_t m);
-
-template std::vector<NativeInteger> GetTotientList(const NativeInteger& n);
-template std::vector<uint32_t> GetTotientList(const uint32_t& n);
-
-template NativeVector PolyMod(const NativeVector& dividend, const NativeVector& divisor, const NativeInteger& modulus);
-template NativeVector PolynomialMultiplication(const NativeVector& a, const NativeVector& b);
-template NativeVector GetCyclotomicPolynomial(uint32_t m, const NativeInteger& modulus);
-template NativeInteger SyntheticRemainder(const NativeVector& dividend, const NativeInteger& a,
-                                          const NativeInteger& modulus);
-template NativeVector SyntheticPolyRemainder(const NativeVector& dividend, const NativeVector& aList,
-                                             const NativeInteger& modulus);
-template NativeVector PolynomialPower<NativeVector>(const NativeVector& input, uint32_t power);
-template NativeVector SyntheticPolynomialDivision(const NativeVector& dividend, const NativeInteger& a,
-                                                  const NativeInteger& modulus);
-template NativeInteger FindGeneratorCyclic(const NativeInteger& modulo);
-template bool IsGenerator(const NativeInteger& g, const NativeInteger& modulo);
-template std::shared_ptr<std::vector<int64_t>> GetDigits(const NativeInteger& u, uint64_t base, uint32_t k);
-
-template class Matrix<NativeInteger>;
-template class Matrix<NativeVector>;
-
-}  // namespace lbcrypto
-
-CEREAL_CLASS_VERSION(NativeInteger, NativeInteger::SerializedVersion());
-CEREAL_CLASS_VERSION(NativeVector, NativeVector::SerializedVersion());
-
-#endif
+  Since OpenFHE v1.6, the canonical template instantiations for the native math
+  backend live in src/core/lib/math/hal/intnat/benative-math-impl.cpp, which
+  instantiates through the lbcrypto::NativeInteger / lbcrypto::NativeVector
+  aliases. In a WITH_INTEL_HEXL build those aliases resolve to the intnathexl
+  backend (see math/hal/nativeintbackend.h), so that translation unit already
+  instantiates the HEXL-accelerated classes and nothing remains to do here.
+*/
