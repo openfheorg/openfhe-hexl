@@ -54,8 +54,6 @@
 #include "scheme/bgvrns/gen-cryptocontext-bgvrns.h"
 #include "scheme/ckksrns/gen-cryptocontext-ckksrns.h"
 
-// keep all small moduli below 50 bits so Intel HEXL dispatches to the AVX512-IFMA kernels
-// (see docs/static_docs/Best_Performance.md)
 #define MAX_MODULUS_SIZE_HEXL 50
 
 using namespace lbcrypto;

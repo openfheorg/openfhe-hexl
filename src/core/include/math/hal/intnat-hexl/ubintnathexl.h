@@ -36,11 +36,12 @@
 #ifndef SRC_CORE_INCLUDE_MATH_HAL_INTNAT_HEXL_UBINTNATHEXL_H_
 #define SRC_CORE_INCLUDE_MATH_HAL_INTNAT_HEXL_UBINTNATHEXL_H_
 
-// compile-time switches for routing element-wise vector ops through Intel HEXL:
-// modular multiply is compute-bound and benefits from AVX-512; modular add is
-// memory-bandwidth-bound, so the HEXL path is kept off by default
+// add/sub are memory-bound; HEXL only wins for compute-bound multiply
 #ifndef HEXL_ADD_ENABLE
     #define HEXL_ADD_ENABLE 0
+#endif
+#ifndef HEXL_SUB_ENABLE
+    #define HEXL_SUB_ENABLE 0
 #endif
 #ifndef HEXL_MUL_ENABLE
     #define HEXL_MUL_ENABLE 1

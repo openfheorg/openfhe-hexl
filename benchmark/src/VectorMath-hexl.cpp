@@ -47,8 +47,6 @@
 #include "math/nbtheory.h"
 #include "math/ternaryuniformgenerator.h"
 
-// keep all small moduli below 50 bits so Intel HEXL dispatches to the AVX512-IFMA kernels
-// (see docs/static_docs/Best_Performance.md)
 #define MAX_MODULUS_SIZE_HEXL 50
 
 using namespace lbcrypto;
@@ -99,6 +97,42 @@ static void BM_BigVec_Addeq(benchmark::State& state) {
     V acc{a[0]};
     while (state.KeepRunning()) {
         addeq_BigVec<V>(acc, b[i = (i + 1) & VEC_POOL_M1]);
+    }
+}
+
+template <typename V>
+static void sub_BigVec(const V& a, const V& b) {
+    V c = a - b;
+}
+
+template <typename V>
+static void BM_BigVec_Sub(benchmark::State& state) {
+    auto p = state.range(0);
+    auto q = LastPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p);
+    auto a = MakeVecPool<V>(p, q);
+    auto b = MakeVecPool<V>(p, q);
+    size_t i{VEC_POOL_M1};
+    while (state.KeepRunning()) {
+        i = (i + 1) & VEC_POOL_M1;
+        sub_BigVec<V>(a[i], b[i]);
+    }
+}
+
+template <typename V>
+static void subeq_BigVec(V& a, const V& b) {
+    a -= b;
+}
+
+template <typename V>
+static void BM_BigVec_Subeq(benchmark::State& state) {
+    auto p = state.range(0);
+    auto q = LastPrime<typename V::Integer>(MAX_MODULUS_SIZE_HEXL, p);
+    auto a = MakeVecPool<V>(p, q);
+    auto b = MakeVecPool<V>(p, q);
+    size_t i{VEC_POOL_M1};
+    V acc{a[0]};
+    while (state.KeepRunning()) {
+        subeq_BigVec<V>(acc, b[i = (i + 1) & VEC_POOL_M1]);
     }
 }
 
@@ -182,6 +216,8 @@ static void BM_Sample_Gaussian(benchmark::State& state) {
 
 DO_VECTOR_BENCHMARK(BM_BigVec_Add, NativeVector)
 DO_VECTOR_BENCHMARK(BM_BigVec_Addeq, NativeVector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Sub, NativeVector)
+DO_VECTOR_BENCHMARK(BM_BigVec_Subeq, NativeVector)
 DO_VECTOR_BENCHMARK(BM_BigVec_Mult, NativeVector)
 DO_VECTOR_BENCHMARK(BM_BigVec_Multeq, NativeVector)
 DO_VECTOR_BENCHMARK(BM_Sample_Uniform, NativeVector)

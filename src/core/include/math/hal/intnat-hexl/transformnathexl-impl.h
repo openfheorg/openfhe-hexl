@@ -811,11 +811,15 @@ ChineseRemainderTransformFTTNat<VecType>::GetTables(const IntType& rootOfUnity, 
 template <typename VecType>
 intel::hexl::NTT* ChineseRemainderTransformFTTNat<VecType>::GetHexlNTT(uint32_t dim, const IntType& modulus,
                                                                        const IntType& rootOfUnity) {
-    std::pair<uint64_t, uint64_t> key{dim, modulus.ConvertToInt()};
+    // uint64_t casts required: uint32_t args select HEXL's allocator ctor and fail to link
+    uint64_t q{static_cast<uint64_t>(modulus.ConvertToInt())};
+    std::pair<uint64_t, uint64_t> key{dim, q};
     std::lock_guard<std::mutex> lock(m_mtxIntelNTT);
     auto it = m_IntelNtt.find(key);
-    if (it == m_IntelNtt.end())
-        it = m_IntelNtt.emplace(key, intel::hexl::NTT(dim, modulus.ConvertToInt(), rootOfUnity.ConvertToInt())).first;
+    if (it == m_IntelNtt.end()) {
+        intel::hexl::NTT ntt(static_cast<uint64_t>(dim), q, static_cast<uint64_t>(rootOfUnity.ConvertToInt()));
+        it = m_IntelNtt.emplace(key, std::move(ntt)).first;
+    }
     return &it->second;
 }
 

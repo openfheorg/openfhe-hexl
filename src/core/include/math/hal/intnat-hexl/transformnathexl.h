@@ -739,7 +739,36 @@ class ChineseRemainderTransformArbNat final : public lbcrypto::ChineseRemainderT
 
 }  // namespace intnathexl
 
-// class implementations
-#include "math/hal/intnat-hexl/transformnathexl-impl.h"
+#define TRANSFORM_IMPLEMENTATION "math/hal/intnat-hexl/transformnathexl-impl.h"
+
+#define MAKE_TRANSFORM_TYPES                                                               \
+    template class intnathexl::NumberTheoreticTransformNat<intnathexl::NativeVector>;      \
+    template class intnathexl::ChineseRemainderTransformFTTNat<intnathexl::NativeVector>;  \
+    template class intnathexl::BluesteinFFTNat<intnathexl::NativeVector>;                  \
+    template class intnathexl::ChineseRemainderTransformArbNat<intnathexl::NativeVector>;
+
+#define EXTERN_TRANSFORM_TYPES                                                                   \
+    extern template class intnathexl::NumberTheoreticTransformNat<intnathexl::NativeVector>;     \
+    extern template class intnathexl::ChineseRemainderTransformFTTNat<intnathexl::NativeVector>; \
+    extern template class intnathexl::BluesteinFFTNat<intnathexl::NativeVector>;                 \
+    extern template class intnathexl::ChineseRemainderTransformArbNat<intnathexl::NativeVector>;
+
+// Same set at 32-bit width, for use alongside the native width in a 64-bit build.
+#define MAKE_TRANSFORM_TYPES32                                                               \
+    template class intnathexl::NumberTheoreticTransformNat<intnathexl::NativeVector32>;      \
+    template class intnathexl::ChineseRemainderTransformFTTNat<intnathexl::NativeVector32>;  \
+    template class intnathexl::BluesteinFFTNat<intnathexl::NativeVector32>;                  \
+    template class intnathexl::ChineseRemainderTransformArbNat<intnathexl::NativeVector32>;
+
+#define EXTERN_TRANSFORM_TYPES32                                                                   \
+    extern template class intnathexl::NumberTheoreticTransformNat<intnathexl::NativeVector32>;     \
+    extern template class intnathexl::ChineseRemainderTransformFTTNat<intnathexl::NativeVector32>; \
+    extern template class intnathexl::BluesteinFFTNat<intnathexl::NativeVector32>;                 \
+    extern template class intnathexl::ChineseRemainderTransformArbNat<intnathexl::NativeVector32>;
+
+EXTERN_TRANSFORM_TYPES
+#if NATIVEINT != 32
+EXTERN_TRANSFORM_TYPES32
+#endif
 
 #endif  // SRC_CORE_INCLUDE_MATH_HAL_INTNAT_HEXL_TRANSFORMNATHEXL_H_

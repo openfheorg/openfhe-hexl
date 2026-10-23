@@ -1199,14 +1199,9 @@ void HexlDCRTPolyImpl<VecType>::ExpandCRTBasisQlHat(const std::shared_ptr<Params
                                                 const std::vector<NativeInteger>& QlHatModqPrecon,
                                                 const uint32_t sizeQ) {
     uint32_t sizeQl(m_vectors.size());
-    uint32_t ringDim(m_params->GetRingDimension());
 #pragma omp parallel for num_threads(OpenFHEParallelControls.GetThreadLimit(sizeQl))
     for (uint32_t i = 0; i < sizeQl; ++i) {
-        const NativeInteger& qi = m_vectors[i].GetModulus();
-        const NativeInteger& QlHatModqi = QlHatModq[i];
-        const NativeInteger& QlHatModqiPrecon = QlHatModqPrecon[i];
-        for (uint32_t ri = 0; ri < ringDim; ++ri)
-            m_vectors[i][ri].ModMulFastConstEq(QlHatModqi, qi, QlHatModqiPrecon);
+        m_vectors[i] *= QlHatModq[i];
     }
     m_vectors.resize(sizeQ);
     for (uint32_t i = sizeQl; i < sizeQ; ++i) {

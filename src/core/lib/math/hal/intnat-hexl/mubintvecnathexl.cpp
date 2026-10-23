@@ -257,14 +257,8 @@ void NativeVectorT<IntegerType>::SwitchModulus(const IntegerType& modulus) {
 
 template <class IntegerType>
 void NativeVectorT<IntegerType>::LazySwitchModulus(const IntegerType& modulus) {
-    if constexpr (std::is_same_v<IntegerType, NativeInteger>) {
-        uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
-        intel::hexl::EltwiseReduceMod(op1, op1, m_data.size(), modulus.m_value, 1, 1);
-    }
-    else {
-        for (auto& v : m_data)
-            v.ModEq(modulus);
-    }
+    for (auto& v : m_data)
+        v.ModEq(modulus);
     this->SetModulus(modulus);
 }
 
@@ -467,8 +461,15 @@ NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModSub(const IntegerType&
         bv.ModEq(m_modulus);
     const size_t size{m_data.size()};
     NativeVectorT ans(size, m_modulus);
-    for (size_t i = 0; i < size; ++i)
-        ans.m_data[i].m_value = modSubLane(m_data[i].m_value, bv.m_value, mv);
+    if constexpr (HEXL_SUB_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+        uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
+        const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+        intel::hexl::EltwiseSubMod(res, op1, bv.m_value, size, mv);
+    }
+    else {
+        for (size_t i = 0; i < size; ++i)
+            ans.m_data[i].m_value = modSubLane(m_data[i].m_value, bv.m_value, mv);
+    }
     return ans;
 }
 
@@ -479,8 +480,14 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModSubEq(const IntegerTy
     if (bv.m_value >= mv)
         bv.ModEq(m_modulus);
     const size_t size{m_data.size()};
-    for (size_t i = 0; i < size; ++i)
-        m_data[i].m_value = modSubLane(m_data[i].m_value, bv.m_value, mv);
+    if constexpr (HEXL_SUB_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+        uint64_t* op1 = reinterpret_cast<uint64_t*>(&m_data[0]);
+        intel::hexl::EltwiseSubMod(op1, op1, bv.m_value, size, mv);
+    }
+    else {
+        for (size_t i = 0; i < size; ++i)
+            m_data[i].m_value = modSubLane(m_data[i].m_value, bv.m_value, mv);
+    }
     return *this;
 }
 
@@ -488,18 +495,29 @@ template <class IntegerType>
 NativeVectorT<IntegerType> NativeVectorT<IntegerType>::ModSub(const NativeVectorT& b) const {
     if (m_data.size() != b.m_data.size() || m_modulus != b.m_modulus)
         OPENFHE_THROW("Called on NativeVectorT's with different parameters.");
+    if constexpr (HEXL_SUB_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+        const size_t size{m_data.size()};
+        NativeVectorT ans(size, m_modulus);
+        uint64_t* res       = reinterpret_cast<uint64_t*>(&ans.m_data[0]);
+        const uint64_t* op1 = reinterpret_cast<const uint64_t*>(&m_data[0]);
+        const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b.m_data[0]);
+        intel::hexl::EltwiseSubMod(res, op1, op2, size, m_modulus.m_value);
+        return ans;
+    }
+    else {
 #if defined(__clang__)
-    auto ans(*this);
-    ans.ModSubEq(b);
-    return ans;
+        auto ans(*this);
+        ans.ModSubEq(b);
+        return ans;
 #else
-    const auto mv{m_modulus.m_value};
-    const size_t size{m_data.size()};
-    NativeVectorT ans(size, m_modulus);
-    for (size_t i = 0; i < size; ++i)
-        ans.m_data[i].m_value = modSubLane(m_data[i].m_value, b.m_data[i].m_value, mv);
-    return ans;
+        const auto mv{m_modulus.m_value};
+        const size_t size{m_data.size()};
+        NativeVectorT ans(size, m_modulus);
+        for (size_t i = 0; i < size; ++i)
+            ans.m_data[i].m_value = modSubLane(m_data[i].m_value, b.m_data[i].m_value, mv);
+        return ans;
 #endif
+    }
 }
 
 template <class IntegerType>
@@ -508,8 +526,15 @@ NativeVectorT<IntegerType>& NativeVectorT<IntegerType>::ModSubEq(const NativeVec
         OPENFHE_THROW("Called on NativeVectorT's with different parameters.");
     const auto mv{m_modulus.m_value};
     const size_t size{m_data.size()};
-    for (size_t i = 0; i < size; ++i)
-        m_data[i].m_value = modSubLane(m_data[i].m_value, b.m_data[i].m_value, mv);
+    if constexpr (HEXL_SUB_ENABLE && std::is_same_v<IntegerType, NativeInteger>) {
+        uint64_t* op1       = reinterpret_cast<uint64_t*>(&m_data[0]);
+        const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&b.m_data[0]);
+        intel::hexl::EltwiseSubMod(op1, op1, op2, size, mv);
+    }
+    else {
+        for (size_t i = 0; i < size; ++i)
+            m_data[i].m_value = modSubLane(m_data[i].m_value, b.m_data[i].m_value, mv);
+    }
     return *this;
 }
 
