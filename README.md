@@ -1,6 +1,6 @@
 # OpenFHE HEXL Acceleration
 
-This repository contains code that can be staged into OpenFHE v1.5.1 to enable Intel HEXL v1.2.6 acceleration.
+This repository contains code that can be staged into OpenFHE v1.6.1 to enable Intel HEXL v1.2.6 acceleration.
 
 # How To Use
 
@@ -25,11 +25,11 @@ Cloning openfhe-development repository.
 
 ===============================================================================
 
-Switching to openfhe-development branch v1.5.1.
+Switching to openfhe-development tag v1.6.1.
 
 ===============================================================================
 
-Status of openfhe-development brach v1.5.1.
+Status of openfhe-development tag v1.6.1.
 
 ===============================================================================
 
@@ -46,11 +46,11 @@ Cloning openfhe-hexl repository.
 
 ===============================================================================
 
-Switching to openfhe-hexl branch v1.5.1.0.
+Switching to openfhe-hexl tag v1.6.1.0.
 
 ===============================================================================
 
-Status of openfhe-hexl branch v1.5.1.0.
+Status of openfhe-hexl tag v1.6.1.0.
 
 ===============================================================================
 

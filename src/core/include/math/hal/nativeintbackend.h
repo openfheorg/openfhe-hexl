@@ -29,41 +29,60 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-#ifndef __NATIVEINTBACKEND_H__
-#define __NATIVEINTBACKEND_H__
+#ifndef SRC_CORE_INCLUDE_MATH_HAL_NATIVEINTBACKEND_H_
+#define SRC_CORE_INCLUDE_MATH_HAL_NATIVEINTBACKEND_H_
 
 #include "config_core.h"
 #include "math/hal/basicint.h"
 
 #ifdef WITH_INTEL_HEXL
 
-    #include "math/hal/intnat-hexl/ubintnathexl.h"
     #include "math/hal/intnat-hexl/mubintvecnathexl.h"
     #include "math/hal/intnat-hexl/transformnathexl.h"
+    #include "math/hal/intnat-hexl/ubintnathexl.h"
+
+template <typename VecType>
+using NatChineseRemainderTransformFTT = intnathexl::ChineseRemainderTransformFTTNat<VecType>;
+template <typename VecType>
+using NatChineseRemainderTransformArb = intnathexl::ChineseRemainderTransformArbNat<VecType>;
 
 namespace lbcrypto {
 
 using NativeInteger = intnathexl::NativeInteger;
-using NativeVector  = intnathexl::NativeVector;
+using NativeVector = intnathexl::NativeVector;
+
+using NativeInteger32 = intnathexl::NativeInteger32;
+using NativeVector32 = intnathexl::NativeVector32;
 
 }  // namespace lbcrypto
 
 #else
 
-    #include "math/hal/intnat/ubintnat.h"
     #include "math/hal/intnat/mubintvecnat.h"
     #include "math/hal/intnat/transformnat.h"
+    #include "math/hal/intnat/ubintnat.h"
+
+template <typename VecType>
+using NatChineseRemainderTransformFTT = intnat::ChineseRemainderTransformFTTNat<VecType>;
+template <typename VecType>
+using NatChineseRemainderTransformArb = intnat::ChineseRemainderTransformArbNat<VecType>;
 
 namespace lbcrypto {
 
 using NativeInteger = intnat::NativeInteger;
-using NativeVector  = intnat::NativeVector;
+using NativeVector = intnat::NativeVector;
+
+using NativeInteger32 = intnat::NativeInteger32;
+using NativeVector32 = intnat::NativeVector32;
 
 }  // namespace lbcrypto
 
 #endif
 
 using NativeInteger = lbcrypto::NativeInteger;
-using NativeVector  = lbcrypto::NativeVector;
+using NativeVector = lbcrypto::NativeVector;
 
-#endif
+using NativeInteger32 = lbcrypto::NativeInteger32;
+using NativeVector32 = lbcrypto::NativeVector32;
+
+#endif  // SRC_CORE_INCLUDE_MATH_HAL_NATIVEINTBACKEND_H_

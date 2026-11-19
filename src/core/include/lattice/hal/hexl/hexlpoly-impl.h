@@ -29,112 +29,91 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //==================================================================================
 
-// TODO: Update functions to utilize hexl functionality
+/*
+  implementation of the integer lattice
+ */
 
-#ifndef LBCRYPTO_INC_LATTICE_HAL_HEXL_HEXLPOLY_IMPL_H
-#define LBCRYPTO_INC_LATTICE_HAL_HEXL_HEXLPOLY_IMPL_H
-
-#include "hexl/hexl.hpp"
-
-#include "lattice/hal/hexl/hexlpoly.h"
-
-#include "utils/debug.h"
-#include "utils/exception.h"
-#include "utils/inttypes.h"
+#ifndef SRC_CORE_INCLUDE_LATTICE_HAL_HEXL_HEXLPOLY_IMPL_H_
+#define SRC_CORE_INCLUDE_LATTICE_HAL_HEXL_HEXLPOLY_IMPL_H_
 
 #include <cmath>
+#include <cstdint>
+#include <initializer_list>
 #include <limits>
 #include <memory>
 #include <ostream>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
+#include "lattice/hal/hexl/hexlpoly.h"
+#include "utils/debug.h"
+#include "utils/exception.h"
+#include "utils/inttypes.h"
+#include "utils/utilities.h"
+
 namespace lbcrypto {
 
+/**
+ * @brief Constructs an element whose coefficients are sampled from a discrete Gaussian distribution and converted
+ * to the requested format.
+ *
+ * @param dgg the discrete Gaussian generator.
+ * @param params the element parameters.
+ * @param format the format of the resulting element.
+ */
 template <typename VecType>
-HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator+=(const HexlPolyImpl& element) {
-    if (!m_values)
-        m_values = std::make_unique<VecType>(m_params->GetRingDimension(), m_params->GetModulus());
-    if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
-        uint64_t* op1       = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
-        const uint64_t* op2 = reinterpret_cast<const uint64_t*>(&element[0]);
-        intel::hexl::EltwiseAddMod(op1, op1, op2, m_params->GetRingDimension(),
-                                   m_params->GetModulus().template ConvertToInt<uint64_t>());
-    }
-    else {
-        m_values->ModAddEq(*element.m_values);
-    }
-    return *this;
-}
-
-template <typename VecType>
-void HexlPolyImpl<VecType>::AddILElementOne() {
-    if constexpr (HEXL_ADD_ENABLE && std::is_same_v<VecType, NativeVector>) {
-        uint64_t* op1 = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
-        intel::hexl::EltwiseAddMod(op1, op1, 1, m_params->GetRingDimension(),
-                                   m_params->GetModulus().template ConvertToInt<uint64_t>());
-    }
-    else {
-        static const Integer ONE(1);
-        uint32_t vlen{m_params->GetRingDimension()};
-        const auto& m{m_params->GetModulus()};
-        for (uint32_t i = 0; i < vlen; ++i)
-            (*m_values)[i].ModAddFastEq(ONE, m);
-    }
-}
-
-template <typename VecType>
-void HexlPolyImpl<VecType>::SwitchModulus(const Integer& modulus, const Integer& rootOfUnity, const Integer& modulusArb,
-                                          const Integer& rootOfUnityArb) {
-    if (!m_values)
-        OPENFHE_THROW("Poly SwitchModulus on empty values");
-    if constexpr (HEXL_MUL_ENABLE && std::is_same_v<VecType, NativeVector>) {
-        uint64_t om{m_values->GetModulus().ConvertToInt()};
-        m_values->SetModulus(modulus);
-        uint64_t nm{modulus.ConvertToInt()};
-        uint64_t* op1 = reinterpret_cast<uint64_t*>(&(*m_values)[0]);
-        if (nm > om)
-            intel::hexl::EltwiseCmpAdd(op1, op1, m_params->GetRingDimension(), intel::hexl::CMPINT::NLE, (om >> 1),
-                                       nm - om);
-        else
-            intel::hexl::EltwiseCmpSubMod(op1, op1, m_params->GetRingDimension(), nm, intel::hexl::CMPINT::NLE,
-                                          (om >> 1), (om - nm) % nm);
-    }
-    else {
-        m_values->SwitchModulus(modulus);
-    }
-    auto c{m_params->GetCyclotomicOrder()};
-    m_params = std::make_shared<HexlPolyImpl::Params>(c, modulus, rootOfUnity, modulusArb, rootOfUnityArb);
-}
-
-template <typename VecType>
-HexlPolyImpl<VecType>::HexlPolyImpl(const DggType& dgg, const std::shared_ptr<HexlPolyImpl::Params>& params,
-                                    Format format)
+HexlPolyImpl<VecType>::HexlPolyImpl(const DggType& dgg, const std::shared_ptr<HexlPolyImpl::Params>& params, Format format)
     : m_format{Format::COEFFICIENT},
       m_params{params},
       m_values{std::make_unique<VecType>(dgg.GenerateVector(params->GetRingDimension(), params->GetModulus()))} {
     HexlPolyImpl<VecType>::SetFormat(format);
 }
 
+/**
+ * @brief Constructs an element with values sampled uniformly modulo the modulus, recorded as already being in the
+ * requested format (no transform is applied).
+ *
+ * @param dug the discrete uniform generator.
+ * @param params the element parameters.
+ * @param format the format recorded for the resulting element.
+ */
 template <typename VecType>
 HexlPolyImpl<VecType>::HexlPolyImpl(DugType& dug, const std::shared_ptr<HexlPolyImpl::Params>& params, Format format)
     : m_format{format},
       m_params{params},
       m_values{std::make_unique<VecType>(dug.GenerateVector(params->GetRingDimension(), params->GetModulus()))} {}
 
+/**
+ * @brief Constructs an element whose coefficients are sampled from the binary uniform distribution and converted
+ * to the requested format.
+ *
+ * @param bug the binary uniform generator.
+ * @param params the element parameters.
+ * @param format the format of the resulting element.
+ */
 template <typename VecType>
-HexlPolyImpl<VecType>::HexlPolyImpl(const BugType& bug, const std::shared_ptr<HexlPolyImpl::Params>& params,
-                                    Format format)
+HexlPolyImpl<VecType>::HexlPolyImpl(const BugType& bug, const std::shared_ptr<HexlPolyImpl::Params>& params, Format format)
     : m_format{Format::COEFFICIENT},
       m_params{params},
       m_values{std::make_unique<VecType>(bug.GenerateVector(params->GetRingDimension(), params->GetModulus()))} {
     HexlPolyImpl<VecType>::SetFormat(format);
 }
 
+/**
+ * @brief Constructs an element whose coefficients are sampled from the ternary uniform distribution and converted
+ * to the requested format.
+ *
+ * @param tug the ternary uniform generator.
+ * @param params the element parameters.
+ * @param format the format of the resulting element.
+ * @param h the Hamming weight (number of nonzero coefficients) for the sparse distribution; 0 samples every
+ * coefficient uniformly.
+ */
 template <typename VecType>
-HexlPolyImpl<VecType>::HexlPolyImpl(const TugType& tug, const std::shared_ptr<HexlPolyImpl::Params>& params,
-                                    Format format, uint32_t h)
+HexlPolyImpl<VecType>::HexlPolyImpl(const TugType& tug, const std::shared_ptr<HexlPolyImpl::Params>& params, Format format,
+                            uint32_t h)
     : m_format{Format::COEFFICIENT},
       m_params{params},
       m_values{std::make_unique<VecType>(tug.GenerateVector(params->GetRingDimension(), params->GetModulus(), h))} {
@@ -188,8 +167,7 @@ HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator=(const std::vector<int64_
     }
     for (size_t j = 0; j < vlen; ++j) {
         if (j < llen)
-            (*m_values)[j] =
-                (rhs[j] < 0) ? m - Integer(static_cast<uint64_t>(-rhs[j])) : Integer(static_cast<uint64_t>(rhs[j]));
+            (*m_values)[j] = SignedToResidue(rhs[j], m);
         else
             (*m_values)[j] = ZERO;
     }
@@ -210,8 +188,7 @@ HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator=(const std::vector<int32_
     }
     for (size_t j = 0; j < vlen; ++j) {
         if (j < llen)
-            (*m_values)[j] =
-                (rhs[j] < 0) ? m - Integer(static_cast<uint64_t>(-rhs[j])) : Integer(static_cast<uint64_t>(rhs[j]));
+            (*m_values)[j] = SignedToResidue(rhs[j], m);
         else
             (*m_values)[j] = ZERO;
     }
@@ -268,11 +245,10 @@ void HexlPolyImpl<VecType>::SetValues(VecType&& values, Format format) {
 template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Plus(const typename VecType::Integer& element) const {
     HexlPolyImpl<VecType> tmp(m_params, m_format);
-    if (m_format == Format::COEFFICIENT) {
+    if (m_format == Format::COEFFICIENT)
         tmp.SetValues((*m_values).ModAddAtIndex(0, element), m_format);
-        return tmp;
-    }
-    tmp.SetValues((*m_values).ModAdd(element), m_format);
+    else
+        tmp.SetValues((*m_values).ModAdd(element), m_format);
     return tmp;
 }
 
@@ -299,8 +275,7 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Times(NativeInteger::SignedNativeIn
         if (elementReduced > q)
             elementReduced.ModEq(q);
         tmp.SetValues((*m_values).ModMul(q - elementReduced), m_format);
-    }
-    else {
+    } else {
         Integer elementReduced{NativeInteger::Integer(element)};
         if (elementReduced > q)
             elementReduced.ModEq(q);
@@ -318,7 +293,7 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Minus(const HexlPolyImpl& rhs) cons
 
 template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::MultiplyAndRound(const typename VecType::Integer& p,
-                                                              const typename VecType::Integer& q) const {
+                                                      const typename VecType::Integer& q) const {
     HexlPolyImpl<VecType> tmp(m_params, m_format);
     tmp.SetValues((*m_values).MultiplyAndRound(p, q), m_format);
     return tmp;
@@ -336,8 +311,16 @@ template <typename VecType>
 HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Negate() const {
     //  UnitTestBFVrnsCRTOperations.cpp line 316 throws with this uncommented
     //    if (m_format != Format::EVALUATION)
-    //        OPENFHE_THROW(not_implemented_error, "Negate for HexlPolyImpl is supported only in Format::EVALUATION format.\n");
+    //        OPENFHE_THROW("Negate for HexlPolyImpl is supported only in Format::EVALUATION format.\n");
     return HexlPolyImpl<VecType>(m_params, m_format, true) -= *this;
+}
+
+template <typename VecType>
+HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator+=(const HexlPolyImpl& element) {
+    if (!m_values)
+        m_values = std::make_unique<VecType>(m_params->GetRingDimension(), m_params->GetModulus());
+    m_values->ModAddEq(*element.m_values);
+    return *this;
 }
 
 template <typename VecType>
@@ -346,6 +329,15 @@ HexlPolyImpl<VecType>& HexlPolyImpl<VecType>::operator-=(const HexlPolyImpl& ele
         m_values = std::make_unique<VecType>(m_params->GetRingDimension(), m_params->GetModulus());
     m_values->ModSubEq(*element.m_values);
     return *this;
+}
+
+template <typename VecType>
+void HexlPolyImpl<VecType>::AddILElementOne() {
+    static const Integer ONE(1);
+    uint32_t vlen{m_params->GetRingDimension()};
+    const auto& m{m_params->GetModulus()};
+    for (uint32_t i = 0; i < vlen; ++i)
+        (*m_values)[i].ModAddFastEq(ONE, m);
 }
 
 template <typename VecType>
@@ -405,8 +397,7 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::AutomorphismTransform(uint32_t k) c
 }
 
 template <typename VecType>
-HexlPolyImpl<VecType> HexlPolyImpl<VecType>::AutomorphismTransform(uint32_t k,
-                                                                   const std::vector<uint32_t>& precomp) const {
+HexlPolyImpl<VecType> HexlPolyImpl<VecType>::AutomorphismTransform(uint32_t k, const std::vector<uint32_t>& precomp) const {
     if ((m_format != Format::EVALUATION) || (m_params->GetRingDimension() != (m_params->GetCyclotomicOrder() >> 1)))
         OPENFHE_THROW("Automorphism Poly Format not EVALUATION or not power-of-two");
     if (k % 2 == 0)
@@ -440,8 +431,18 @@ HexlPolyImpl<VecType> HexlPolyImpl<VecType>::Mod(const Integer& modulus) const {
 }
 
 template <typename VecType>
-void HexlPolyImpl<VecType>::LazySwitchModulus(const Integer& modulus, const Integer& rootOfUnity,
-                                              const Integer& modulusArb, const Integer& rootOfUnityArb) {
+void HexlPolyImpl<VecType>::SwitchModulus(const Integer& modulus, const Integer& rootOfUnity, const Integer& modulusArb,
+                                      const Integer& rootOfUnityArb) {
+    if (m_values != nullptr) {
+        m_values->SwitchModulus(modulus);
+        auto c{m_params->GetCyclotomicOrder()};
+        m_params = std::make_shared<HexlPolyImpl::Params>(c, modulus, rootOfUnity, modulusArb, rootOfUnityArb);
+    }
+}
+
+template <typename VecType>
+void HexlPolyImpl<VecType>::LazySwitchModulus(const Integer& modulus, const Integer& rootOfUnity, const Integer& modulusArb,
+                                          const Integer& rootOfUnityArb) {
     if (m_values != nullptr) {
         m_values->LazySwitchModulus(modulus);
         auto c{m_params->GetCyclotomicOrder()};
@@ -484,14 +485,20 @@ void HexlPolyImpl<VecType>::ArbitrarySwitchFormat() {
         m_format = Format::EVALUATION;
         auto&& v = ChineseRemainderTransformArb<VecType>().ForwardTransform(*m_values, lr, bm, br, co);
         m_values = std::make_unique<VecType>(v);
-    }
-    else {
+    } else {
         m_format = Format::COEFFICIENT;
         auto&& v = ChineseRemainderTransformArb<VecType>().InverseTransform(*m_values, lr, bm, br, co);
         m_values = std::make_unique<VecType>(v);
     }
 }
 
+/**
+ * @brief Writes the values and modulus of a polynomial, followed by its root of unity, to an output stream.
+ *
+ * @param os the output stream.
+ * @param p the polynomial to print.
+ * @return the output stream.
+ */
 template <typename VecType>
 std::ostream& operator<<(std::ostream& os, const HexlPolyImpl<VecType>& p) {
     if (p.m_values != nullptr) {
@@ -552,7 +559,6 @@ double HexlPolyImpl<VecType>::Norm() const {
 // \log q / base } \rceil }; used as a subroutine in the relinearization
 // procedure baseBits is the number of bits in the base, i.e., base = 2^baseBits
 
-// TODO: optimize this
 template <typename VecType>
 std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::BaseDecompose(uint32_t baseBits, bool evalModeAnswer) const {
     uint32_t nBits = m_params->GetModulus().GetLengthForBase(2);
@@ -561,23 +567,36 @@ std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::BaseDecompose(uint32_t
     if (nBits % baseBits > 0)
         nWindows++;
 
-    HexlPolyImpl<VecType> xDigit(m_params);
-
     std::vector<HexlPolyImpl<VecType>> result;
     result.reserve(nWindows);
 
-    HexlPolyImpl<VecType> x(*this);
-    x.SetFormat(Format::COEFFICIENT);
+    HexlPolyImpl<VecType> xcopy;
+    if (m_format != Format::COEFFICIENT) {
+        xcopy = *this;
+        xcopy.SetFormat(Format::COEFFICIENT);
+    }
+    const HexlPolyImpl<VecType>& x = (m_format != Format::COEFFICIENT) ? xcopy : *this;
 
-    // TP: x is same for BACKEND 2 and 6
-    for (uint32_t i = 0; i < nWindows; ++i) {
-        xDigit.SetValues(x.GetValues().GetDigitAtIndexForBase(i + 1, 1 << baseBits), x.GetFormat());
+    if constexpr (std::is_same_v<VecType, NativeVector>) {
+        for (auto&& dv : x.GetValues().BaseDecompose(baseBits)) {
+            HexlPolyImpl<VecType> xDigit(m_params);
+            xDigit.SetValues(std::move(dv), Format::COEFFICIENT);
+            if (evalModeAnswer)
+                xDigit.SwitchFormat();
+            result.push_back(std::move(xDigit));
+        }
+    } else {
+        // TP: x is same for BACKEND 2 and 6
+        for (uint32_t i = 0; i < nWindows; ++i) {
+            HexlPolyImpl<VecType> xDigit(m_params);
+            xDigit.SetValues(x.GetValues().GetDigitAtIndexForBase(i + 1, uint32_t{1} << baseBits), Format::COEFFICIENT);
 
-        // TP: xDigit is all zeros for BACKEND=6, but not for BACKEND-2
-        // *********************************************************
-        if (evalModeAnswer)
-            xDigit.SwitchFormat();
-        result.push_back(xDigit);
+            // TP: xDigit is all zeros for BACKEND=6, but not for BACKEND-2
+            // *********************************************************
+            if (evalModeAnswer)
+                xDigit.SwitchFormat();
+            result.push_back(std::move(xDigit));
+        }
     }
     return result;
 }
@@ -598,9 +617,6 @@ std::vector<HexlPolyImpl<VecType>> HexlPolyImpl<VecType>::PowersOfBase(uint32_t 
         ++nWindows;
     std::vector<HexlPolyImpl<VecType>> result(nWindows);
     Integer shift{0}, bbits{baseBits};
-
-    // TODO: result[0] = (*this); result[i] = result[i - 1] * TWO.ModExp(bbits, m);
-
     for (uint32_t i = 0; i < nWindows; ++i, shift += bbits)
         result[i] = (*this) * TWO.ModExp(shift, m);
     return result;
@@ -625,4 +641,4 @@ inline HexlPolyImpl<NativeVector> HexlPolyImpl<NativeVector>::ToNativePoly() con
 
 }  // namespace lbcrypto
 
-#endif
+#endif  // SRC_CORE_INCLUDE_LATTICE_HAL_HEXL_HEXLPOLY_IMPL_H_

@@ -1,7 +1,7 @@
 //==================================================================================
 // BSD 2-Clause License
 //
-// Copyright (c) 2014-2024, NJIT, Duality Technologies Inc. and other contributors
+// Copyright (c) 2014-2026, NJIT, Duality Technologies Inc. and other contributors
 //
 // All rights reserved.
 //
@@ -30,24 +30,20 @@
 //==================================================================================
 
 /*
- * This code benchmarks polynomial operations for ring dimension of 16k.
+ * This code benchmarks polynomial operations for ring dimension of 16k in the
+ * HEXL-accelerated build. Moduli are kept below 50 bits so the AVX512-IFMA
+ * instructions apply (see docs/static_docs/Best_Performance.md).
  */
+
+#include <cstdint>
+#include <iostream>
 
 #include "math/hal/basicint.h"
 #include "poly-benchmark.h"
-#include <iostream>
 
 constexpr uint32_t RING_DIM_LOG = 14;
-constexpr uint32_t DCRTBITS     = 50;
+constexpr uint32_t DCRTBITS = 50;
 
-class Setup {
-public:
-    Setup() {
-        std::cerr << "Generating polynomials for the benchmark..." << std::endl;
-        GeneratePolys((1 << (RING_DIM_LOG + 1)), DCRTBITS, NativepolysEval, NativepolysCoef);
-        GenerateDCRTPolys((1 << (RING_DIM_LOG + 1)), DCRTBITS, DCRTpolysEval, DCRTpolysCoef);
-        std::cerr << "Polynomials for the benchmark are generated" << std::endl;
-    }
-} TestParameters;
+static PolyBenchParams TestParameters((1 << (RING_DIM_LOG + 1)), DCRTBITS);
 
 BENCHMARK_MAIN();
